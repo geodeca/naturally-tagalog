@@ -344,15 +344,108 @@
         </div>
     </div>
 
-    <!-- MODAL: ABOUT -->
+    <!-- MODAL: ABOUT & COMPLETE USER GUIDE -->
     <div id="aboutModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 space-y-4">
-            <h3 class="font-serif font-extrabold text-base text-slate-900">About Naturally Tagalog</h3>
-            <p class="text-xs text-slate-600 leading-relaxed">
-                Vivid memory hooks for expats, residents, and learners in Metro Manila, Luzon, and beyond. Designed around Spaced Repetition (SRS) without tedious grammar rules.
-            </p>
-            <div class="flex justify-end">
-                <button onclick="toggleAboutModal()" class="px-4 py-2 bg-slate-900 text-white font-bold text-xs rounded-xl">Close</button>
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[88vh]">
+            <!-- Header -->
+            <div class="p-4 bg-tealBrand-700 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+                        <i class="fa-solid fa-leaf text-teal-200"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-serif font-extrabold text-base">About & How to Use Naturally Tagalog</h3>
+                        <p class="text-[11px] text-teal-100/90">Complete Guide to Spaced Repetition, Buttons & Daily Practice</p>
+                    </div>
+                </div>
+                <button onclick="toggleAboutModal()" class="text-white/80 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+
+            <!-- Scrollable Guide Content -->
+            <div class="p-6 overflow-y-auto space-y-5 text-xs text-slate-700 leading-relaxed">
+                <!-- Core Philosophy -->
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-1.5">
+                    <h4 class="font-extrabold text-sm text-amber-950 flex items-center gap-1.5">
+                        <i class="fa-solid fa-repeat text-amber-600"></i> The Secret: Repetition Until Fully Learned
+                    </h4>
+                    <p>
+                        <strong>Naturally Tagalog</strong> is built around <strong>vivid sound-alike mnemonics</strong> and <strong>deliberate repetition</strong>—never dry grammar drills. Every new word or conversational sentence sticks permanently only when you hear it, say it aloud, and test yourself repeatedly until it moves from unfamiliar to automatic.
+                    </p>
+                </div>
+
+                <!-- How the 3 Buttons on Every Card Work -->
+                <div class="space-y-2">
+                    <h4 class="font-serif font-extrabold text-sm text-slate-900 border-b border-slate-100 pb-1">
+                        1. How to Rate Each Word & Sentence (Bottom of Every Card)
+                    </h4>
+                    <p>
+                        Every card starts in the red <strong>Again</strong> queue. As you practice each word or sentence over and over, tap one of the three buttons at the bottom of its card to track your mastery and update your top progress bar:
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1">
+                        <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 space-y-1">
+                            <span class="inline-block px-2 py-0.5 rounded bg-rose-600 text-white font-extrabold text-[10px]">Again (5m)</span>
+                            <p class="text-[11px] text-slate-700"><strong>Still new or forgotten.</strong> Keep repeating this word/sentence in short 5-minute loops until the mnemonic hook clicks.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 space-y-1">
+                            <span class="inline-block px-2 py-0.5 rounded bg-amber-500 text-slate-950 font-extrabold text-[10px]">Familiar (1d)</span>
+                            <p class="text-[11px] text-slate-700"><strong>You recognize it, but need more reps.</strong> Review it again tomorrow to strengthen recall speed.</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-tealBrand-50 border border-tealBrand-200 space-y-1">
+                            <span class="inline-block px-2 py-0.5 rounded bg-tealBrand-700 text-white font-extrabold text-[10px]">Learned (30d)</span>
+                            <p class="text-[11px] text-slate-700"><strong>Fully mastered!</strong> You can understand and speak it naturally without hesitating.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommended Daily Repetition Routine -->
+                <div class="space-y-2">
+                    <h4 class="font-serif font-extrabold text-sm text-slate-900 border-b border-slate-100 pb-1">
+                        2. Daily Training System (Four 15-Minute Repetition Modes)
+                    </h4>
+                    <p>Select any topic island at the top, then work through the four daily training modules to lock words into long-term memory:</p>
+                    <ul class="space-y-1.5 pl-4 list-disc text-slate-700">
+                        <li><strong>New Words (15 min):</strong> Introduces 5 words at a time with pronunciation audio, vivid mnemonic stories, and real-life Manila context.</li>
+                        <li><strong>Recall (15 min):</strong> Active-recall flashcards that hide the English meaning first so your brain works to retrieve it before grading <em>Again</em>, <em>Familiar</em>, or <em>Learned</em>.</li>
+                        <li><strong>Shadowing (15 min):</strong> Plays phrases at <strong>0.7x slow speed</strong> and <strong>1.0x natural speed</strong>—repeat out loud alongside the audio to train your mouth and rhythm.</li>
+                        <li><strong>Listening (15 min):</strong> Hands-free continuous audio loop that plays each Tagalog phrase aloud and advances automatically so you can absorb phrases while walking or commuting.</li>
+                    </ul>
+                </div>
+
+                <!-- Complete Button & Feature Reference -->
+                <div class="space-y-2">
+                    <h4 class="font-serif font-extrabold text-sm text-slate-900 border-b border-slate-100 pb-1">
+                        3. Complete Guide to Every Button & Tab
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[11px]">
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
+                            <strong class="text-slate-900"><i class="fa-solid fa-volume-high text-tealBrand-700 mr-1"></i> Speaker Icon (On Cards):</strong> Plays native Tagalog pronunciation—tap repeatedly to mimic syllable stress (shown in CAPITALS).
+                        </div>
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
+                            <strong class="text-slate-900"><i class="fa-solid fa-star text-amber-500 mr-1"></i> Star Icon (On Cards):</strong> Bookmarks tricky words or favorite phrases into your personal <em>Favorites</em> tab for extra review.
+                        </div>
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
+                            <strong class="text-slate-900"><i class="fa-solid fa-layer-group text-tealBrand-700 mr-1"></i> Top Topic Pills:</strong> Filter your deck by real-world situations (Greetings, Food, Directions, Shopping, Home, Work, Health, Weather, Family, Hobbies, Condo & Social).
+                        </div>
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
+                            <strong class="text-slate-900"><i class="fa-solid fa-magnifying-glass text-tealBrand-700 mr-1"></i> Top Search Bar:</strong> Instantly search by Tagalog word, English meaning, or mnemonic keyword.
+                        </div>
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
+                            <strong class="text-slate-900"><i class="fa-solid fa-table-columns text-tealBrand-700 mr-1"></i> Navigation Tabs & Bottom Bar:</strong> Switch between <em>Daily</em>, <em>Favorites</em>, <em>Words</em>, <em>Sentences</em>, <em>Random</em> (shuffled practice), <em>Audio</em>, and <em>Comments / Q&A</em>.
+                        </div>
+                        <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
+                            <strong class="text-slate-900"><i class="fa-solid fa-plus text-amber-600 mr-1"></i> + Add Content:</strong> Import new weekly lesson JSON packs or paste your own custom Tagalog | English word pairs.
+                        </div>
+                        <div class="p-2.5 bg-rose-50 rounded-xl border border-rose-200 sm:col-span-2">
+                            <strong class="text-rose-800"><i class="fa-solid fa-triangle-exclamation text-rose-600 mr-1"></i> Red Floating SOS Button (Bottom-Right):</strong> Opens instant survival Tagalog phrases with one-tap audio for emergencies, jeepney/tricycle stops (<em>"Para po!"</em>), hospitals, and quick street needs.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-[11px] text-slate-500">Tip: Repeat each card aloud 3–5 times before moving it to <strong>Learned</strong>.</span>
+                <button onclick="toggleAboutModal()" class="px-5 py-2 bg-tealBrand-700 hover:bg-tealBrand-800 text-white font-bold text-xs rounded-xl shadow">Got It, Let's Practice</button>
             </div>
         </div>
     </div>
@@ -3657,8 +3750,14 @@
             document.getElementById('deckHeaderTitle').innerText = activeTab.toUpperCase() + ' Deck';
             document.getElementById('deckItemCountText').innerText = `Showing ${items.length} items`;
 
-            grid.innerHTML = items.map(item => `
-                <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm space-y-3">
+            grid.innerHTML = items.map(item => {
+                const cardBorderClass = item.status === 'learned'
+                    ? 'border-tealBrand-500/70 ring-1 ring-tealBrand-500/20'
+                    : item.status === 'familiar'
+                        ? 'border-amber-400/80 ring-1 ring-amber-400/20'
+                        : 'border-slate-200/80';
+                return `
+                <div class="bg-white p-5 rounded-2xl border ${cardBorderClass} shadow-sm space-y-3 transition-all">`;
                     <div class="flex items-center justify-between">
                         <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-tealBrand-50 text-tealBrand-700 uppercase border border-tealBrand-100">
                             ${item.category}
@@ -3686,13 +3785,31 @@
                         <p class="italic text-slate-700">${item.mnemonic}</p>
                     </div>
 
-                    <div class="pt-2 flex items-center justify-between border-t border-slate-100 text-[10px] font-extrabold">
-                        <button onclick="setCardStatus(${item.id}, 'again')" class="px-2 py-1 rounded bg-rose-50 text-rose-600">Again (5m)</button>
-                        <button onclick="setCardStatus(${item.id}, 'familiar')" class="px-2 py-1 rounded bg-amber-50 text-amber-700">Familiar (1d)</button>
-                        <button onclick="setCardStatus(${item.id}, 'learned')" class="px-2 py-1 rounded bg-tealBrand-50 text-tealBrand-700">Learned (30d)</button>
+                    <div class="pt-2 flex items-center justify-between gap-1.5 border-t border-slate-100 text-[10px] font-extrabold">
+                        <button onclick="setCardStatus(${item.id}, 'again')" class="flex-1 py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 ${
+                            item.status === 'again'
+                            ? 'bg-rose-600 text-white shadow-sm ring-2 ring-rose-300'
+                            : 'bg-rose-50 text-rose-600 hover:bg-rose-100 opacity-75 hover:opacity-100'
+                        }">
+                            ${item.status === 'again' ? '<i class="fa-solid fa-check text-[9px]"></i>' : ''} Again (5m)
+                        </button>
+                        <button onclick="setCardStatus(${item.id}, 'familiar')" class="flex-1 py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 ${
+                            item.status === 'familiar'
+                            ? 'bg-amber-500 text-slate-950 shadow-sm ring-2 ring-amber-300'
+                            : 'bg-amber-50 text-amber-700 hover:bg-amber-100 opacity-75 hover:opacity-100'
+                        }">
+                            ${item.status === 'familiar' ? '<i class="fa-solid fa-check text-[9px]"></i>' : ''} Familiar (1d)
+                        </button>
+                        <button onclick="setCardStatus(${item.id}, 'learned')" class="flex-1 py-1.5 px-2 rounded-lg transition flex items-center justify-center gap-1 ${
+                            item.status === 'learned'
+                            ? 'bg-tealBrand-700 text-white shadow-sm ring-2 ring-tealBrand-300'
+                            : 'bg-tealBrand-50 text-tealBrand-700 hover:bg-tealBrand-100 opacity-75 hover:opacity-100'
+                        }">
+                            ${item.status === 'learned' ? '<i class="fa-solid fa-check text-[9px]"></i>' : ''} Learned (30d)
+                        </button>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         }
 
         function renderComments() {
@@ -3751,14 +3868,43 @@
             renderComments();
         }
 
+        function showStatusToast(message) {
+            let toast = document.getElementById('srsToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'srsToast';
+                toast.className = 'fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-2 rounded-full shadow-lg border border-slate-700 transition-opacity duration-300 pointer-events-none';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = message;
+            toast.style.opacity = '1';
+            clearTimeout(window._srsToastTimer);
+            window._srsToastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 1800);
+        }
+
         function setCardStatus(id, status) {
-            const item = vocabData.find(v => v.id === id);
-            if (item) { item.status = status; saveData(); renderDeck(); }
+            const item = vocabData.find(v => v.id == id);
+            if (item) {
+                item.status = status;
+                saveData();
+                renderDeck();
+                const labels = {
+                    again: 'Again (5m) — Kept in active review queue',
+                    familiar: 'Familiar (1d) — Moving into short-term memory',
+                    learned: 'Learned (30d) — Mastered! Progress bar updated'
+                };
+                showStatusToast(`${item.tagalog}: ${labels[status] || status}`);
+            }
         }
 
         function toggleFavorite(id) {
-            const item = vocabData.find(v => v.id === id);
-            if (item) { item.favorite = !item.favorite; saveData(); renderDeck(); }
+            const item = vocabData.find(v => v.id == id);
+            if (item) {
+                item.favorite = !item.favorite;
+                saveData();
+                renderDeck();
+                showStatusToast(item.favorite ? `★ Added "${item.tagalog}" to Favorites` : `Removed "${item.tagalog}" from Favorites`);
+            }
         }
 
         function speakTagalog(text) {
