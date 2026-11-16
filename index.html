@@ -36,78 +36,8 @@
                 }
             }
         }
-
-        function handleSearch() {
-            renderDeck();
-        }
-
-        function handleJsonFileUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const parsed = JSON.parse(e.target.result);
-                    const existingTagalog = new Set(vocabData.map(v => v.tagalog.toLowerCase().trim()));
-                    let added = 0;
-
-                    if (Array.isArray(parsed.words)) {
-                        parsed.words.forEach(w => {
-                            const key = (w.tagalog || '').toLowerCase().trim();
-                            if (key && !existingTagalog.has(key)) {
-                                existingTagalog.add(key);
-                                vocabData.push({
-                                    id: Date.now() + Math.random(),
-                                    type: "word",
-                                    tagalog: w.tagalog,
-                                    romanization: w.phonetic || w.romanization || "",
-                                    english: w.english || "",
-                                    category: w.island || w.category || "Step 1: Greetings & Politeness",
-                                    mnemonic: w.mnemonic_trigger ? `${w.mnemonic_trigger} — ${w.mnemonic_story || ''}` : (w.mnemonic || ""),
-                                    example: w.example_tagalog ? `${w.example_tagalog} (${w.example_english || ''})` : "",
-                                    culturalNote: w.cultural_note || "",
-                                    status: "again",
-                                    favorite: false,
-                                    isCustom: true
-                                });
-                                added++;
-                            }
-                        });
-                    }
-
-                    if (Array.isArray(parsed.sentences)) {
-                        parsed.sentences.forEach(s => {
-                            const key = (s.tagalog || '').toLowerCase().trim();
-                            if (key && !existingTagalog.has(key)) {
-                                existingTagalog.add(key);
-                                vocabData.push({
-                                    id: Date.now() + Math.random(),
-                                    type: "sentence",
-                                    tagalog: s.tagalog,
-                                    romanization: s.phonetic || s.romanization || "",
-                                    english: s.english || "",
-                                    category: s.island || s.category || "Step 1: Greetings & Politeness",
-                                    mnemonic: s.literal_breakdown ? `Word-by-word: ${s.literal_breakdown}` : (s.mnemonic || ""),
-                                    status: "again",
-                                    favorite: false,
-                                    isCustom: true
-                                });
-                                added++;
-                            }
-                        });
-                    }
-
-                    saveData();
-                    renderDeck();
-                    closeAddModal();
-                    alert(`Successfully imported ${added} new unique items!`);
-                } catch (err) {
-                    alert("Could not read JSON file. Please make sure it is a valid JSON file.");
-                }
-            };
-            reader.readAsText(file);
-        }
     </script>
+
 
     <style>
         body {
@@ -134,7 +64,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h1 class="font-serif font-extrabold text-xl text-white tracking-wide">Naturally Tagalog</h1>
-                        <span id="headerWordBadge" class="bg-tealBrand-600 text-teal-100 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider border border-teal-500">60 Words • 60 Sentences</span>
+                        <span id="headerWordBadge" class="bg-tealBrand-600 text-teal-100 text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider border border-teal-500">114 Words • 109 Sentences</span>
                     </div>
                     <p class="text-[11px] text-teal-100/80 font-medium">Mabuhay! Welcome back • Expat Tagalog Deck</p>
                 </div>
@@ -175,8 +105,8 @@
         <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1 text-xs border-b border-slate-200">
             <button onclick="switchTab('daily')" id="tab-daily" class="px-3 py-1.5 font-bold rounded-lg bg-tealBrand-700 text-white">Daily</button>
             <button onclick="switchTab('favorites')" id="tab-favorites" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Favorites (0)</button>
-            <button onclick="switchTab('words')" id="tab-words" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Words (60)</button>
-            <button onclick="switchTab('islands')" id="tab-islands" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Sentences (60)</button>
+            <button onclick="switchTab('words')" id="tab-words" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Words (114)</button>
+            <button onclick="switchTab('islands')" id="tab-islands" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Sentences (109)</button>
             <button onclick="switchTab('myislands')" id="tab-myislands" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">My Islands (0)</button>
             <button onclick="switchTab('random')" id="tab-random" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Random</button>
             <button onclick="switchTab('audio')" id="tab-audio" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Audio</button>
@@ -352,6 +282,25 @@
         </button>
     </div>
 
+    <!-- MODAL: DAILY TRAINING MODULE (New Words, Recall, Shadowing, Listening) -->
+    <div id="trainingModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-xl rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[90vh]">
+            <div id="trainingModalHeader" class="p-4 bg-tealBrand-700 text-white flex items-center justify-between">
+                <div>
+                    <h3 id="trainingModalTitle" class="font-extrabold text-sm">Training Session</h3>
+                    <p id="trainingModalSubtitle" class="text-[11px] text-white/85">Card 1 of 5</p>
+                </div>
+                <button onclick="closeTrainingModal()" class="text-white/80 hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div id="trainingModalBody" class="p-6 overflow-y-auto space-y-4">
+                <!-- Dynamic module content injected via JS -->
+            </div>
+            <div id="trainingModalFooter" class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-2">
+                <!-- Dynamic controls injected via JS -->
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL: ADD CONTENT / BULK IMPORTER -->
     <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
@@ -417,7 +366,7 @@
                         "tagalog": "Kumusta",
                         "romanization": "koo-moos-TAH",
                         "english": "How are you / Hello",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "COME MOST-A — Imagine greeting an old friend at the door and saying, 'COME MOST-A the time, I miss you!' as you ask how they are doing.",
                         "example": "Kumusta ka na, kaibigan? (How are you doing now, friend?)",
                         "culturalNote": "Derived from the Spanish '¿Cómo está?'. Adding 'po' ('Kumusta po kayo?') makes it respectful for elders or strangers.",
@@ -431,7 +380,7 @@
                         "tagalog": "Salamat",
                         "romanization": "sah-LAH-maht",
                         "english": "Thank you",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "SALAD MAT — Picture someone handing you a giant bowl of fresh SALAD on a woven MAT, and you gratefully say 'Salamat!'",
                         "example": "Maraming salamat sa tulong mo. (Thank you very much for your help.)",
                         "culturalNote": "'Maraming salamat' literally translates to 'many thanks' and is the standard warm way to express deep gratitude.",
@@ -445,7 +394,7 @@
                         "tagalog": "Paumanhin",
                         "romanization": "pah-oo-mahn-HEEN",
                         "english": "Excuse me / Sorry / Pardon",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "POW! MAN HITS — POW! A MAN accidentally HITS your shoulder on a crowded sidewalk, and he immediately bows and says 'Paumanhin!'",
                         "example": "Paumanhin po, maaari po bang dumaan? (Excuse me, may I please pass through?)",
                         "culturalNote": "More formal and polite than saying 'Sorry' or 'Pasensya na'; ideal when interrupting or passing by elders.",
@@ -459,7 +408,7 @@
                         "tagalog": "Oo",
                         "romanization": "OH-oh",
                         "english": "Yes",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "OH-OH! — You nod enthusiastically twice—'OH-OH!'—when someone offers you a second slice of mango.",
                         "example": "Oo, pupunta ako bukas nang umaga. (Yes, I am going tomorrow morning.)",
                         "culturalNote": "Pronounced as two distinct syllables ('oh-oh'), never blended into a single 'oo' sound. Polite form is 'Opo'.",
@@ -473,7 +422,7 @@
                         "tagalog": "Hindi",
                         "romanization": "hin-DEH",
                         "english": "No / Not",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "HEN DAY — You ask the farmer if it is rooster day, and he shakes his head: 'No, it's HEN DAY!'",
                         "example": "Hindi ko alam kung saan ang daan. (I do not know where the road is.)",
                         "culturalNote": "When combined with 'po' for respect, it contracts smoothly into 'Hindi po' (No, sir/ma'am).",
@@ -487,7 +436,7 @@
                         "tagalog": "Magkano",
                         "romanization": "mahg-KAH-noh",
                         "english": "How much (price)",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "MUG CANOE — You pick up a souvenir MUG shaped like a CANOE at a market stall and ask the vendor, 'Magkano?'",
                         "example": "Magkano po ang isang kilo nito? (How much is one kilo of this?)",
                         "culturalNote": "Used strictly for asking the price of items. For asking quantity ('how many'), use 'Ilan'.",
@@ -501,7 +450,7 @@
                         "tagalog": "Sukli",
                         "romanization": "sook-LEE",
                         "english": "Change (money returned)",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "SOOK LEE — Your friend LEE drops his coins into a puddle, and you hand him his wet, SOAKED LEE coins back as his change.",
                         "example": "Heto po ang sukli ninyo sa limang daan. (Here is your change for five hundred.)",
                         "culturalNote": "Drivers on jeepneys and tricycles often ask 'May barya ka ba?' (Do you have small coins?) if they lack sukli for large bills.",
@@ -515,7 +464,7 @@
                         "tagalog": "Barya",
                         "romanization": "bahr-YAH",
                         "english": "Coins / Loose change",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "BAR YARD — Picture digging through the dirt in a BAR YARD and finding dozens of shiny silver coins.",
                         "example": "Wala akong barya, puro buo ang pera ko. (I have no coins, my money is all whole bills.)",
                         "culturalNote": "'Buo' (whole) refers to large paper bills, whereas 'barya' refers to coins or small 20- and 50-peso bills.",
@@ -529,7 +478,7 @@
                         "tagalog": "Bayad",
                         "romanization": "BAH-yahd",
                         "english": "Payment / Fare",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "BUY YARD — You hand over a stack of cash to BUY the entire YARD—that's your 'Bayad!'",
                         "example": "Bayad po, isang estudyante hanggang Cubao. (Here is my payment, one student fare up to Cubao.)",
                         "culturalNote": "On a jeepney, passengers pass coins forward down the row while saying 'Bayad po' until it reaches the driver.",
@@ -543,7 +492,7 @@
                         "tagalog": "Tawad",
                         "romanization": "TAH-wahd",
                         "english": "Discount / Haggle / Forgiveness",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "TOWEL WAD — You offer a vendor a WAD of cash plus a free TOWEL to ask for a discount on your purchase.",
                         "example": "Puwede bang humingi ng konting tawad, Ate? (Can I ask for a small discount, older sister?)",
                         "culturalNote": "In wet markets (palengke), polite haggling ('tumawad') is expected and welcomed when done with a smile.",
@@ -557,7 +506,7 @@
                         "tagalog": "Palengke",
                         "romanization": "pah-LENG-keh",
                         "english": "Wet market / Public market",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "PAL LINKED — You and your PAL LINKED arms so you wouldn't get separated in the bustling open-air market.",
                         "example": "Maaga kaming namili ng sariwang isda sa palengke. (We shopped early for fresh fish at the wet market.)",
                         "culturalNote": "From the Spanish 'palenque'. Going before 7:00 AM gets you the freshest catch and produce.",
@@ -571,7 +520,7 @@
                         "tagalog": "Sariwa",
                         "romanization": "sah-REE-wah",
                         "english": "Fresh",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "SARAH RE-WASHED — SARAH RE-WASHED the crisp green lettuce under cold water so it stayed extra fresh.",
                         "example": "Bagong huli ba itong mga hipon? Mukhang sariwa. (Are these shrimp newly caught? They look fresh.)",
                         "culturalNote": "Used for produce, seafood, meat, and even cool morning air ('sariwang hangin').",
@@ -585,7 +534,7 @@
                         "tagalog": "Mahal",
                         "romanization": "mah-HAHL",
                         "english": "Expensive / Beloved",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "MY HALL — Decorating MY entire HALL in gold leaf was way too expensive—'Ang mahal!'",
                         "example": "Masyadong mahal ang presyo ng bawang ngayon. (The price of garlic is too expensive right now.)",
                         "culturalNote": "Carries a dual meaning: 'expensive' when talking about prices, and 'love' or 'dear' when speaking to loved ones ('Mahal kita').",
@@ -599,7 +548,7 @@
                         "tagalog": "Mura",
                         "romanization": "MOO-rah",
                         "english": "Cheap / Inexpensive",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "MOO-RAH! — A cow yells 'MOO-RAH!' at the farmer's market because the hay is on clearance for a super cheap price.",
                         "example": "Mas mura ang gulay dito kaysa sa supermarket. (Vegetables are cheaper here than at the supermarket.)",
                         "culturalNote": "Be mindful of context: as a noun/verb ('pagmumura'), the same word means swearing or cursing.",
@@ -613,7 +562,7 @@
                         "tagalog": "Suki",
                         "romanization": "SOO-kee",
                         "english": "Regular loyal customer / Favorite vendor",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "SOUP KEY — Because you buy soup from the same vendor every week, she gives you the secret SOUP KEY and extra portions as her loyal 'Suki'.",
                         "example": "Suki na ako rito kaya laging may dagdag na piraso. (I am a regular customer here, so there is always an extra piece thrown in.)",
                         "culturalNote": "A cornerstone of Filipino commerce—building a 'suki' relationship earns you better prices, choice cuts, and extra items ('dagdag').",
@@ -627,7 +576,7 @@
                         "tagalog": "Pasensya",
                         "romanization": "pah-SEN-shah",
                         "english": "Patience / Sorry / Excuse me",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "PASSING SHAH — When accidentally bumping into a PASSING SHAH in a crowded palace, you apologize softly: 'Pasensya na po!'",
                         "example": "Pasensya na po sa abala. (Sorry for the inconvenience.)",
                         "culturalNote": "Literally translates to 'patience' (from Spanish 'paciencia'). Saying 'Pasensya na' asks the listener to extend patience for a minor mistake.",
@@ -641,7 +590,7 @@
                         "tagalog": "Walang anuman",
                         "romanization": "wah-LAHNG ah-noo-MAHN",
                         "english": "You're welcome / Think nothing of it",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "WALL-LONG A NEW MAN — After you help build a WALL-LONG fence, A NEW MAN thanks you, and you reply, 'It was nothing—walang anuman!'",
                         "example": "Walang anuman po, masaya akong tumulong. (You're welcome, I am happy to help.)",
                         "culturalNote": "Literally means 'there is nothing whatsoever'. It is the standard polite response to 'Salamat'.",
@@ -655,7 +604,7 @@
                         "tagalog": "Paalam",
                         "romanization": "pah-AH-lahm",
                         "english": "Goodbye / Farewell",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "PA'S ALARM — When PA'S ALARM goes off at the airport gate, it is time to wave goodbye and say 'Paalam!'",
                         "example": "Paalam na po, mag-iingat kayo sa biyahe. (Goodbye now, take care on your trip.)",
                         "culturalNote": "Used for longer goodbyes or formal departures. For casual everyday partings, Filipinos often say 'Sige, alis na ako' (Okay, I'm heading out now).",
@@ -669,7 +618,7 @@
                         "tagalog": "Ingat",
                         "romanization": "EE-ngaht",
                         "english": "Take care / Be careful",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "IN GUARD — Picture stepping out into traffic while a crossing GUARD yells, 'Be IN GUARD—ingat!'",
                         "example": "Ingat ka palagi sa pag-uwi. (Take care always on your way home.)",
                         "culturalNote": "One of the warmest everyday farewells in the Philippines, functioning both as 'be careful' and 'safe travels'.",
@@ -683,7 +632,7 @@
                         "tagalog": "Pakiusap",
                         "romanization": "pah-kee-OO-sahp",
                         "english": "Please / Request / Favor",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "PACK YOUR SAP — You politely ask a maple farmer, 'Please PACK YOUR SAP into jars for me—pakiusap!'",
                         "example": "Pakiusap lang po, pakihinaan ang radyo. (Please, kindly lower the volume of the radio.)",
                         "culturalNote": "The prefix 'paki-' attaches directly to verb roots (like 'pakibigay' = please give) to turn commands into polite requests.",
@@ -697,7 +646,7 @@
                         "tagalog": "Isa",
                         "romanization": "ee-SAH",
                         "english": "One",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "EE-SAW — Picture a lumberjack holding up just ONE giant EE-SAW.",
                         "example": "Bigyan mo ako ng isa pang baso ng tubig. (Give me one more glass of water.)",
                         "culturalNote": "Tagalog uses native numbers ('isa, dalawa, tatlo') for counting objects, while Spanish-derived numbers ('uno, dos, tres') are common for telling time and large prices.",
@@ -711,7 +660,7 @@
                         "tagalog": "Dalawa",
                         "romanization": "dah-lah-WAH",
                         "english": "Two",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "DOLLAR WAR — TWO rival merchants fight a DOLLAR WAR over a two-dollar bill.",
                         "example": "Dalawa kaming sasakay papuntang Makati. (Two of us are riding going to Makati.)",
                         "culturalNote": "Contracts to 'dalawang' when placed directly before a noun (e.g., 'dalawang tiket' = two tickets).",
@@ -725,7 +674,7 @@
                         "tagalog": "Tatlo",
                         "romanization": "taht-LOH",
                         "english": "Three",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "TOT LOW — THREE tiny TOTS duck LOW under a limbo bar.",
                         "example": "May tatlo akong kapatid sa probinsya. (I have three siblings in the province.)",
                         "culturalNote": "Contracts to 'tatlong' before a noun (e.g., 'tatlong daan' = three hundred).",
@@ -739,7 +688,7 @@
                         "tagalog": "Daan",
                         "romanization": "dah-AHN",
                         "english": "Hundred / Road / Path",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "DAWN — At DAWN, you count a stack of one HUNDRED crisp bills on the open road.",
                         "example": "Isang daan at limampung piso ang bayad dito. (The payment here is one hundred and fifty pesos.)",
                         "culturalNote": "After numbers ending in a vowel, 'daan' shifts to 'raan' for smoother pronunciation (e.g., 'dalawang raan' = 200).",
@@ -753,7 +702,7 @@
                         "tagalog": "Libo",
                         "romanization": "LEE-boh",
                         "english": "Thousand",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "LEE'S BOW — Archer LEE'S BOW can shoot an arrow a full THOUSAND yards.",
                         "example": "Isang libo ang ibinayad ko sa kuryente. (I paid one thousand for electricity.)",
                         "culturalNote": "The 1,000-peso blue banknote ('isang libo') is the highest denomination in Philippine currency.",
@@ -767,7 +716,7 @@
                         "tagalog": "Tindera",
                         "romanization": "tin-DEH-rah",
                         "english": "Female vendor / Shopkeeper",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "TIN DARE-A — Behind a counter stacked with TIN cans, a cheerful shopkeeper says, 'I DARE-A you to find lower prices!'",
                         "example": "Mabait ang tindera sa kanto kaya doon ako bumibili. (The vendor on the corner is kind, so I buy there.)",
                         "culturalNote": "The male counterpart is 'tindero'. At neighborhood sari-sari stores, customers usually call the tindera 'Ate' (older sister) or 'Nanay' (mother).",
@@ -781,7 +730,7 @@
                         "tagalog": "Presyo",
                         "romanization": "PRESH-yoh",
                         "english": "Price",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "PRESS SHOW — At a high-end fashion PRESS SHOW, every jacket has a massive price tag dangling from the sleeve.",
                         "example": "Tumaas na naman ang presyo ng bigas ngayong linggo. (The price of rice went up again this week.)",
                         "culturalNote": "From Spanish 'precio'. Wet market stalls display prices per kilo ('kada kilo') or per small pile ('tumpok').",
@@ -795,7 +744,7 @@
                         "tagalog": "Timbang",
                         "romanization": "tim-BAHNG",
                         "english": "Weight / Scale measurement",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "TIM BANG! — TIM drops a giant watermelon onto the market scale—BANG!—and checks its exact weight.",
                         "example": "Sakto ba sa timbang itong isang kilong baboy? (Is this one kilo of pork accurate in weight?)",
                         "culturalNote": "Public markets feature a 'Timbangan ng Bayan' (People's Weighing Scale) near the entrance so shoppers can verify vendor weights.",
@@ -809,7 +758,7 @@
                         "tagalog": "Supot",
                         "romanization": "SOO-poht",
                         "english": "Plastic bag / Paper pouch",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "SOUP POT — Instead of a SOUP POT, someone tries to carry hot broth home in a thin plastic bag—'Supot!'",
                         "example": "Pakilagay na lang po sa isang supot ang mga gulay. (Please just put all the vegetables into one bag.)",
                         "culturalNote": "Many Metro Manila cities enforce single-use plastic bans, so vendors use brown paper bags ('supot na papel') or ask if you brought an eco-bag.",
@@ -823,7 +772,7 @@
                         "tagalog": "Bumili",
                         "romanization": "boo-mee-LEE",
                         "english": "To buy / Bought",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "BOOM! MILLY — BOOM! MILLY slams her wallet onto the counter because she wants to buy everything in the bakery.",
                         "example": "Bumili ako ng mainit na pandesal kaninang umaga. (I bought warm pandesal rolls earlier this morning.)",
                         "culturalNote": "Root word is 'bili' (buy). 'Bumili' focuses on the buyer ('I bought'), while 'binili' focuses on the item ('the item was bought').",
@@ -837,7 +786,7 @@
                         "tagalog": "Tuloy",
                         "romanization": "too-LOY",
                         "english": "Come in / Enter / Continue",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "TWO LOY-AL DOGS — TWO LOY-AL DOGS wag their tails at the front door to invite guests inside: 'Tuloy po kayo!'",
                         "example": "Tuloy po kayo sa loob, huwag kayong mahiya. (Please come inside, do not be shy.)",
                         "culturalNote": "Filipino hospitality always includes welcoming guests inside immediately with 'Tuloy kayo!' and offering food or water.",
@@ -851,7 +800,7 @@
                         "tagalog": "Tao po",
                         "romanization": "TAH-oh poh",
                         "english": "Hello, anybody home? (knocking call)",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "TOWEL POLE — Instead of knocking with your knuckles, you tap a TOWEL POLE against the gate and call out, 'Tao po!'",
                         "example": "Tao po! May tao ba riyan sa loob? (Anybody home! Is there someone inside?)",
                         "culturalNote": "Literally translates to 'Person, sir/ma'am!' Used instead of knocking when approaching a gate, front door, or unstaffed shop counter.",
@@ -865,7 +814,7 @@
                         "tagalog": "Mabuhay",
                         "romanization": "mah-BOO-high",
                         "english": "Welcome / Long live / Cheers",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "MY BOO HIGH — You lift MY BOO HIGH into the air at the airport arrival gate and cheer, 'Mabuhay!'",
                         "example": "Mabuhay at maligayang pagdating sa Pilipinas! (Welcome and happy arrival to the Philippines!)",
                         "culturalNote": "Derived from the root 'buhay' (life), literally wishing 'may you live'. Commonly used by hosts, tour guides, and airlines.",
@@ -879,7 +828,7 @@
                         "tagalog": "Pakisuyo",
                         "romanization": "pah-kee-SOO-yoh",
                         "english": "Please do me a favor / Kindly pass",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "PACK YOUR SOY-O — At dinner, you ask your neighbor to PACK YOUR SOY-O sauce bottle and pass it down the table: 'Pakisuyo!'",
                         "example": "Pakisuyo naman ng asin sa dulo ng mesa. (Please kindly pass the salt at the end of the table.)",
                         "culturalNote": "'Suyo' means winning someone's favor or affection; 'pakisuyo' softens a request into a warm favor.",
@@ -893,7 +842,7 @@
                         "tagalog": "Sige",
                         "romanization": "SEE-geh",
                         "english": "Okay / Go ahead / Alright / Bye",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "SEE GAY-LE — You nod at your friend GAY-LE and say, 'Okay, go ahead—SEE GAY-LE, sige!'",
                         "example": "Sige po, babalik na lang ako mamayang hapon. (Alright then, I will just come back later this afternoon.)",
                         "culturalNote": "From Spanish 'sigue' (continue). One of the most versatile words in daily Tagalog—used to agree, encourage, or wrap up a conversation.",
@@ -907,7 +856,7 @@
                         "tagalog": "Apat",
                         "romanization": "AH-paht",
                         "english": "Four",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "A POT — Picture FOUR shamrocks growing inside A POT on your windowsill.",
                         "example": "Apat na silya ang kailangan natin sa balkonahe. (We need four chairs on the balcony.)",
                         "culturalNote": "Because 'apat' ends in a consonant ('t'), it takes the separate linker 'na' before a noun ('apat na tao' = four people).",
@@ -921,7 +870,7 @@
                         "tagalog": "Lima",
                         "romanization": "lee-MAH",
                         "english": "Five",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "LIMA BEANS — You count exactly FIVE giant LIMA beans on your dinner plate.",
                         "example": "Bukas nang alas-singko o lima ng hapon tayo aalis. (Tomorrow at five in the afternoon we will leave.)",
                         "culturalNote": "Contracts to 'limang' before a noun (e.g., 'limang minuto' = five minutes).",
@@ -935,7 +884,7 @@
                         "tagalog": "Sampu",
                         "romanization": "sahm-POO",
                         "english": "Ten",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "SHAMPOO — You line up TEN bottles of SHAMPOO along the edge of your bathtub.",
                         "example": "Sampung piso lang ang pamasahe sa traysikel. (The tricycle fare is only ten pesos.)",
                         "culturalNote": "Contracts to 'sampung' before a noun. Teens are formed by adding 'labing-' (e.g., 'labing-isa' = 11, 'labindalawa' = 12).",
@@ -949,7 +898,7 @@
                         "tagalog": "Preskong",
                         "romanization": "PRES-kong",
                         "english": "Cool / Fresh / Crisp",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "PRESS KING KONG — You PRESS a cold ice pack against KING KONG's forehead to keep him cool and fresh.",
                         "example": "Maganda mamili nang maaga habang presko pa ang hangin. (It is nice to shop early while the air is still cool.)",
                         "culturalNote": "From Spanish 'fresco'. Used for crisp vegetables, cool breezes, and freshly laundered clothes.",
@@ -963,7 +912,7 @@
                         "tagalog": "Kulang",
                         "romanization": "KOO-lahng",
                         "english": "Lacking / Short / Insufficient",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "COOL LUNG — A runner gasps with a COOL LUNG because he is short of breath—'Kulang!'",
                         "example": "Kulang po ng sampung piso ang sukli ninyo. (Your change is short by ten pesos.)",
                         "culturalNote": "Essential phrase for checking receipts, change, or ingredients when something is missing.",
@@ -977,7 +926,7 @@
                         "tagalog": "Sobra",
                         "romanization": "SOH-brah",
                         "english": "Excess / Too much / Extra change",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "SO BRAVO! — A chef pours way too much sauce on the pasta and shouts, 'SO BRAVO—sobra!'",
                         "example": "Sobra po ang ibinigay ninyong sukli sa akin. (The change you gave me is too much.)",
                         "culturalNote": "Opposite of 'kulang'. Returning extra change ('sobrang sukli') is deeply appreciated by market vendors.",
@@ -991,7 +940,7 @@
                         "tagalog": "Tumpok",
                         "romanization": "toom-POK",
                         "english": "Small pile / Heap (market portion)",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "TOMB POKE — You POKE a neat little pyramid pile of garlic bulbs arranged like a tiny TOMB on a market table.",
                         "example": "Magkano po ang isang tumpok ng kamatis? (How much is one small pile of tomatoes?)",
                         "culturalNote": "Instead of weighing small items like garlic, shallots, or chilies, palengke vendors sell them in pre-grouped piles called 'tumpok'.",
@@ -1005,7 +954,7 @@
                         "tagalog": "Piraso",
                         "romanization": "pee-RAH-soh",
                         "english": "Piece / Individual item",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "PEER A SAW — You PEER at A SAW cutting a wooden plank into individual pieces—'Piraso!'",
                         "example": "Tatlong piraso ng mangga ang binili ko. (I bought three pieces of mango.)",
                         "culturalNote": "From Spanish 'pedazo'. Used when buying items individually rather than by weight ('kilo').",
@@ -1019,7 +968,7 @@
                         "tagalog": "Hinog",
                         "romanization": "hee-NOG",
                         "english": "Ripe",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "HE KNOCKED — HE KNOCKED gently on the papaya with his knuckles to test if it was sweet and ripe.",
                         "example": "Piliin mo iyong hinog na papaya para matamis. (Choose the ripe papaya so that it is sweet.)",
                         "culturalNote": "The opposite is 'hilaw' (unripe or raw)—green mangoes ('manggang hilaw') are eaten crisp with shrimp paste ('bagoong').",
@@ -1033,7 +982,7 @@
                         "tagalog": "Resibo",
                         "romanization": "reh-SEE-boh",
                         "english": "Receipt",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "RE-SEE BOW — You look back to RE-SEE the BOW tied around your gift box and check the receipt tucked inside.",
                         "example": "Puwede po bang makahingi ng opisyal na resibo? (May I please ask for an official receipt?)",
                         "culturalNote": "From Spanish 'recibo'. Supermarkets and hardware stores issue printed receipts, whereas open-air palengke stalls operate cash-only without paper receipts.",
@@ -1047,7 +996,7 @@
                         "tagalog": "Magandang hapon",
                         "romanization": "mah-gahn-DAHNG HAH-pon",
                         "english": "Good afternoon",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "MY GRAND HANG-ON HALF-ON — Around 3:00 PM, MY GRANDfather HANGS ON to the porch rail as the afternoon sun goes HALF-ON.",
                         "example": "Magandang hapon po sa inyong lahat! (Good afternoon to all of you!)",
                         "culturalNote": "Used roughly from 12:00 PM until sunset (around 5:30–6:00 PM), after which it shifts to 'Magandang gabi' (Good evening).",
@@ -1061,7 +1010,7 @@
                         "tagalog": "Magandang gabi",
                         "romanization": "mah-gahn-DAHNG gah-BEE",
                         "english": "Good evening",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "MY GRAND GAWK BEE — Under the evening stars, you GAWK at a glowing firefly BEE—'Magandang gabi!'",
                         "example": "Magandang gabi po, kumain na ba kayo ng hapunan? (Good evening, have you eaten dinner yet?)",
                         "culturalNote": "Asking 'Kumain ka na ba?' (Have you eaten yet?) right after 'Magandang gabi' is a classic Filipino expression of care.",
@@ -1075,7 +1024,7 @@
                         "tagalog": "Walang problema",
                         "romanization": "wah-LAHNG prob-LEH-mah",
                         "english": "No problem",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "WALL-LONG PROBLEM-A — You smash right through a WALL-LONG obstacle and smile: 'No problem at all—walang problema!'",
                         "example": "Walang problema, kaya nating tapusin ito ngayon. (No problem, we can finish this today.)",
                         "culturalNote": "Combines Tagalog 'wala' (none/no) with Spanish 'problema'. Very common in everyday reassuring conversation.",
@@ -1089,7 +1038,7 @@
                         "tagalog": "Puwede",
                         "romanization": "PWEH-deh",
                         "english": "Can / May / Possible",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "PAY DAY — Once PAY DAY arrives, anything is possible—you can finally afford that trip!",
                         "example": "Puwede po bang magtanong kung saan ang istasyon? (May I please ask where the station is?)",
                         "culturalNote": "From Spanish 'puede'. Paired with 'po' and the question marker 'ba' ('Puwede po ba?'), it is the go-to phrase for polite permission.",
@@ -1103,7 +1052,7 @@
                         "tagalog": "Bawal",
                         "romanization": "BAH-wahl",
                         "english": "Forbidden / Prohibited / Not allowed",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "BAR WALL — A giant red sign on a brick BAR WALL warns: 'No entry—Bawal!'",
                         "example": "Bawal pumarada ang mga sasakyan sa harap ng gate. (Vehicles are prohibited from parking in front of the gate.)",
                         "culturalNote": "You will see 'Bawal' signs everywhere across Metro Manila—such as 'Bawal Tumawid' (No Crossing) and 'Bawal Magtapon ng Basura' (No Littering).",
@@ -1117,7 +1066,7 @@
                         "tagalog": "Anim",
                         "romanization": "AH-nim",
                         "english": "Six",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "A NAME — You write A NAME with SIX letters on a name tag.",
                         "example": "Anim na itlog ang binili ko sa tindahan. (I bought six eggs at the store.)",
                         "culturalNote": "Ends in 'm', so it uses the separate linker 'na' before a noun ('anim na araw' = six days).",
@@ -1131,7 +1080,7 @@
                         "tagalog": "Pito",
                         "romanization": "pee-TOH",
                         "english": "Seven",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "PEE-TOE — Picture a lucky referee blowing a whistle ('pito' also means whistle!) SEVEN times.",
                         "example": "Pitong araw sa isang linggo bukas ang palengke. (The wet market is open seven days a week.)",
                         "culturalNote": "Contracts to 'pitong' before a noun. As a standalone noun, 'pito' also means a referee's or traffic enforcer's whistle.",
@@ -1145,7 +1094,7 @@
                         "tagalog": "Walo",
                         "romanization": "wah-LOH",
                         "english": "Eight",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "WALL-LOW — An octopus with EIGHT arms hugs a WALL-LOW aquarium glass.",
                         "example": "Walong baso ng tubig ang iniinom ko araw-araw. (I drink eight glasses of water every day.)",
                         "culturalNote": "Contracts to 'walong' before a noun (e.g., 'walong piso' = eight pesos).",
@@ -1159,7 +1108,7 @@
                         "tagalog": "Siyam",
                         "romanization": "SHAHM",
                         "english": "Nine",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "SHAM — A cat with NINE lives pulls off a clever SHAM to get extra treats.",
                         "example": "Siyam na buwan kaming naghanda para sa pista. (We prepared for nine months for the fiesta.)",
                         "culturalNote": "Uses the separate linker 'na' before a noun ('siyam na taon' = nine years).",
@@ -1173,7 +1122,7 @@
                         "tagalog": "Kalahati",
                         "romanization": "kah-lah-HAH-tee",
                         "english": "Half",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "CALL A HOT TEA — You CALL for A HOT TEA, but the waiter only fills the cup HALF-way—'Kalahati!'",
                         "example": "Kalahating kilo ng baboy lang ang kailangan ko. (I only need half a kilo of pork.)",
                         "culturalNote": "Very common at meat and produce stalls ('kalahating kilo' = 500 grams).",
@@ -1187,7 +1136,7 @@
                         "tagalog": "Matamis",
                         "romanization": "mah-tah-MEES",
                         "english": "Sweet",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "MY TOMMY'S — MY TOMMY'S full of honey and ripe mangoes—so sweet!",
                         "example": "Matamis ba itong mga pakwan na tinda ninyo? (Are these watermelons you are selling sweet?)",
                         "culturalNote": "Root word is 'tamis' (sweetness). Vendors often guarantee sweetness by offering a tiny slice ('patikim') to taste.",
@@ -1201,7 +1150,7 @@
                         "tagalog": "Maasim",
                         "romanization": "mah-AH-sim",
                         "english": "Sour",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "MY AUNT SIMMERS — MY AUNT SIMMERS tamarind soup so sour that everyone's cheeks pucker!",
                         "example": "Maasim ang sinigang kapag maraming sampalok. (Sinigang soup is sour when there is plenty of tamarind.)",
                         "culturalNote": "Root word is 'asim' (sourness). Essential vocabulary for choosing between sweet ripe fruits and sour cooking ingredients like calamansi or tamarind.",
@@ -1215,7 +1164,7 @@
                         "tagalog": "Sari-sari",
                         "romanization": "SAH-ree SAH-ree",
                         "english": "Assorted / Variety / Neighborhood convenience store",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "SORRY-SORRY — You bump into racks of assorted snacks in a tiny neighborhood shop and say, 'SORRY-SORRY!'",
                         "example": "Bumili ako ng yelo at toyo sa sari-sari store sa kanto. (I bought ice and soy sauce at the neighborhood variety store on the corner.)",
                         "culturalNote": "Sari-sari stores are small family-run neighborhood shops selling single-serving sachets ('tingi'), snacks, drinks, and household basics.",
@@ -1229,7 +1178,7 @@
                         "tagalog": "Tingi",
                         "romanization": "ting-EE",
                         "english": "Retail / Single-piece small portion",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "TING-Y — You drop one TING-Y coin onto the counter to buy a single sachet of coffee.",
                         "example": "Puwede bang bumili nang tingi-tingi rito? (Can one buy in single small portions here?)",
                         "culturalNote": "Refers to the Filipino practice of buying single-use sachets, single cigarettes, or small measured scoops of cooking oil rather than bulk bottles.",
@@ -1243,7 +1192,7 @@
                         "tagalog": "Bayong",
                         "romanization": "bah-YONG",
                         "english": "Traditional woven market tote bag",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "BUY YOUNG — You BUY a YOUNG palm-leaf woven basket to carry your groceries home from the market.",
                         "example": "Dala ni Lola ang kanyang matibay na bayong sa palengke. (Grandmother brought her sturdy woven tote bag to the wet market.)",
                         "culturalNote": "Handwoven from buri palm or pandan leaves; traditional, eco-friendly, and sturdy enough to hold heavy produce and fish.",
@@ -1257,7 +1206,7 @@
                         "tagalog": "Magandang umaga po, kumusta po ang araw ninyo?",
                         "romanization": "mah-gahn-DAHNG oo-MAH-gah poh, koo-moos-TAH poh ahng AH-rahw neen-YOH?",
                         "english": "Good morning, how is your day going?",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Beautiful morning (respect), how-are (respect) the day yours?",
                         "example": "",
                         "culturalNote": "",
@@ -1271,7 +1220,7 @@
                         "tagalog": "Maraming salamat po sa masarap na pagkain.",
                         "romanization": "mah-RAH-meeng sah-LAH-maht poh sah mah-sah-RAHP nah pahg-KAH-in.",
                         "english": "Thank you very much for the delicious food.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Many thanks (respect) for delicious (linker) food.",
                         "example": "",
                         "culturalNote": "",
@@ -1285,7 +1234,7 @@
                         "tagalog": "Paumanhin po, hindi ko sinasadyang mabangga kayo.",
                         "romanization": "pah-oo-mahn-HEEN poh, hin-DEH koh see-nah-sahd-YAHNG mah-bahng-GAH kah-YOH.",
                         "english": "Excuse me, I did not mean to bump into you.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Pardon (respect), not by-me intended to-bump you.",
                         "example": "",
                         "culturalNote": "",
@@ -1299,7 +1248,7 @@
                         "tagalog": "Opo, nakatira na ako rito sa Maynila nang matagal.",
                         "romanization": "OH-poh, nah-kah-tee-RAH nah ah-KOH REE-toh sah may-NEE-lah nahng mah-tah-GAHL.",
                         "english": "Yes, I have been living here in Manila for a long time.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Yes (respect), living already I here in Manila for long-time.",
                         "example": "",
                         "culturalNote": "",
@@ -1313,7 +1262,7 @@
                         "tagalog": "Hindi po ako kumakain ng maanghang na pagkain.",
                         "romanization": "hin-DEH poh ah-KOH koo-mah-KAH-in nahng mah-ahng-HAHNG nah pahg-KAH-in.",
                         "english": "I do not eat spicy food.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Not (respect) I eating of spicy (linker) food.",
                         "example": "",
                         "culturalNote": "",
@@ -1327,7 +1276,7 @@
                         "tagalog": "Magkano po lahat ang pinamili ko?",
                         "romanization": "mahg-KAH-noh poh lah-HAHT ahng pee-nah-mee-LEE koh?",
                         "english": "How much is everything I bought in total?",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: How-much (respect) all the items-bought by-me?",
                         "example": "",
                         "culturalNote": "",
@@ -1341,7 +1290,7 @@
                         "tagalog": "Pakibilang po muna ang sukli bago tayo umalis.",
                         "romanization": "pah-kee-BEE-lahng poh MOO-nah ahng sook-LEE BAH-goh TAH-yoh oo-mah-LEES.",
                         "english": "Please count the change first before we leave.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Please-count (respect) first the change before we leave.",
                         "example": "",
                         "culturalNote": "",
@@ -1355,7 +1304,7 @@
                         "tagalog": "Puwede po bang magpapalit ng barya sa tindahan?",
                         "romanization": "PWEH-deh poh bahng mahg-pah-pah-LEET nahng bahr-YAH sah tin-DAH-hahn?",
                         "english": "Can we ask to break a bill into coins at the store?",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Possible (respect) (question) to-have-changed of coins at store?",
                         "example": "",
                         "culturalNote": "",
@@ -1369,7 +1318,7 @@
                         "tagalog": "Pakisuyo po ng bayad ko papunta sa kanto.",
                         "romanization": "pah-kee-SOO-yoh poh nahng BAH-yahd koh pah-poon-TAH sah KAHN-toh.",
                         "english": "Please pass my fare going to the street corner.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Please-favor (respect) of payment my heading to corner.",
                         "example": "",
                         "culturalNote": "",
@@ -1383,7 +1332,7 @@
                         "tagalog": "Sige na po, bigyan ninyo na ako ng tawad.",
                         "romanization": "SEE-geh nah poh, big-YAHN neen-YOH nah ah-KOH nahng TAH-wahd.",
                         "english": "Come on please, give me a discount already.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Go-ahead now (respect), give by-you now me of discount.",
                         "example": "",
                         "culturalNote": "",
@@ -1397,7 +1346,7 @@
                         "tagalog": "Pupunta kami sa palengke tuwing Sabado ng umaga.",
                         "romanization": "poo-poon-TAH kah-MEE sah pah-LENG-keh too-WEENG SAH-bah-doh nahng oo-MAH-gah.",
                         "english": "We go to the wet market every Saturday morning.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Will-go we to wet-market every Saturday of morning.",
                         "example": "",
                         "culturalNote": "",
@@ -1411,7 +1360,7 @@
                         "tagalog": "Piliin mo iyong mga sariwang kamatis para sa ensalada.",
                         "romanization": "pee-LEE-in moh ee-YONG mah-NGAH sah-REE-wahng kah-MAH-tees PAH-rah sah en-sah-LAH-dah.",
                         "english": "Choose those fresh tomatoes for the salad.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Choose by-you those (plural) fresh tomatoes for (prep) salad.",
                         "example": "",
                         "culturalNote": "",
@@ -1425,7 +1374,7 @@
                         "tagalog": "Naku, ang mahal naman ng mangga ngayong buwan!",
                         "romanization": "nah-KOO, ahng mah-HAHL nah-MAHN nahng mahng-GAH ngah-YONG BWAHN!",
                         "english": "Oh my, mangoes are so expensive this month!",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Oh-my, how expensive truly of mango this month!",
                         "example": "",
                         "culturalNote": "",
@@ -1439,7 +1388,7 @@
                         "tagalog": "Nakabili ako ng murang saging sa tabi ng kalsada.",
                         "romanization": "nah-kah-bee-LEE ah-KOH nahng MOO-rahng SAH-ging sah tah-BEE nahng kahl-SAH-dah.",
                         "english": "I was able to buy cheap bananas by the side of the road.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Was-able-to-buy I of cheap banana at side of road.",
                         "example": "",
                         "culturalNote": "",
@@ -1453,7 +1402,7 @@
                         "tagalog": "Binigyan ako ng suki ko ng libreng kalamansi.",
                         "romanization": "bee-nig-YAHN ah-KOH nahng SOO-kee koh nahng LEE-breng kah-lah-mahn-SEE.",
                         "english": "My regular vendor gave me free calamansi limes.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Was-given I by regular-vendor my of free calamansi.",
                         "example": "",
                         "culturalNote": "",
@@ -1467,7 +1416,7 @@
                         "tagalog": "Pasensya na po kung nahuli ako nang kaunti sa usapan natin.",
                         "romanization": "pah-SEN-shah nah poh koong nah-HOO-lee ah-KOH nahng kah-oon-TEE sah oo-SAH-pahn NAH-tin.",
                         "english": "Sorry if I arrived a little late for our meeting.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Patience now (respect) if was-late I by a-little to appointment our.",
                         "example": "",
                         "culturalNote": "",
@@ -1481,7 +1430,7 @@
                         "tagalog": "Walang anuman po, basta ikaw ay laging bukas ang pinto namin.",
                         "romanization": "wah-LAHNG ah-noo-MAHN poh, bahs-TAH ee-KAHW ay LAH-ging boo-KAHS ahng pin-TOH NAH-min.",
                         "english": "You're welcome, for you our door is always open.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Nothing whatsoever (respect), as-long-as you (linker) always open the door our.",
                         "example": "",
                         "culturalNote": "",
@@ -1495,7 +1444,7 @@
                         "tagalog": "Paalam na muna sa ngayon, magkita tayong muli sa susunod na linggo.",
                         "romanization": "pah-AH-lahm nah MOO-nah sah ngah-YON, mahg-KEE-tah TAH-yong moo-LEE sah soo-soo-NOD nah ling-GOH.",
                         "english": "Goodbye for now, let us see each other again next week.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Farewell now first for today, see-each-other we again on next (linker) week.",
                         "example": "",
                         "culturalNote": "",
@@ -1509,7 +1458,7 @@
                         "tagalog": "Mag-ingat ka sa pagtawid dahil mabilis ang mga sasakyan dito.",
                         "romanization": "mahg-EE-ngaht kah sah pahg-tah-WEED DAH-hil mah-bee-LEES ahng mah-NGAH sah-sahk-YAHN DEE-toh.",
                         "english": "Be careful crossing because the vehicles here are fast.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Take-care you in crossing because fast the (plural) vehicles here.",
                         "example": "",
                         "culturalNote": "",
@@ -1523,7 +1472,7 @@
                         "tagalog": "Pakiusap po, pakisara ang pinto paglabas ninyo.",
                         "romanization": "pah-kee-OO-sahp poh, pah-kee-sah-RAH ahng pin-TOH pahg-lah-BAHS neen-YOH.",
                         "english": "Please, kindly close the door when you go out.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Request (respect), please-close the door upon-exiting yours.",
                         "example": "",
                         "culturalNote": "",
@@ -1537,7 +1486,7 @@
                         "tagalog": "Isa lang po ang kukunin kong pakwan dahil mabigat ito.",
                         "romanization": "ee-SAH lahng poh ahng koo-KOO-nin kong pahk-WAHN DAH-hil mah-bee-GAHT ee-TOH.",
                         "english": "I will only get one watermelon because it is heavy.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: One only (respect) the will-take by-me watermelon because heavy this.",
                         "example": "",
                         "culturalNote": "",
@@ -1551,7 +1500,7 @@
                         "tagalog": "Dalawang kilo ng saging na saba ang binili ko para sa meryenda.",
                         "romanization": "dah-lah-WAHNG KEE-loh nahng SAH-ging nah sah-BAH ahng bee-nee-LEE koh PAH-rah sah mer-YEN-dah.",
                         "english": "I bought two kilos of saba bananas for afternoon snack.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Two kilos of banana (linker) saba the bought by-me for (prep) snack.",
                         "example": "",
                         "culturalNote": "",
@@ -1565,7 +1514,7 @@
                         "tagalog": "Tatlong oras kaming naghintay bago dumating ang bus.",
                         "romanization": "taht-LONG OH-rahs kah-MEENG nahg-hin-TAY BAH-goh doo-mah-TING ahng boos.",
                         "english": "We waited for three hours before the bus arrived.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Three hours we waited before arrived the bus.",
                         "example": "",
                         "culturalNote": "",
@@ -1579,7 +1528,7 @@
                         "tagalog": "Limang daang piso na lang ang natitirang pera sa pitaka ko.",
                         "romanization": "lee-MAHNG dah-AHNG PEE-soh nah lahng ahng nah-tee-tee-RAHNG PEH-rah sah pee-TAH-kah koh.",
                         "english": "Only five hundred pesos is the remaining money in my wallet.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Five hundred pesos now only the remaining money in wallet my.",
                         "example": "",
                         "culturalNote": "",
@@ -1593,7 +1542,7 @@
                         "tagalog": "Dalawang libo ang upa namin sa maliit na kuwarto bawat buwan.",
                         "romanization": "dah-lah-WAHNG LEE-boh ahng OO-pah NAH-min sah mah-lee-EET nah KWAHR-toh BAH-waht BWAHN.",
                         "english": "Our rent for the small room is two thousand every month.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Two thousand the rent our for small (linker) room every month.",
                         "example": "",
                         "culturalNote": "",
@@ -1607,7 +1556,7 @@
                         "tagalog": "Tinanong ko ang tindera kung mayroon pa silang sariwang bangus.",
                         "romanization": "tee-nah-NONG koh ahng tin-DEH-rah koong may-roh-ON pah see-LAHNG sah-REE-wahng bah-NGOOS.",
                         "english": "I asked the vendor if they still had fresh milkfish.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Asked by-me the vendor if there-is still their fresh milkfish.",
                         "example": "",
                         "culturalNote": "",
@@ -1621,7 +1570,7 @@
                         "tagalog": "Pareho lang ang presyo ng manok sa dalawang tindahang ito.",
                         "romanization": "pah-REH-hoh lahng ahng PRESH-yoh nahng mah-NOK sah dah-lah-WAHNG tin-DAH-hahng ee-TOH.",
                         "english": "The price of chicken is just the same at these two stores.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Same only the price of chicken at two stores these.",
                         "example": "",
                         "culturalNote": "",
@@ -1635,7 +1584,7 @@
                         "tagalog": "Puwede ko bang tingnan ang timbang habang kinikilo ang karne?",
                         "romanization": "PWEH-deh koh bahng ting-NAHN ahng tim-BAHNG HAH-bahng kee-nee-KEE-loh ahng kahr-NEH?",
                         "english": "Can I look at the scale weight while the meat is being weighed?",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Possible by-me (question) to-look-at the weight while being-weighed the meat?",
                         "example": "",
                         "culturalNote": "",
@@ -1649,7 +1598,7 @@
                         "tagalog": "May dala akong sariling bag kaya hindi ko na kailangan ng supot.",
                         "romanization": "may dah-LAH ah-KONG sah-REE-ling bahg kah-YAH hin-DEH koh nah kah-ee-LAH-ngahn nahng SOO-poht.",
                         "english": "I brought my own bag so I no longer need a plastic bag.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Have brought I own bag so not by-me now needed of plastic-bag.",
                         "example": "",
                         "culturalNote": "",
@@ -1663,7 +1612,7 @@
                         "tagalog": "Bumili siya ng maraming prutas para dalhin sa ospital.",
                         "romanization": "boo-mee-LEE shah nahng mah-RAH-meeng PROO-tahs PAH-rah dahl-HIN sah os-pee-TAHL.",
                         "english": "She bought plenty of fruits to bring to the hospital.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Bought she of many fruits for bringing to hospital.",
                         "example": "",
                         "culturalNote": "",
@@ -1677,7 +1626,7 @@
                         "tagalog": "Tuloy po kayo sa aming tahanan at maupo muna kayo.",
                         "romanization": "too-LOY poh kah-YOH sah AH-ming tah-HAH-nahn aht mah-oo-POH MOO-nah kah-YOH.",
                         "english": "Please come into our home and have a seat first.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Enter (respect) you to our home and sit first you.",
                         "example": "",
                         "culturalNote": "",
@@ -1691,7 +1640,7 @@
                         "tagalog": "Tao po! May nagpadala po ng sulat para kay Ginang Reyes.",
                         "romanization": "TAH-oh poh! may nahg-pah-dah-LAH poh nahng SOO-laht PAH-rah kay GEE-nahng REH-yes.",
                         "english": "Anybody home! Someone sent a letter for Mrs. Reyes.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Person (respect)! There-is sent (respect) of letter for (marker) Mrs. Reyes.",
                         "example": "",
                         "culturalNote": "",
@@ -1705,7 +1654,7 @@
                         "tagalog": "Mabuhay! Ikinagagalak naming makilala kayong lahat.",
                         "romanization": "mah-BOO-high! ee-kee-nah-gah-gah-LAHK NAH-ming mah-kee-LAH-lah kah-YONG lah-HAHT.",
                         "english": "Welcome! We are delighted to meet all of you.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Welcome! Pleased by-us to-meet you all.",
                         "example": "",
                         "culturalNote": "",
@@ -1719,7 +1668,7 @@
                         "tagalog": "Pakisuyo po ng sukli ko sa drayber ng dyip.",
                         "romanization": "pah-kee-SOO-yoh poh nahng sook-LEE koh sah DRAY-ber nahng jeep.",
                         "english": "Please pass my change from the jeepney driver.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Please-pass (respect) of change my from driver of jeep.",
                         "example": "",
                         "culturalNote": "",
@@ -1733,7 +1682,7 @@
                         "tagalog": "Sige na, sumama ka na sa amin sa pamamasyal mamaya.",
                         "romanization": "SEE-geh nah, soo-MAH-mah kah nah sah AH-min sah pah-mah-mahs-YAHL mah-mah-YAH.",
                         "english": "Come on, join us for a stroll later.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Go-ahead now, come-along you now with us on outing later.",
                         "example": "",
                         "culturalNote": "",
@@ -1747,7 +1696,7 @@
                         "tagalog": "Apat na baso ng mainit na kape ang inorder namin.",
                         "romanization": "AH-paht nah BAH-soh nahng mah-EE-nit nah kah-PEH ahng een-OR-der NAH-min.",
                         "english": "We ordered four cups of hot coffee.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Four (linker) glasses of hot (linker) coffee the ordered by-us.",
                         "example": "",
                         "culturalNote": "",
@@ -1761,7 +1710,7 @@
                         "tagalog": "Limang hakbang na lang mula rito ang sakayan ng traysikel.",
                         "romanization": "lee-MAHNG hahk-BAHNG nah lahng moo-LAH REE-toh ahng sah-KAH-yahn nahng TRAY-see-kel.",
                         "english": "The tricycle terminal is just five steps away from here.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Five steps now only from here the loading-area of tricycle.",
                         "example": "",
                         "culturalNote": "",
@@ -1775,7 +1724,7 @@
                         "tagalog": "Sampung pirasong pandesal ang binibili ko tuwing umaga.",
                         "romanization": "sahm-POONG pee-RAH-song pahn-deh-SAHL ahng bee-nee-bee-LEE koh too-WEENG oo-MAH-gah.",
                         "english": "I buy ten pieces of pandesal every morning.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Ten pieces pandesal the buy by-me every morning.",
                         "example": "",
                         "culturalNote": "",
@@ -1789,7 +1738,7 @@
                         "tagalog": "Presko ang pakiramdam kapag umuulan nang mahina sa gabi.",
                         "romanization": "PRES-koh ahng pah-kee-rahm-DAHM kah-PAHG oo-moo-oo-LAHN nahng mah-HEE-nah sah gah-BEE.",
                         "english": "It feels cool and refreshing when it rains lightly at night.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Cool the feeling when raining (linker) lightly at night.",
                         "example": "",
                         "culturalNote": "",
@@ -1803,7 +1752,7 @@
                         "tagalog": "Kulang ang sangkap natin kaya kailangan pang bumili ng sibuyas.",
                         "romanization": "KOO-lahng ahng sahng-KAHP NAH-tin kah-YAH kah-ee-LAH-ngahn pahng boo-mee-LEE nahng see-BOO-yahs.",
                         "english": "Our ingredients are lacking so we still need to buy onions.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Lacking the ingredients our so need still to-buy of onion.",
                         "example": "",
                         "culturalNote": "",
@@ -1817,7 +1766,7 @@
                         "tagalog": "Sobra-sobra ang niluto niyang ulam para sa buong pamilya.",
                         "romanization": "SOH-brah SOH-brah ahng nee-LOO-toh nee-YAHNG OO-lahm PAH-rah sah boo-ONG pah-MEEL-yah.",
                         "english": "She cooked more than enough viand for the whole family.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Excess-excess the cooked by-her viand for (prep) whole family.",
                         "example": "",
                         "culturalNote": "",
@@ -1831,7 +1780,7 @@
                         "tagalog": "Bumili ako ng dalawang tumpok ng bawang sa palengke.",
                         "romanization": "boo-mee-LEE ah-KOH nahng dah-lah-WAHNG toom-POK nahng BAH-wahng sah pah-LENG-keh.",
                         "english": "I bought two small piles of garlic at the wet market.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Bought I of two piles of garlic at wet-market.",
                         "example": "",
                         "culturalNote": "",
@@ -1845,7 +1794,7 @@
                         "tagalog": "Isang piraso na lang ng tinapay ang natira sa mesa.",
                         "romanization": "ee-SAHNG pee-RAH-soh nah lahng nahng tee-NAH-pay ahng nah-tee-RAH sah MEH-sah.",
                         "english": "Only one piece of bread was left on the table.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: One piece now only of bread the remained on table.",
                         "example": "",
                         "culturalNote": "",
@@ -1859,7 +1808,7 @@
                         "tagalog": "Hinog na ba itong mga saging o matigas pa?",
                         "romanization": "hee-NOG nah bah ee-TONG mah-NGAH SAH-ging oh mah-tee-GAHS pah?",
                         "english": "Are these bananas ripe already or still hard?",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Ripe already (question) these (plural) bananas or hard still?",
                         "example": "",
                         "culturalNote": "",
@@ -1873,7 +1822,7 @@
                         "tagalog": "Itago mo ang resibo sakaling kailanganin nating ipapalit ito.",
                         "romanization": "ee-TAH-goh moh ahng reh-SEE-boh sah-KAH-ling kah-ee-lah-NGAH-nin NAH-ting ee-pah-pah-LEET ee-TOH.",
                         "english": "Keep the receipt in case we need to exchange this.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Keep by-you the receipt in-case will-need by-us to-exchange this.",
                         "example": "",
                         "culturalNote": "",
@@ -1887,7 +1836,7 @@
                         "tagalog": "Magandang hapon po, bukas pa po ba ang tanggapan ninyo?",
                         "romanization": "mah-gahn-DAHNG HAH-pon poh, boo-KAHS pah poh bah ahng tahng-GAH-pahn neen-YOH?",
                         "english": "Good afternoon, is your office still open?",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Beautiful afternoon (respect), open still (respect) (question) the office yours?",
                         "example": "",
                         "culturalNote": "",
@@ -1901,7 +1850,7 @@
                         "tagalog": "Magandang gabi po, salamat sa pagbisita ninyo sa amin.",
                         "romanization": "mah-gahn-DAHNG gah-BEE poh, sah-LAH-maht sah pahg-bee-SEE-tah neen-YOH sah AH-min.",
                         "english": "Good evening, thank you for visiting us.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Beautiful evening (respect), thanks for visiting yours to us.",
                         "example": "",
                         "culturalNote": "",
@@ -1915,7 +1864,7 @@
                         "tagalog": "Walang problema kung bukas mo na ibabalik ang libro ko.",
                         "romanization": "wah-LAHNG prob-LEH-mah koong BOO-kahs moh nah ee-bah-bah-LEEK ahng leeb-ROH koh.",
                         "english": "No problem if you return my book tomorrow.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: No problem if tomorrow by-you now will-return the book my.",
                         "example": "",
                         "culturalNote": "",
@@ -1929,7 +1878,7 @@
                         "tagalog": "Puwede po ba akong umupo sa bakanteng upuan na ito?",
                         "romanization": "PWEH-deh poh bah ah-KONG oo-moo-POH sah bah-KAHN-teng oo-poo-AHN nah ee-TOH?",
                         "english": "May I please sit on this vacant chair?",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Possible (respect) (question) I to-sit on vacant chair (linker) this?",
                         "example": "",
                         "culturalNote": "",
@@ -1943,7 +1892,7 @@
                         "tagalog": "Bawal mag-ingay sa loob ng silid-aklatan habang may nag-aaral.",
                         "romanization": "BAH-wahl mahg-EE-ngay sah loh-OB nahng see-lid-ahk-LAH-tahn HAH-bahng may nahg-ah-AH-rahl.",
                         "english": "Making noise is prohibited inside the library while people are studying.",
-                        "category": "Step 1: Greetings & Politeness",
+                        "category": "1. Greetings & Small Talk",
                         "mnemonic": "Word-by-word: Prohibited to-make-noise at inside of library while there-are studying.",
                         "example": "",
                         "culturalNote": "",
@@ -1957,7 +1906,7 @@
                         "tagalog": "Anim na buwan na akong nag-aaral magsalita ng Tagalog.",
                         "romanization": "AH-nim nah BWAHN nah ah-KONG nahg-ah-AH-rahl mahg-sah-lee-TAH nahng tah-GAH-log.",
                         "english": "I have been studying how to speak Tagalog for six months now.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Six (linker) months already I studying to-speak of Tagalog.",
                         "example": "",
                         "culturalNote": "",
@@ -1971,7 +1920,7 @@
                         "tagalog": "Alas-siyete o pito ng umaga nagbubukas ang mga tindahan.",
                         "romanization": "ah-lahs-SHYEH-teh oh pee-TOH nahng oo-MAH-gah nahg-boo-boo-KAHS ahng mah-NGAH tin-DAH-hahn.",
                         "english": "The stores open at seven in the morning.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Seven-o'clock or seven of morning open the (plural) stores.",
                         "example": "",
                         "culturalNote": "",
@@ -1985,7 +1934,7 @@
                         "tagalog": "Walong pirasong mangga ang kasya sa maliit na kahon.",
                         "romanization": "wah-LONG pee-RAH-song mahng-GAH ahng KAHSH-yah sah mah-lee-EET nah kah-HON.",
                         "english": "Eight pieces of mango fit inside the small box.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Eight pieces mango the fit in small (linker) box.",
                         "example": "",
                         "culturalNote": "",
@@ -1999,7 +1948,7 @@
                         "tagalog": "Siyam na piso na lang ang natira sa barya ko.",
                         "romanization": "SHAHM nah PEE-soh nah lahng ahng nah-tee-RAH sah bahr-YAH koh.",
                         "english": "Only nine pesos is left of my coins.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Nine (linker) pesos now only the remained in coins my.",
                         "example": "",
                         "culturalNote": "",
@@ -2013,7 +1962,7 @@
                         "tagalog": "Kalahati lang ng manok ang ipapahiwa ko sa tindero.",
                         "romanization": "kah-lah-HAH-tee lahng nahng mah-NOK ahng ee-pah-pah-HEE-wah koh sah tin-DEH-roh.",
                         "english": "I will ask the vendor to slice only half of the chicken.",
-                        "category": "Step 2: Numbers & Money",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Half only of chicken the will-have-sliced by-me by vendor.",
                         "example": "",
                         "culturalNote": "",
@@ -2027,7 +1976,7 @@
                         "tagalog": "Matamis ang hinog na mangga kapag galing sa Guimaras.",
                         "romanization": "mah-tah-MEES ahng hee-NOG nah mahng-GAH kah-PAHG GAH-ling sah gee-mah-RAHS.",
                         "english": "Ripe mangoes are sweet when they come from Guimaras.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Sweet the ripe (linker) mango when coming from Guimaras.",
                         "example": "",
                         "culturalNote": "",
@@ -2041,7 +1990,7 @@
                         "tagalog": "Huwag kang bumili ng maasim na dalandan para sa bata.",
                         "romanization": "HWAHG kahng boo-mee-LEE nahng mah-AH-sim nah dah-lahn-DAHN PAH-rah sah BAH-tah.",
                         "english": "Do not buy sour oranges for the child.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Do-not you buy of sour (linker) local-orange for (prep) child.",
                         "example": "",
                         "culturalNote": "",
@@ -2055,7 +2004,7 @@
                         "tagalog": "Maraming mabibiling meryenda sa sari-sari store sa kanto.",
                         "romanization": "mah-RAH-meeng mah-bee-bee-LING mer-YEN-dah sah SAH-ree SAH-ree stor sah KAHN-toh.",
                         "english": "There are many snacks you can buy at the variety store on the corner.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Many can-be-bought snacks at variety store on corner.",
                         "example": "",
                         "culturalNote": "",
@@ -2069,7 +2018,7 @@
                         "tagalog": "Mas nakakatipid ang ilan kapag bumibili nang tingi sa tindahan.",
                         "romanization": "mahs nah-kah-kah-tee-PEED ahng ee-LAHN kah-PAHG boo-mee-bee-LEE nahng ting-EE sah tin-DAH-hahn.",
                         "english": "Some people save more cash on hand when buying in small portions at the store.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: More able-to-save the some when buying (linker) retail-small at store.",
                         "example": "",
                         "culturalNote": "",
@@ -2083,8 +2032,1450 @@
                         "tagalog": "Puno ng sariwang gulay at prutas ang bayong pag-uwi namin.",
                         "romanization": "poo-NOH nahng sah-REE-wahng GOO-lay aht PROO-tahs ahng bah-YONG pahg-oo-WEE NAH-min.",
                         "english": "The woven market bag was full of fresh vegetables and fruits when we came home.",
-                        "category": "Step 3: Palengke & Shopping",
+                        "category": "4. Shopping & Money",
                         "mnemonic": "Word-by-word: Full of fresh vegetables and fruits the woven-bag upon-returning our.",
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Ikinagagalak",
+                        "romanization": "ee-kee-nah-gah-gah-LAHK",
+                        "english": "Delighted / Pleased (as in 'Nice to meet you')",
+                        "category": "1. Greetings & Small Talk",
+                        "mnemonic": "I CAN GARGLE LUCK — You are so delighted to meet a celebrity that you cheer, 'I CAN GARGLE LUCK today!'",
+                        "example": "Ikinagagalak kitang makilala! (Nice to meet you! / I am delighted to meet you!)",
+                        "culturalNote": "Combined with 'kitang makilala' (to meet you), this is the warm, polite Tagalog equivalent of 'Nice to meet you.'",
+                        "id": 121,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Taga-saan",
+                        "romanization": "tah-gah-sah-AHN",
+                        "english": "From where (origin / hometown)",
+                        "category": "1. Greetings & Small Talk",
+                        "mnemonic": "TAG A SIGN — You TAG A SIGN on your suitcase showing which city or country you are from: 'Taga-saan ka?'",
+                        "example": "Taga-saan ka sa Amerika? (Where in America are you from?)",
+                        "culturalNote": "Prefix 'taga-' + place name indicates where someone lives or hails from (e.g., 'Taga-Maynila ako' = I am from Manila).",
+                        "id": 122,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Trabaho",
+                        "romanization": "trah-BAH-hoh",
+                        "english": "Work / Job / Occupation",
+                        "category": "1. Greetings & Small Talk",
+                        "mnemonic": "TRAFFIC BAJA — Driving through heavy TRAFFIC in BAJA just to get to your job—'Trabaho!'",
+                        "example": "Ano ang trabaho mo rito sa Pilipinas? (What is your job here in the Philippines?)",
+                        "culturalNote": "From Spanish 'trabajo'. 'Anong trabaho mo?' is the standard friendly question for 'What do you do for a living?'",
+                        "id": 123,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Kumusta! Ikinagagalak kitang makilala.",
+                        "romanization": "koo-moos-TAH! ee-kee-nah-gah-gah-LAHK kee-TAHNG mah-kee-LAH-lah.",
+                        "english": "Hello! Nice to meet you.",
+                        "category": "1. Greetings & Small Talk",
+                        "mnemonic": "Word-by-word: How-are-you! Delighted I-you to-meet.",
+                        "id": 124,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Taga-saan ka at ano ang trabaho mo?",
+                        "romanization": "tah-gah-sah-AHN kah aht ah-NOH ahng trah-BAH-hoh moh?",
+                        "english": "Where are you from and what do you do?",
+                        "category": "1. Greetings & Small Talk",
+                        "mnemonic": "Word-by-word: From-where you and what the job yours?",
+                        "id": 125,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Sukat",
+                        "romanization": "SOO-kaht",
+                        "english": "Size / Measurement / Fit",
+                        "category": "4. Shopping & Money",
+                        "mnemonic": "SOUP POT — You measure the exact size of a SOUP POT with a tailor's tape—'Sukat!'",
+                        "example": "Mayroon po ba kayong mas maliit na sukat nito? (Do you have a smaller size of this?)",
+                        "culturalNote": "Also means 'to try on' ('isukat') when shopping for clothes or shoes.",
+                        "id": 126,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Tumitingin",
+                        "romanization": "too-mee-tee-NGIN",
+                        "english": "Looking / Browsing",
+                        "category": "4. Shopping & Money",
+                        "mnemonic": "TWO MEN SINGING — TWO MEN SINGING while casually browsing the store aisles—'Tumitingin lang!'",
+                        "example": "Salamat po, tumitingin-tingin lang muna ako. (Thank you, I am just looking around for now.)",
+                        "culturalNote": "Adding 'lang' ('Tumitingin lang po') is the polite, friendly way to tell attentive mall staff you are just browsing.",
+                        "id": 127,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Mayroon po ba kayong mas maliit na sukat nito?",
+                        "romanization": "may-roh-ON poh bah kah-YONG mahs mah-lee-EET nah SOO-kaht nee-TOH?",
+                        "english": "Do you have a smaller size of this?",
+                        "category": "4. Shopping & Money",
+                        "mnemonic": "Word-by-word: Have (respect) (question) you more small (linker) size of-this?",
+                        "id": 128,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Puwede po bang magbayad gamit ang kard?",
+                        "romanization": "PWEH-deh poh bahng mahg-BAH-yahd GAH-mit ahng kahrd?",
+                        "english": "Can I pay by card?",
+                        "category": "4. Shopping & Money",
+                        "mnemonic": "Word-by-word: Possible (respect) (question) to-pay using the card?",
+                        "id": 129,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Tumitingin-tingin lang po muna ako, salamat.",
+                        "romanization": "too-mee-tee-NGIN tee-NGIN lahng poh MOO-nah ah-KOH, sah-LAH-maht.",
+                        "english": "I'm just looking around for now, thank you.",
+                        "category": "4. Shopping & Money",
+                        "mnemonic": "Word-by-word: Looking-around only (respect) first I, thanks.",
+                        "id": 130,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Gusto ko",
+                        "romanization": "goos-TOH koh",
+                        "english": "I'd like / I want",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "GUSTO CO. — You order with gusto at GUSTO CO. restaurant: 'Gusto ko ng adobo!'",
+                        "example": "Gusto ko po ng mainit na sabaw at kanin. (I would like hot soup and rice.)",
+                        "culturalNote": "From Spanish 'gusto'. Softening with 'po' ('Gusto ko po ng...') sounds warm and polite to servers.",
+                        "id": 131,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Pahingi",
+                        "romanization": "pah-hing-EE",
+                        "english": "Can I have / Please give me",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "PAW HINGE-Y — A puppy lifts its HINGE-Y PAW begging for a treat: 'Pahingi!'",
+                        "example": "Pahingi po ng isang basong malamig na tubig. (Can I please have a glass of cold water?)",
+                        "culturalNote": "Used when asking for free or accompanying items (water, extra napkins, utensils, condiments) rather than purchasing.",
+                        "id": 132,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Asukal",
+                        "romanization": "ah-SOO-kahl",
+                        "english": "Sugar",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "A SOUP CALL — You accidentally pour sweet sugar instead of salt when A SOUP CALL distracts you!",
+                        "example": "Kape lang po, walang asukal. (Just coffee please, without sugar.)",
+                        "culturalNote": "From Spanish 'azúcar'. 'Walang asukal' means 'without sugar'—very helpful at cafés and milk tea shops.",
+                        "id": 133,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Bill / Resibo",
+                        "romanization": "beel / reh-SEE-boh",
+                        "english": "The bill / Check / Receipt",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "BILL ON A RECEIPT-BOW — The waiter brings your restaurant BILL tied with a little BOW.",
+                        "example": "Pahingi na po ng bill namin. (May we have our bill now, please?)",
+                        "culturalNote": "In Philippine restaurants, servers never drop the check unprompted—make eye contact and say 'Bill out po!' or 'Pahingi ng bill.'",
+                        "id": 134,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Masarap",
+                        "romanization": "mah-sah-RAHP",
+                        "english": "Delicious / Tasty",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "MY SYRUP — Pouring MY maple SYRUP over warm pancakes makes everything so delicious—'Masarap!'",
+                        "example": "Napakasarap ng sinigang na hipon dito! (The shrimp sinigang here is super delicious!)",
+                        "culturalNote": "Root word is 'sarap' (deliciousness). Saying 'Ang sarap!' is the highest compliment you can pay a Filipino cook.",
+                        "id": 135,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Tubig",
+                        "romanization": "TOO-big",
+                        "english": "Water",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "TOO BIG — That swimming pool is TOO BIG and full of clear water!",
+                        "example": "Mayroon po ba kayong malamig na tubig? (Do you have cold water?)",
+                        "culturalNote": "House water in restaurants is called 'service water' ('tubig na pang-serbisyo').",
+                        "id": 136,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Gusto ko po sanang umorder ng adobong manok at kanin.",
+                        "romanization": "goos-TOH koh poh SAH-nahng oo-MOR-der nahng ah-DOH-bong mah-NOK aht KAH-nin.",
+                        "english": "I'd like to order chicken adobo and rice, please.",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "Word-by-word: Want by-me (respect) hopefully to-order of adobo chicken and rice.",
+                        "id": 137,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Pahingi po ng menu at isang basong tubig.",
+                        "romanization": "pah-hing-EE poh nahng meh-NOO aht ee-SAHNG BAH-song TOO-big.",
+                        "english": "Can I have the menu and a glass of water, please?",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "Word-by-word: Please-give (respect) of menu and one glass water.",
+                        "id": 138,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Isang kape lang po, walang asukal at walang gatas.",
+                        "romanization": "ee-SAHNG kah-PEH lahng poh, wah-LAHNG ah-SOO-kahl aht wah-LAHNG GAH-tahs.",
+                        "english": "Just one coffee please, without sugar and without milk.",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "Word-by-word: One coffee only (respect), without sugar and without milk.",
+                        "id": 139,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Pahingi na po ng bill, busog na busog na kami.",
+                        "romanization": "pah-hing-EE nah poh nahng beel, boo-SOG nah boo-SOG nah kah-MEE.",
+                        "english": "The bill please, we are completely full.",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "Word-by-word: Please-give now (respect) of bill, full (linker) full already we.",
+                        "id": 140,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Napakasarap po ng luto ninyo, babalik kami rito!",
+                        "romanization": "nah-pah-kah-sah-RAHP poh nahng LOO-toh neen-YOH, bah-bah-LEEK kah-MEE REE-toh!",
+                        "english": "Your cooking is so delicious, we will definitely come back here!",
+                        "category": "2. Food, Ordering & Restaurants",
+                        "mnemonic": "Word-by-word: Very-delicious (respect) of cooking yours, will-return we here!",
+                        "id": 141,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Nasaan",
+                        "romanization": "nah-sah-AHN",
+                        "english": "Where is... (location of person/thing)",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "NASA AN-TENNA — Looking up at the sky asking, 'Where is the giant NASA AN-TENNA?'",
+                        "example": "Nasaan po ang pinakamalapit na istasyon ng MRT? (Where is the nearest MRT station?)",
+                        "culturalNote": "Use 'Nasaan' when asking where a specific place, building, or person is located; use 'Saan' when asking where an action happens.",
+                        "id": 142,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Papunta",
+                        "romanization": "pah-poon-TAH",
+                        "english": "Going to / Heading toward",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "PAW POINT-A — Your dog lifts a PAW to POINT-A finger toward the highway you are heading down.",
+                        "example": "Paano po pumunta sa Makati mula rito? (How do I get to Makati from here?)",
+                        "culturalNote": "Jeepneys display their route destinations on a placard in the windshield (e.g., 'Papuntang Quiapo').",
+                        "id": 143,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Kaliwa",
+                        "romanization": "kah-lee-WAH",
+                        "english": "Left (direction)",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "CALL LEE-WAH — You CALL out to your friend LEE-WAH on your LEFT side: 'Lumiko sa kaliwa!'",
+                        "example": "Lumiko ka sa kaliwa paglampas ng tulay. (Turn left right after crossing the bridge.)",
+                        "culturalNote": "Easy memory trick: 'Kaliwa' has 3 syllables like 'L-E-F-T' is shorter, while 'Kanan' (right) is shorter—just keep 'Kaliwa = Left' anchored!",
+                        "id": 144,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Kanan",
+                        "romanization": "KAH-nahn",
+                        "english": "Right (direction)",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "CANNON — A pirate fires a giant CANNON off the RIGHT side of the ship—'Kanan!'",
+                        "example": "Nasa kanan mo lang ang gusali ng bangko. (The bank building is right on your right side.)",
+                        "culturalNote": "'Diretso lang' means 'straight ahead', 'kaliwa' is 'left', and 'kanan' is 'right'.",
+                        "id": 145,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Pamasahe",
+                        "romanization": "pah-mah-SAH-heh",
+                        "english": "Fare / Ticket price for transport",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "PA MASSAGE-EH — Before PA gets a MASSAGE-EH downtown, he pays the jeepney fare—'Pamasahe!'",
+                        "example": "Magkano po ang pamasahe hanggang Ortigas? (How much is the fare up to Ortigas?)",
+                        "culturalNote": "Used for buses, jeepneys, ferries, and tricycles; for movie or concert tickets, use 'tiket'.",
+                        "id": 146,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Para po",
+                        "romanization": "PAH-rah poh",
+                        "english": "Stop here please (in a vehicle)",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "PARACHUTE POLE — Pull the PARACHUTE cord when you pass your street POLE and call out, 'Para po!'",
+                        "example": "Para po sa tabi ng kanto, manong! (Stop here please by the corner, driver!)",
+                        "culturalNote": "Derived from Spanish 'parar' (to stop). Say it loud and clear so the jeepney or tricycle driver hears you over traffic.",
+                        "id": 147,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Nasaan po ang sakayan ng dyip papuntang Cubao?",
+                        "romanization": "nah-sah-AHN poh ahng sah-KAH-yahn nahng jeep pah-poon-TAHNG koo-BAOW?",
+                        "english": "Where is the jeepney stop going to Cubao?",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "Word-by-word: Where-is (respect) the loading-zone of jeep going-to Cubao?",
+                        "id": 148,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Paano po ako makakapunta sa pinakamalapit na mall?",
+                        "romanization": "pah-AH-noh poh ah-KOH mah-kah-kah-poon-TAH sah pee-nah-kah-mah-LAH-pit nah mawl?",
+                        "english": "How do I get to the nearest mall?",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "Word-by-word: How (respect) I able-to-go to nearest (linker) mall?",
+                        "id": 149,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Dumiretso lang kayo tapos lumiko sa kanan sa unang kanto.",
+                        "romanization": "doo-mee-RET-soh lahng kah-YOH TAH-pos loo-mee-KOH sah KAH-nahn sah OO-nahng KAHN-toh.",
+                        "english": "Just go straight ahead and then turn right at the first corner.",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "Word-by-word: Go-straight only you then turn to right at first corner.",
+                        "id": 150,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Magkano po ang tiket papuntang Baguio sa bus?",
+                        "romanization": "mahg-KAH-noh poh ahng TEE-ket pah-poon-TAHNG BAHG-yoh sah boos?",
+                        "english": "How much is a bus ticket going to Baguio?",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "Word-by-word: How-much (respect) the ticket going-to Baguio on bus?",
+                        "id": 151,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Para po dito sa tapat ng botika, salamat po!",
+                        "romanization": "PAH-rah poh DEE-toh sah tah-PAHT nahng boh-TEE-kah, sah-LAH-maht poh!",
+                        "english": "Stop here please right in front of the drugstore, thank you!",
+                        "category": "3. Directions & Transport",
+                        "mnemonic": "Word-by-word: Stop (respect) here in front of pharmacy, thanks (respect)!",
+                        "id": 152,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Gumising",
+                        "romanization": "goo-MEE-sing",
+                        "english": "To wake up / Woke up",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "GOOEY SINGING — Your alarm clock starts SINGING a GOOEY song at 6:00 AM to wake you up!",
+                        "example": "Maaga akong gumigising tuwing umaga para magkape. (I wake up early every morning to have coffee.)",
+                        "culturalNote": "Root word is 'gising' (awake). 'Gumigising' means 'wakes up regularly'; 'gumising' means 'woke up'.",
+                        "id": 153,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Nakatira",
+                        "romanization": "nah-kah-tee-RAH",
+                        "english": "Living / Residing at",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "KNOCK AT TIRA — You KNOCK AT TIRA's front door where she lives in Mandaluyong.",
+                        "example": "Nakatira ako kasama ang asawa ko sa Mandaluyong. (I live together with my spouse in Mandaluyong.)",
+                        "culturalNote": "Root word is 'tira' (stay/reside). Used to state both your city and who you live with ('kasama si...').",
+                        "id": 154,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Karaniwan",
+                        "romanization": "kah-rah-NEE-wahn",
+                        "english": "Usually / Normally / Ordinary",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "CAR ON NEW ONE — Usually I drive my old car, but today I'm driving a NEW ONE!",
+                        "example": "Karaniwan akong naglalakad sa parke pagkatapos ng almusal. (I usually walk in the park after breakfast.)",
+                        "culturalNote": "In casual conversation, Filipinos also use 'madalas' (often) or 'kadalasan' (usually).",
+                        "id": 155,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Maglinis",
+                        "romanization": "mahg-LEE-nis",
+                        "english": "To clean",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "MUG CLEAN-ISH — You scrub a dirty coffee MUG until it sparkles—'Maglinis!'",
+                        "example": "Kailangan kong maglinis ng kuwarto ngayong Sabado. (I need to clean the room this Saturday.)",
+                        "culturalNote": "Root word is 'linis' (cleanliness). 'Malinis' is the adjective 'clean', while 'maglinis' is the verb 'to clean'.",
+                        "id": 156,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Pagod",
+                        "romanization": "pah-GOD",
+                        "english": "Tired / Exhausted",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "PAW GOD — After a ten-mile hike, your dog collapses onto its PAWS crying, 'Oh GOD, I am tired!'",
+                        "example": "Pagod na pagod ako pagkatapos ng mahabang lakad. (I am super tired after the long walk.)",
+                        "culturalNote": "Repeating an adjective ('pagod na pagod') intensifies it to 'very tired' or 'exhausted'.",
+                        "id": 157,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Gumigising ako nang alas-sais ng umaga araw-araw.",
+                        "romanization": "goo-mee-GEE-sing ah-KOH nahng ah-lahs-sah-EES nahng oo-MAH-gah AH-rahw AH-rahw.",
+                        "english": "I wake up at six o'clock in the morning every day.",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "Word-by-word: Wake-up I at six-o'clock of morning day-day.",
+                        "id": 158,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Nakatira ako sa isang condo kasama ang aking asawa.",
+                        "romanization": "nah-kah-tee-RAH ah-KOH sah ee-SAHNG KON-doh kah-SAH-mah ahng AH-king ah-SAH-wah.",
+                        "english": "I live in a condo together with my spouse.",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "Word-by-word: Residing I at one condo together-with the my spouse.",
+                        "id": 159,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Karaniwan akong nagbabasa at nag-aaral sa kapihan.",
+                        "romanization": "kah-rah-NEE-wahn ah-KONG nahg-bah-bah-SAH aht nahg-ah-AH-rahl sah kah-pee-HAHN.",
+                        "english": "I usually read and study at a coffee shop.",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "Word-by-word: Usually I reading and studying at coffee-shop.",
+                        "id": 160,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Kailangan kong maglinis ng kusina bago dumating ang bisita.",
+                        "romanization": "kah-ee-LAH-ngahn kong mahg-LEE-nis nahng koo-SEE-nah BAH-goh doo-mah-TING ahng bee-SEE-tah.",
+                        "english": "I need to clean the kitchen before the visitor arrives.",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "Word-by-word: Need by-me to-clean of kitchen before arrives the visitor.",
+                        "id": 161,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Pagod na ako kaya magpapahinga muna ako ngayong gabi.",
+                        "romanization": "pah-GOD nah ah-KOH kah-YAH mahg-pah-pah-hing-AH MOO-nah ah-KOH ngah-YONG gah-BEE.",
+                        "english": "I'm tired already so I'm going to rest first tonight.",
+                        "category": "5. Home & Daily Routine",
+                        "mnemonic": "Word-by-word: Tired already I so will-rest first I this evening.",
+                        "id": 162,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Guro",
+                        "romanization": "GOO-roh",
+                        "english": "Teacher / Instructor / Professor",
+                        "category": "6. Work & School",
+                        "mnemonic": "GURU — A wise classroom GURU writing equations on the chalkboard—'Guro!'",
+                        "example": "Nagtatrabaho ako bilang guro sa unibersidad. (I work as a teacher at the university.)",
+                        "culturalNote": "Students address teachers respectfully as 'Sir', 'Ma'am', or 'Propesor/Propesora'.",
+                        "id": 163,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Pulong / Miting",
+                        "romanization": "POO-long / MEE-ting",
+                        "english": "Meeting / Conference",
+                        "category": "6. Work & School",
+                        "mnemonic": "PULL-LONG MEETING — Everyone has to PULL a LONG chair up to the table for a three-hour meeting!",
+                        "example": "Mayroon akong mahalagang pulong ngayong hapon. (I have an important meeting this afternoon.)",
+                        "culturalNote": "'Pulong' is the native Tagalog word used in formal/academic settings, while 'miting' is widely understood in offices.",
+                        "id": 164,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Tulong",
+                        "romanization": "TOO-long",
+                        "english": "Help / Assistance",
+                        "category": "6. Work & School",
+                        "mnemonic": "TOO LONG — Carrying that heavy box TOO LONG by yourself—ask for 'Tulong!'",
+                        "example": "Puwede mo ba akong tulungan sa proyektong ito? (Can you help me with this project?)",
+                        "culturalNote": "'Tulong' is the noun ('help'), and 'tulungan' is the verb ('to help someone').",
+                        "id": 165,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Naiintindihan",
+                        "romanization": "nah-ee-in-tin-dee-HAHN",
+                        "english": "Understand / Comprehend",
+                        "category": "6. Work & School",
+                        "mnemonic": "NAH, I INTEND DEE HAND — When you finally grasp a tough lesson, you say, 'I understand—naiintindihan ko!'",
+                        "example": "Pasensya na po, hindi ko masyadong naiintindihan. (Sorry, I don't quite understand.)",
+                        "culturalNote": "From Spanish 'entender'. Saying 'Hindi ko naiintindihan' immediately prompts locals to slow down or rephrase.",
+                        "id": 166,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Estudyante",
+                        "romanization": "es-tood-YAHN-teh",
+                        "english": "Student",
+                        "category": "6. Work & School",
+                        "mnemonic": "A STUDY AUNTIE — A hardworking AUNTIE STUDYING late at the library—'Estudyante!'",
+                        "example": "Masisipag ang mga estudyante sa klase ko. (The students in my class are hardworking.)",
+                        "culturalNote": "From Spanish 'estudiante'. Another native term is 'mag-aaral' (learner/student).",
+                        "id": 167,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Nagtatrabaho ako bilang guro at manunulat.",
+                        "romanization": "nahg-tah-trah-BAH-hoh ah-KOH BEE-lahng GOO-roh aht mah-noo-noo-LAHT.",
+                        "english": "I work as a teacher and writer.",
+                        "category": "6. Work & School",
+                        "mnemonic": "Word-by-word: Working I as teacher and writer.",
+                        "id": 168,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Masaya pero abala ang trabaho ko sa paaralan.",
+                        "romanization": "mah-sah-YAH PEH-roh ah-BAH-lah ahng trah-BAH-hoh koh sah pah-ah-rah-LAHN.",
+                        "english": "My job at the school is enjoyable but busy.",
+                        "category": "6. Work & School",
+                        "mnemonic": "Word-by-word: Happy/enjoyable but busy the job my at school.",
+                        "id": 169,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Mayroon akong pulong mamayang alas-dos ng hapon.",
+                        "romanization": "may-roh-ON ah-KONG POO-long mah-mah-YAHNG ah-lahs-DOS nahng HAH-pon.",
+                        "english": "I have a meeting later at two o'clock in the afternoon.",
+                        "category": "6. Work & School",
+                        "mnemonic": "Word-by-word: Have I meeting later two-o'clock of afternoon.",
+                        "id": 170,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Puwede mo ba akong tulungan saglit dito?",
+                        "romanization": "PWEH-deh moh bah ah-KONG too-LOO-ngahn sahg-LIT DEE-toh?",
+                        "english": "Can you help me for a quick moment here?",
+                        "category": "6. Work & School",
+                        "mnemonic": "Word-by-word: Possible by-you (question) me to-help briefly here?",
+                        "id": 171,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Hindi ko po naiintindihan, puwede po bang ulitin nang dahan-dahan?",
+                        "romanization": "hin-DEH koh poh nah-ee-in-tin-dee-HAHN, PWEH-deh poh bahng oo-LEE-tin nahng DAH-hahn DAH-hahn?",
+                        "english": "I don't understand, could you please repeat it slowly?",
+                        "category": "6. Work & School",
+                        "mnemonic": "Word-by-word: Not by-me (respect) understood, possible (respect) (question) to-repeat (linker) slowly?",
+                        "id": 172,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "May sakit",
+                        "romanization": "may sah-KIT",
+                        "english": "Sick / Ill / Have an illness",
+                        "category": "7. Health & Body",
+                        "mnemonic": "MY SOCK-IT — When you feel sick, you curl up in bed wearing warm fuzzy socks—'May sakit!'",
+                        "example": "Masama ang pakiramdam ko, parang may sakit ako. (I feel unwell, it feels like I am sick.)",
+                        "culturalNote": "'Sakit' means both 'illness/disease' and 'pain/ache' depending on context.",
+                        "id": 173,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Sakit ng ulo",
+                        "romanization": "sah-KIT nahng OO-loh",
+                        "english": "Headache",
+                        "category": "7. Health & Body",
+                        "mnemonic": "SOCK-IT ON OOH-LOW — Someone hits your head ('ulo') and you moan 'OOH-LOW, what a headache!'",
+                        "example": "May matindi akong sakit ng ulo ngayong umaga. (I have a bad headache this morning.)",
+                        "culturalNote": "Pattern 'Masakit ang [body part]' works for any ache: 'Masakit ang ulo ko' (My head hurts), 'Masakit ang tiyan ko' (My stomach hurts).",
+                        "id": 174,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Doktor",
+                        "romanization": "dok-TOR",
+                        "english": "Doctor / Physician",
+                        "category": "7. Health & Body",
+                        "mnemonic": "DOCK TOUR — The ship's DOCTOR gives you a quick checkup right on the DOCK!",
+                        "example": "Kailangan kong magpatingin sa doktor ngayon. (I need to get checked by a doctor today.)",
+                        "culturalNote": "From Spanish 'doctor'. Female doctors are often respectfully addressed as 'Doktora' ('Dok').",
+                        "id": 175,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Masakit",
+                        "romanization": "mah-sah-KIT",
+                        "english": "Painful / Hurts / Sore",
+                        "category": "7. Health & Body",
+                        "mnemonic": "MY SOCK-IT HURTS — Stubbing your toe inside MY SOCK hurts—'Masakit!'",
+                        "example": "Masakit dito sa likod ko kapag yumuyuko ako. (It hurts here in my back when I bend over.)",
+                        "culturalNote": "Point to the spot and say 'Masakit dito' ('It hurts right here').",
+                        "id": 176,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Gamot / Botika",
+                        "romanization": "gah-MOT / boh-TEE-kah",
+                        "english": "Medicine / Drugstore (Pharmacy)",
+                        "category": "7. Health & Body",
+                        "mnemonic": "GOT MOTH IN BOAT-TIKI — You sail to the TIKI-BOAT pharmacy ('botika') to get medicine ('gamot').",
+                        "example": "Bibili ako ng gamot sa botika sa kanto. (I will buy medicine at the drugstore on the corner.)",
+                        "culturalNote": "Drugstores like Mercury Drug or Watsons are called 'botika' or 'drugstore'.",
+                        "id": 177,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Masama ang pakiramdam ko at parang may sakit ako.",
+                        "romanization": "mah-sah-MAH ahng pah-kee-rahm-DAHM koh aht PAH-rahng may sah-KIT ah-KOH.",
+                        "english": "I feel unwell and it feels like I'm getting sick.",
+                        "category": "7. Health & Body",
+                        "mnemonic": "Word-by-word: Bad the physical-feeling my and seems have sickness I.",
+                        "id": 178,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Masakit ang ulo ko at medyo nahihilo ako.",
+                        "romanization": "mah-sah-KIT ahng OO-loh koh aht MED-yoh nah-hee-HEE-loh ah-KOH.",
+                        "english": "I have a headache and I feel a little dizzy.",
+                        "category": "7. Health & Body",
+                        "mnemonic": "Word-by-word: Painful the head my and slightly dizzy I.",
+                        "id": 179,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Kailangan ko pong magpatingin sa doktor sa ospital.",
+                        "romanization": "kah-ee-LAH-ngahn koh pong mahg-pah-tee-NGIN sah dok-TOR sah os-pee-TAHL.",
+                        "english": "I need to see a doctor at the hospital, please.",
+                        "category": "7. Health & Body",
+                        "mnemonic": "Word-by-word: Need by-me (respect) to-be-examined by doctor at hospital.",
+                        "id": 180,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Masakit po dito sa bandang balikat ko.",
+                        "romanization": "mah-sah-KIT poh DEE-toh sah bahn-DAHNG bah-LEE-kaht koh.",
+                        "english": "It hurts right here around my shoulder.",
+                        "category": "7. Health & Body",
+                        "mnemonic": "Word-by-word: Painful (respect) here at area-of shoulder my.",
+                        "id": 181,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "May allergy po ako sa hipon at mani.",
+                        "romanization": "may AH-ler-jee poh ah-KOH sah HEE-pon aht mah-NEE.",
+                        "english": "I am allergic to shrimp and peanuts.",
+                        "category": "7. Health & Body",
+                        "mnemonic": "Word-by-word: Have allergy (respect) I to shrimp and peanuts.",
+                        "id": 182,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Ngayon",
+                        "romanization": "ngah-YON",
+                        "english": "Today / Now",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "NIGH-ON — The time is NIGH-ON right now—today!",
+                        "example": "Ano ang plano mo ngayon? (What is your plan today?)",
+                        "culturalNote": "'Ngayong araw' specifically means 'today', while 'ngayon' alone means 'now' or 'today'.",
+                        "id": 183,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Bukas",
+                        "romanization": "BOO-kahs",
+                        "english": "Tomorrow (also: Open)",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "BOOK US — BOOK US a flight for TOMORROW morning!",
+                        "example": "Magkita tayo bukas nang umaga. (Let's meet tomorrow morning.)",
+                        "culturalNote": "Context distinguishes 'BOO-kahs' (tomorrow) from 'boo-KAHS' (open, as in an open store).",
+                        "id": 184,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Susunod na linggo",
+                        "romanization": "soo-soo-NOD nah ling-GOH",
+                        "english": "Next week",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "SOON-NOD LINGO — You NOD that SOON the next week's LINGO lesson begins!",
+                        "example": "Bibiyahe kami sa susunod na linggo. (We will travel next week.)",
+                        "culturalNote": "'Linggo' means both 'week' and 'Sunday'.",
+                        "id": 185,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Mainit / Maulan",
+                        "romanization": "mah-EE-nit / mah-oo-LAHN",
+                        "english": "Hot / Rainy",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "MY EAT-IT / MY OOH-LAWN — In the HOT sun ('mainit'), ice cream melts before MY EAT-IT; in RAINY weather ('maulan'), MY LAWN floods!",
+                        "example": "Napakainit kanina pero maulan na ngayon. (It was super hot earlier, but it is rainy now.)",
+                        "culturalNote": "Metro Manila has two main seasons: 'tag-init' (hot dry season) and 'tag-ulan' (rainy season).",
+                        "id": 186,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Libre / Bakante",
+                        "romanization": "LEEB-reh / bah-KAHN-teh",
+                        "english": "Free / Available (schedule)",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "LIBERTY VACANCY — Having LIBERTY and a VACANCY in your calendar means you are free to meet!",
+                        "example": "Libre ka ba mamayang alas-singko? (Are you free later at five o'clock?)",
+                        "culturalNote": "'Libre' also means 'free of charge' or 'my treat!' ('Libre kita!' = It's my treat!).",
+                        "id": 187,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Ngayon ay maganda ang panahon, pero bukas daw ay uulan.",
+                        "romanization": "ngah-YON ay mah-gahn-DAH ahng pah-nah-HON, PEH-roh BOO-kahs dahw ay oo-oo-LAHN.",
+                        "english": "Today the weather is nice, but they say tomorrow it will rain.",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "Word-by-word: Today (linker) nice the weather, but tomorrow reportedly (linker) will-rain.",
+                        "id": 188,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Sa susunod na linggo na lang natin ituloy ang lakad.",
+                        "romanization": "sah soo-soo-NOD nah ling-GOH nah lahng NAH-tin ee-too-LOY ahng LAH-kahd.",
+                        "english": "Let's just push through with our outing next week.",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "Word-by-word: On next (linker) week now only by-us continue the outing.",
+                        "id": 189,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Mainit at maalinsangan sa labas kapag tanghali.",
+                        "romanization": "mah-EE-nit aht mah-ah-lin-SAH-ngahn sah lah-BAHS kah-PAHG tahng-HAH-lee.",
+                        "english": "It is hot and humid outside at noon.",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "Word-by-word: Hot and humid at outside when noon.",
+                        "id": 190,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Magkita tayo mamayang alas-singko ng hapon sa kapihan.",
+                        "romanization": "mahg-KEE-tah TAH-yoh mah-mah-YAHNG ah-lahs-SING-koh nahng HAH-pon sah kah-pee-HAHN.",
+                        "english": "Let's meet later at five in the afternoon at the coffee shop.",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "Word-by-word: Meet-each-other we later five-o'clock of afternoon at coffee-shop.",
+                        "id": 191,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Libre ka ba bukas ng gabi para maghapunan?",
+                        "romanization": "LEEB-reh kah bah BOO-kahs nahng gah-BEE PAH-rah mahg-hah-POO-nahn?",
+                        "english": "Are you free tomorrow evening to have dinner?",
+                        "category": "8. Time, Weather & Plans",
+                        "mnemonic": "Word-by-word: Free you (question) tomorrow of evening in-order-to eat-dinner?",
+                        "id": 192,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Nanay / Ina",
+                        "romanization": "NAH-nay / ee-NAH",
+                        "english": "Mother / Mom",
+                        "category": "9. Family & People",
+                        "mnemonic": "NANNY — Your loving NANNY who raised you like a mother—'Nanay!'",
+                        "example": "Ito ang nanay ko, bumisita siya mula sa probinsya. (This is my mother, she visited from the province.)",
+                        "culturalNote": "'Nanay' is warm and affectionate (like 'Mom'); 'Ina' is more formal (like 'Mother').",
+                        "id": 193,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Kaibigan",
+                        "romanization": "kah-ee-BEE-gahn",
+                        "english": "Friend",
+                        "category": "9. Family & People",
+                        "mnemonic": "KAI BE GUN — Your loyal best friend KAI would never BE a GUN against you—true 'Kaibigan!'",
+                        "example": "Siya ang matalik kong kaibigan dito sa Maynila. (He/She is my close friend here in Manila.)",
+                        "culturalNote": "Notice the stress: 'kah-ee-BEE-gahn' means 'friend', while 'kah-ee-bee-GAHN' means 'lover/sweetheart'!",
+                        "id": 194,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Mabait",
+                        "romanization": "mah-bah-EET",
+                        "english": "Kind / Good-hearted / Nice",
+                        "category": "9. Family & People",
+                        "mnemonic": "MY BITE — Even a big dog won't give MY hand a BITE because he is so gentle and kind—'Mabait!'",
+                        "example": "Napakabait at matulungin ng mga kapitbahay namin. (Our neighbors are very kind and helpful.)",
+                        "culturalNote": "Root word is 'bait' (kindness/goodness). One of the top compliments for a person's character.",
+                        "id": 195,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Malapit",
+                        "romanization": "mah-LAH-pit",
+                        "english": "Close (relationship or distance)",
+                        "category": "9. Family & People",
+                        "mnemonic": "MY LAP-IT — Your cat curls up right on MY LAP because you two are so close—'Malapit!'",
+                        "example": "Malapit kami sa isa't isa mula pa noong bata kami. (We have been close to each other since we were kids.)",
+                        "culturalNote": "Works both for physical proximity ('malapit sa mall' = near the mall) and emotional closeness ('malapit na kaibigan' = close friend).",
+                        "id": 196,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Edad / Taon",
+                        "romanization": "eh-DAHD / tah-ON",
+                        "english": "Age / Year(s) old",
+                        "category": "9. Family & People",
+                        "mnemonic": "A DAD TOWN — Every DAD in TOWN celebrates another year of age on his birthday!",
+                        "example": "Ilang taon ka na? (How old are you?)",
+                        "culturalNote": "Literally asks 'How many years are you now?' ('Ilang taon ka na?').",
+                        "id": 197,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Ito ang aking asawa at ito naman ang matalik kong kaibigan.",
+                        "romanization": "ee-TOH ahng AH-king ah-SAH-wah aht ee-TOH nah-MAHN ahng mah-TAH-lik kong kah-ee-BEE-gahn.",
+                        "english": "This is my spouse and this is my close friend.",
+                        "category": "9. Family & People",
+                        "mnemonic": "Word-by-word: This the my spouse and this on-the-other-hand the close my friend.",
+                        "id": 198,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Ang nanay ko ay napakabait at mahilig magluto.",
+                        "romanization": "ahng NAH-nay koh ay nah-pah-kah-bah-EET aht mah-HEE-lig mahg-LOO-toh.",
+                        "english": "My mother is very kind and loves to cook.",
+                        "category": "9. Family & People",
+                        "mnemonic": "Word-by-word: The mother my (linker) very-kind and fond-of cooking.",
+                        "id": 199,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Mabait siya sa lahat kaya marami siyang kaibigan.",
+                        "romanization": "mah-bah-EET shah sah lah-HAHT kah-YAH mah-RAH-mee shahng kah-ee-BEE-gahn.",
+                        "english": "He/She is kind to everyone, so he/she has many friends.",
+                        "category": "9. Family & People",
+                        "mnemonic": "Word-by-word: Kind he/she to everyone so many he/she-has friends.",
+                        "id": 200,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Malapit kaming magkakapatid kahit magkakalayo kami.",
+                        "romanization": "mah-LAH-pit kah-MEENG mahg-kah-kah-pah-TID KAH-hit mahg-kah-kah-lah-YOH kah-MEE.",
+                        "english": "We siblings are close even though we live far apart.",
+                        "category": "9. Family & People",
+                        "mnemonic": "Word-by-word: Close we siblings even-though far-apart we.",
+                        "id": 201,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Ilang taon ka na at kailan ang kaarawan mo?",
+                        "romanization": "ee-LAHNG tah-ON kah nah aht kah-ee-LAHN ahng kah-ah-rah-WAHN moh?",
+                        "english": "How old are you and when is your birthday?",
+                        "category": "9. Family & People",
+                        "mnemonic": "Word-by-word: How-many years you already and when the birthday yours?",
+                        "id": 202,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Ayaw ko",
+                        "romanization": "AH-yahw koh",
+                        "english": "I don't like / I don't want",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "I YAWN CO. — When someone offers a boring movie, you say, 'I YAWN—ayaw ko!'",
+                        "example": "Ayaw ko ng masyadong matamis na inumin. (I don't like overly sweet drinks.)",
+                        "culturalNote": "Direct opposite of 'Gusto ko' (I like/want).",
+                        "id": 203,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Sa tingin ko",
+                        "romanization": "sah tee-NGIN koh",
+                        "english": "I think / In my view",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "SAW THING IN CO. — Looking at the blueprint, you say, 'From what I SAW, I think...' ('Sa tingin ko...')",
+                        "example": "Sa tingin ko, mas maganda kung aalis tayo nang maaga. (I think it is better if we leave early.)",
+                        "culturalNote": "Literally translates to 'In my look/view'—the most natural conversational way to say 'I think'.",
+                        "id": 204,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Opinyon",
+                        "romanization": "oh-pin-YON",
+                        "english": "Opinion",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "OPEN YAWN — Everyone opens their mouth to share an opinion—'Sa aking opinyon!'",
+                        "example": "Sa aking opinyon, napakahalaga ng pag-aaral ng wika. (In my opinion, studying languages is very important.)",
+                        "culturalNote": "From Spanish 'opinión'. 'Sa aking opinyon' or 'Para sa akin' both mean 'In my opinion / For me'.",
+                        "id": 205,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Libangan",
+                        "romanization": "lee-BAH-ngahn",
+                        "english": "Hobby / Pastime / Leisure activity",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "LEE BANG-ON — LEE plays drums BANG-ON every weekend as his favorite hobby—'Libangan!'",
+                        "example": "Ang paborito kong libangan ay ang pananaliksik sa kasaysayan. (My favorite hobby is researching history.)",
+                        "culturalNote": "Root word is 'libang' (amuse/entertain oneself).",
+                        "id": 206,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Paborito",
+                        "romanization": "pah-boh-REE-toh",
+                        "english": "Favorite",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "FAVORITO — Sounds just like Spanish/English 'favorite' with a Filipino 'P' sound!",
+                        "example": "Ano ang paborito mong pagkaing Pilipino? (What is your favorite Filipino food?)",
+                        "culturalNote": "From Spanish 'favorito'.",
+                        "id": 207,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Gusto ko ang kulturang Pilipino at ang mainit na pagtanggap ng mga tao.",
+                        "romanization": "goos-TOH koh ahng kool-TOO-rahng pee-lee-PEE-noh aht ahng mah-EE-nit nah pahg-tahng-GAHP nahng mah-NGAH TAH-oh.",
+                        "english": "I like Filipino culture and the warm welcome of the people.",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "Word-by-word: Like by-me the culture Filipino and the warm (linker) reception of the people.",
+                        "id": 208,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Ayaw ko ng sobrang ingay kapag nagbabasa ako.",
+                        "romanization": "AH-yahw koh nahng SOH-brahng EE-ngay kah-PAHG nahg-bah-bah-SAH ah-KOH.",
+                        "english": "I don't like too much noise when I am reading.",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "Word-by-word: Dislike by-me of excessive noise when reading I.",
+                        "id": 209,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Sa tingin ko, mas madaling matuto kapag nagsasalita araw-araw.",
+                        "romanization": "sah tee-NGIN koh, mahs mah-dah-LING mah-TOO-toh kah-PAHG nahg-sah-sah-lee-TAH AH-rahw AH-rahw.",
+                        "english": "I think it is easier to learn when you speak every day.",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "Word-by-word: In view my, more easy to-learn when speaking day-day.",
+                        "id": 210,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Sa aking opinyon, ang paglalakad tuwing umaga ay maganda sa kalusugan.",
+                        "romanization": "sah AH-king oh-pin-YON, ahng pahg-lah-LAH-kahd too-WEENG oo-MAH-gah ay mah-gahn-DAH sah kah-loo-SOO-gahn.",
+                        "english": "In my opinion, walking every morning is good for one's health.",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "Word-by-word: In my opinion, the walking every morning (linker) good for health.",
+                        "id": 211,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Ang paborito kong libangan ay ang pagbabasa ng kasaysayan at paglalakbay.",
+                        "romanization": "ahng pah-boh-REE-toh kong lee-BAH-ngahn ay ahng pahg-bah-bah-SAH nahng kah-say-SAH-yahn aht pahg-lah-lahk-BAY.",
+                        "english": "My favorite hobby is reading history and traveling.",
+                        "category": "10. Opinions, Likes & Hobbies",
+                        "mnemonic": "Word-by-word: The favorite my hobby (linker) the reading of history and traveling.",
+                        "id": 212,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Guwardiya",
+                        "romanization": "gwahr-DYAH",
+                        "english": "Security guard",
+                        "category": "11. Condo, Building & Errands",
+                        "mnemonic": "GUARD-YA — The friendly condo lobby GUARD greets you every morning: 'Magandang umaga, Sir!'",
+                        "example": "Iniwan ko ang susi sa guwardiya sa lobby. (I left the key with the security guard in the lobby.)",
+                        "culturalNote": "Building guards are the backbone of Metro Manila condos and are universally addressed as 'Kuya' (older brother) or 'Chief'.",
+                        "id": 213,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Padala / Delivery",
+                        "romanization": "pah-dah-LAH / deh-LEE-beh-ree",
+                        "english": "Package / Parcel / Delivery",
+                        "category": "11. Condo, Building & Errands",
+                        "mnemonic": "PA-DOLLAR — PA sends a DOLLAR package via courier—'May padala po kayo!'",
+                        "example": "May padala po kayo sa reception desk. (You have a delivery at the reception desk.)",
+                        "culturalNote": "Root word 'dala' (bring/carry). Used for Grab, Lalamove, Shopee, and postal parcels.",
+                        "id": 214,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Labada",
+                        "romanization": "lah-BAH-dah",
+                        "english": "Laundry (clothes to be washed)",
+                        "category": "11. Condo, Building & Errands",
+                        "mnemonic": "LAVA-DA — Your laundry basket piles up as tall as a LAVA volcano—time for 'Labada!'",
+                        "example": "Ipapakuha ko ang labada ko bukas ng umaga. (I will have my laundry picked up tomorrow morning.)",
+                        "culturalNote": "'Maglaba' is to wash clothes; 'labandera' is a laundress.",
+                        "id": 215,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Sira",
+                        "romanization": "see-RAH",
+                        "english": "Broken / Out of order / Damaged",
+                        "category": "11. Condo, Building & Errands",
+                        "mnemonic": "SEE RAW — You SEE RAW wires sticking out of the broken aircon—'Sira na!'",
+                        "example": "Sira po ang aircon sa kuwarto, puwede bang ipaayos? (The aircon in the room is broken, can it be repaired?)",
+                        "culturalNote": "Essential word for condo engineering and maintenance requests.",
+                        "id": 216,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Kuya guard, pakisabi po kapag dumating na ang delivery ko.",
+                        "romanization": "KOO-yah gahrd, pah-kee-SAH-bee poh kah-PAHG doo-mah-TING nah ahng deh-LEE-beh-ree koh.",
+                        "english": "Brother guard, please let me know when my delivery arrives.",
+                        "category": "11. Condo, Building & Errands",
+                        "mnemonic": "Word-by-word: Older-brother guard, please-tell (respect) when arrives already the delivery my.",
+                        "id": 217,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Sira po ang gripo sa banyo, kailangan ng tubero.",
+                        "romanization": "see-RAH poh ahng GREE-poh sah BAHN-yoh, kah-ee-LAH-ngahn nahng too-BEH-roh.",
+                        "english": "The faucet in the bathroom is broken, we need a plumber.",
+                        "category": "11. Condo, Building & Errands",
+                        "mnemonic": "Word-by-word: Broken (respect) the faucet in bathroom, needed of plumber.",
+                        "id": 218,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Kain tayo",
+                        "romanization": "KAH-in TAH-yoh",
+                        "english": "Let's eat! (Polite invitation to share food)",
+                        "category": "12. Socializing, Invitations & Emergencies",
+                        "mnemonic": "CARING TOWEL — A host waves a CARING TOWEL over a feast and invites everyone: 'Kain tayo!'",
+                        "example": "Kain tayo! Marami kaming nilutong ulam. (Let's eat! We cooked plenty of food.)",
+                        "culturalNote": "Whenever Filipinos are eating and someone walks by, etiquette requires saying 'Kain tayo!'—the polite response is 'Salamat, busog pa po!' (Thanks, I'm still full!).",
+                        "id": 219,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Saklolo",
+                        "romanization": "sahk-LOH-loh",
+                        "english": "Help! (Emergency cry for help)",
+                        "category": "12. Socializing, Invitations & Emergencies",
+                        "mnemonic": "SOCK LOW-LOW — You fall into a ditch down LOW-LOW and shout for rescue: 'Saklolo!'",
+                        "example": "Saklolo! Tumawag kayo ng ambulansya! (Help! Call an ambulance!)",
+                        "culturalNote": "Reserved for true physical or medical emergencies; for everyday help, use 'Tulong'.",
+                        "id": 220,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "word",
+                        "tagalog": "Sayang",
+                        "romanization": "SAH-yahng",
+                        "english": "What a shame / What a waste / Too bad",
+                        "category": "12. Socializing, Invitations & Emergencies",
+                        "mnemonic": "SIGH-ING — SIGH-ING deeply when you drop your ice cream cone on the sidewalk—'Sayang!'",
+                        "example": "Sayang, hindi ka nakasama sa biyahe namin kahapon. (Too bad, you weren't able to join our trip yesterday.)",
+                        "culturalNote": "Used both when food/money goes to waste and when someone misses out on a fun event.",
+                        "id": 221,
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Kain tayo! Halika at tikman mo itong niluto namin.",
+                        "romanization": "KAH-in TAH-yoh! hah-LEE-kah aht tik-MAHN moh ee-TONG nee-LOO-toh NAH-min.",
+                        "english": "Let's eat! Come and taste what we cooked.",
+                        "category": "12. Socializing, Invitations & Emergencies",
+                        "mnemonic": "Word-by-word: Eat we! Come-here and taste by-you this cooked by-us.",
+                        "id": 222,
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false
+            },
+            {
+                        "type": "sentence",
+                        "tagalog": "Sayang naman, sa susunod ay sumama ka na sa amin!",
+                        "romanization": "SAH-yahng nah-MAHN, sah soo-soo-NOD ay soo-MAH-mah kah nah sah AH-min!",
+                        "english": "What a shame, next time make sure you join us!",
+                        "category": "12. Socializing, Invitations & Emergencies",
+                        "mnemonic": "Word-by-word: What-a-shame truly, on next-time (linker) come-along you now with us!",
+                        "id": 223,
                         "example": "",
                         "culturalNote": "",
                         "status": "again",
@@ -2095,10 +3486,19 @@
 
         const islandTopics = [
             "All Steps",
-            "Step 1: Greetings & Politeness",
-            "Step 2: Numbers & Money",
-            "Step 3: Palengke & Shopping"
-        ];
+            "1. Greetings & Small Talk",
+            "2. Food, Ordering & Restaurants",
+            "3. Directions & Transport",
+            "4. Shopping & Money",
+            "5. Home & Daily Routine",
+            "6. Work & School",
+            "7. Health & Body",
+            "8. Time, Weather & Plans",
+            "9. Family & People",
+            "10. Opinions, Likes & Hobbies",
+            "11. Condo, Building & Errands",
+            "12. Socializing, Invitations & Emergencies"
+];
 
         const sosPhrases = [
             { tagalog: "Saklolo!", english: "Help!" },
@@ -2117,7 +3517,7 @@
             { id: 1, author: "John D.", text: "The mnemonic for Tubig helped me remember it instantly!", date: "Nov 6, 2026", replies: ["Admin: Salamat John! Repetition is key."] }
         ];
 
-        let vocabData = JSON.parse(localStorage.getItem('nt_vocabData_v2')) || initialVocab;
+        let vocabData = JSON.parse(localStorage.getItem('nt_vocabData_v3')) || initialVocab;
         let commentsData = JSON.parse(localStorage.getItem('nt_commentsData')) || initialComments;
         let activeCategory = "All Steps";
         let activeTab = "daily";
@@ -2132,17 +3532,20 @@
         };
 
         function saveData() {
-            localStorage.setItem('nt_vocabData_v2', JSON.stringify(vocabData));
+            localStorage.setItem('nt_vocabData_v3', JSON.stringify(vocabData));
             localStorage.setItem('nt_commentsData', JSON.stringify(commentsData));
             updateSrsCounts();
         }
 
         function renderCategoryChips() {
             const container = document.getElementById('categoryContainer');
-            container.innerHTML = islandTopics.map(topic => {
+            const existingSet = new Set(islandTopics);
+            const extraTopics = [...new Set(vocabData.map(v => v.category).filter(c => c && !existingSet.has(c)))];
+            const dynamicTopics = [...islandTopics, ...extraTopics];
+            container.innerHTML = dynamicTopics.map(topic => {
                 const isActive = activeCategory === topic;
                 return `
-                    <button onclick="selectCategory('${topic}')" 
+                    <button onclick="selectCategory('${topic.replace(/'/g, "\\'")}')" 
                         class="px-3.5 py-1 rounded-full font-bold whitespace-nowrap transition text-xs ${
                             isActive 
                             ? 'bg-amberBrand-500 text-slate-950 shadow-sm' 
@@ -2471,6 +3874,7 @@
                     }
 
                     saveData();
+                    renderCategoryChips();
                     renderDeck();
                     closeAddModal();
                     alert(`Successfully imported ${added} new unique items!`);
@@ -2480,7 +3884,295 @@
             };
             reader.readAsText(file);
         }
+
+        // --- DAILY TRAINING MODULE ENGINE ---
+        let currentModuleType = null;
+        let moduleQueue = [];
+        let moduleIndex = 0;
+        let recallRevealed = false;
+        let listeningTimer = null;
+        let listeningPlaying = false;
+        let dailyMinutesCompleted = parseInt(localStorage.getItem('nt_dailyMinutes') || '0', 10);
+
+        function updateDailyGoalUI() {
+            const pct = Math.min(100, Math.round((dailyMinutesCompleted / 60) * 100));
+            const sub = document.getElementById('dailyGoalSubtext');
+            if (sub) sub.innerText = `Today: ${dailyMinutesCompleted} min / 60 min goal (${pct}%)`;
+        }
+
+        const origOnload = window.onload;
+        window.onload = function() {
+            if (origOnload) origOnload();
+            updateDailyGoalUI();
+        };
+
+        function startModule(type) {
+            currentModuleType = type;
+            moduleIndex = 0;
+            recallRevealed = false;
+            stopListeningLoop();
+
+            const pool = activeCategory === 'All Steps'
+                ? [...vocabData]
+                : vocabData.filter(v => v.category === activeCategory);
+
+            if (type === 'newWords') {
+                const unseen = pool.filter(v => v.type === 'word' && v.status === 'again');
+                const wordsPool = unseen.length >= 5 ? unseen : pool.filter(v => v.type === 'word');
+                moduleQueue = wordsPool.slice(0, 5);
+                document.getElementById('trainingModalHeader').className = "p-4 bg-tealBrand-700 text-white flex items-center justify-between";
+                document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-book-open mr-1.5"></i> New Words (15 min)';
+            } else if (type === 'recall') {
+                const due = pool.filter(v => v.status !== 'learned');
+                const recallPool = due.length > 0 ? due : pool;
+                moduleQueue = [...recallPool].sort(() => 0.5 - Math.random()).slice(0, 8);
+                document.getElementById('trainingModalHeader').className = "p-4 bg-rose-600 text-white flex items-center justify-between";
+                document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-brain mr-1.5"></i> Active Recall Flashcards';
+            } else if (type === 'shadowing') {
+                const sentences = pool.filter(v => v.type === 'sentence');
+                moduleQueue = (sentences.length > 0 ? sentences : pool).slice(0, 6);
+                document.getElementById('trainingModalHeader').className = "p-4 bg-purple-600 text-white flex items-center justify-between";
+                document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-microphone mr-1.5"></i> Shadowing Practice (0.7x Slow + Normal)';
+            } else if (type === 'listening') {
+                moduleQueue = [...pool].slice(0, 12);
+                document.getElementById('trainingModalHeader').className = "p-4 bg-amberBrand-500 text-slate-950 flex items-center justify-between";
+                document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-headphones mr-1.5"></i> Hands-Free Listening Loop';
+            }
+
+            if (!moduleQueue.length) {
+                alert("No cards available in this step yet.");
+                return;
+            }
+
+            document.getElementById('trainingModal').classList.remove('hidden');
+            renderTrainingCard();
+        }
+
+        function closeTrainingModal() {
+            stopListeningLoop();
+            window.speechSynthesis && window.speechSynthesis.cancel();
+            document.getElementById('trainingModal').classList.add('hidden');
+            renderDeck();
+        }
+
+        function speakWithRate(text, rate = 1.0) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'tl-PH';
+                u.rate = rate;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        function renderTrainingCard() {
+            const item = moduleQueue[moduleIndex];
+            const total = moduleQueue.length;
+            document.getElementById('trainingModalSubtitle').innerText = `${item.category} • Card ${moduleIndex + 1} of ${total}`;
+
+            const body = document.getElementById('trainingModalBody');
+            const footer = document.getElementById('trainingModalFooter');
+            const escapedTagalog = item.tagalog.replace(/'/g, "\\'");
+
+            if (currentModuleType === 'newWords') {
+                body.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-tealBrand-50 text-tealBrand-700 border border-tealBrand-100">${item.category}</span>
+                                <h2 class="font-serif font-extrabold text-3xl text-slate-900 mt-2">${item.tagalog}</h2>
+                                <p class="text-sm font-bold text-tealBrand-600">${item.romanization || ''}</p>
+                                <p class="text-base font-semibold text-slate-700 mt-1">${item.english}</p>
+                            </div>
+                            <button onclick="speakWithRate('${escapedTagalog}', 1.0)" class="px-3.5 py-2.5 rounded-xl bg-tealBrand-700 hover:bg-tealBrand-800 text-white font-bold text-xs flex items-center gap-1.5 shadow">
+                                <i class="fa-solid fa-volume-high"></i> Listen
+                            </button>
+                        </div>
+                        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-1">
+                            <div class="text-xs font-extrabold text-amber-900"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Vivid Mnemonic Hook</div>
+                            <p class="text-xs text-slate-800 leading-relaxed">${item.mnemonic}</p>
+                        </div>
+                        ${item.example ? `
+                        <div class="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-1">
+                            <div class="text-[11px] font-bold text-slate-500 uppercase">In Context</div>
+                            <p class="text-xs font-semibold text-slate-800">${item.example}</p>
+                        </div>` : ''}
+                        ${item.culturalNote ? `
+                        <p class="text-[11px] text-slate-500 italic"><strong class="text-slate-700 not-italic">Cultural Tip:</strong> ${item.culturalNote}</p>` : ''}
+                    </div>
+                `;
+                footer.innerHTML = `
+                    <button onclick="prevModuleCard()" ${moduleIndex === 0 ? 'disabled' : ''} class="px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-600 disabled:opacity-40">← Previous</button>
+                    <button onclick="completeNewWordAndNext()" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-tealBrand-700 hover:bg-tealBrand-800 text-white shadow">
+                        ${moduleIndex === total - 1 ? 'Finish Session (+15 min)' : 'Got It → Next Word'}
+                    </button>
+                `;
+            } else if (currentModuleType === 'recall') {
+                body.innerHTML = `
+                    <div class="text-center py-4 space-y-4">
+                        <span class="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">${item.type === 'sentence' ? 'Sentence' : 'Vocabulary Word'}</span>
+                        <div>
+                            <h2 class="font-serif font-extrabold text-3xl text-slate-900">${item.tagalog}</h2>
+                            <p class="text-xs font-bold text-tealBrand-600 mt-1">${item.romanization || ''}</p>
+                        </div>
+                        <button onclick="speakWithRate('${escapedTagalog}', 1.0)" class="mx-auto px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-volume-high text-tealBrand-700"></i> Hear Pronunciation
+                        </button>
+                        ${!recallRevealed ? `
+                            <div class="pt-4">
+                                <button onclick="revealRecallAnswer()" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs shadow-md">
+                                    Show Meaning & Mnemonic
+                                </button>
+                            </div>
+                        ` : `
+                            <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-left space-y-2 mt-2">
+                                <p class="text-sm font-extrabold text-slate-900">${item.english}</p>
+                                <p class="text-xs text-slate-600 italic">${item.mnemonic}</p>
+                            </div>
+                        `}
+                    </div>
+                `;
+                footer.innerHTML = recallRevealed ? `
+                    <div class="w-full grid grid-cols-3 gap-2">
+                        <button onclick="gradeRecallCard('again')" class="py-2 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-extrabold text-xs border border-rose-200">Again (5m)</button>
+                        <button onclick="gradeRecallCard('familiar')" class="py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-extrabold text-xs border border-amber-200">Familiar (1d)</button>
+                        <button onclick="gradeRecallCard('learned')" class="py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold text-xs border border-emerald-200">Learned (30d)</button>
+                    </div>
+                ` : `
+                    <span class="text-[11px] text-slate-400">Try to recall the English meaning before revealing</span>
+                    <button onclick="revealRecallAnswer()" class="px-4 py-2 rounded-xl bg-rose-600 text-white font-bold text-xs">Reveal</button>
+                `;
+            } else if (currentModuleType === 'shadowing') {
+                body.innerHTML = `
+                    <div class="space-y-4">
+                        <div class="p-4 bg-purple-50/70 border border-purple-200 rounded-xl space-y-2">
+                            <h2 class="font-serif font-extrabold text-2xl text-slate-900">${item.tagalog}</h2>
+                            <p class="text-xs font-bold text-purple-700">${item.romanization || ''}</p>
+                            <p class="text-xs font-semibold text-slate-600">${item.english}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="speakWithRate('${escapedTagalog}', 0.65)" class="p-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow">
+                                <i class="fa-solid fa-snail"></i> Play Slow (0.7x)
+                            </button>
+                            <button onclick="speakWithRate('${escapedTagalog}', 1.0)" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow">
+                                <i class="fa-solid fa-volume-high"></i> Play Natural (1.0x)
+                            </button>
+                        </div>
+                        <p class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200/70">
+                            <strong>How to Shadow:</strong> Play at <strong>0.7x</strong> first and speak aloud simultaneously with the voice, matching the syllable stress shown in CAPITALS, then repeat at <strong>1.0x</strong>.
+                        </p>
+                    </div>
+                `;
+                footer.innerHTML = `
+                    <button onclick="prevModuleCard()" ${moduleIndex === 0 ? 'disabled' : ''} class="px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-600 disabled:opacity-40">← Previous</button>
+                    <button onclick="nextModuleCard(15)" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-purple-600 hover:bg-purple-700 text-white shadow">
+                        ${moduleIndex === total - 1 ? 'Finish Shadowing (+15 min)' : 'Next Phrase →'}
+                    </button>
+                `;
+            } else if (currentModuleType === 'listening') {
+                body.innerHTML = `
+                    <div class="text-center py-3 space-y-4">
+                        <div class="p-5 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-2">
+                            <span class="text-[10px] font-extrabold uppercase text-amber-800">${item.category}</span>
+                            <h2 class="font-serif font-extrabold text-2xl text-slate-900">${item.tagalog}</h2>
+                            <p class="text-xs font-bold text-tealBrand-700">${item.romanization || ''}</p>
+                            <p class="text-sm font-semibold text-slate-700 pt-1">${item.english}</p>
+                        </div>
+                        <div class="flex items-center justify-center gap-3">
+                            <button onclick="toggleListeningLoop()" id="listeningToggleBtn" class="px-5 py-2.5 rounded-xl bg-amberBrand-500 hover:bg-amberBrand-600 text-slate-950 font-extrabold text-xs shadow flex items-center gap-2">
+                                <i class="fa-solid ${listeningPlaying ? 'fa-pause' : 'fa-play'}"></i>
+                                ${listeningPlaying ? 'Pause Auto-Loop' : 'Start Hands-Free Loop'}
+                            </button>
+                        </div>
+                        <p class="text-[11px] text-slate-500">Plays each Tagalog phrase aloud and automatically advances every 4 seconds.</p>
+                    </div>
+                `;
+                footer.innerHTML = `
+                    <button onclick="prevModuleCard()" ${moduleIndex === 0 ? 'disabled' : ''} class="px-3 py-2 rounded-xl text-xs font-bold border border-slate-200 text-slate-600 disabled:opacity-40">← Previous</button>
+                    <button onclick="nextModuleCard(15)" class="px-4 py-2 rounded-xl text-xs font-extrabold bg-slate-900 text-white">
+                        ${moduleIndex === total - 1 ? 'Complete Listening (+15 min)' : 'Skip Next →'}
+                    </button>
+                `;
+            }
+        }
+
+        function prevModuleCard() {
+            if (moduleIndex > 0) {
+                moduleIndex--;
+                recallRevealed = false;
+                renderTrainingCard();
+                if (listeningPlaying) speakWithRate(moduleQueue[moduleIndex].tagalog, 0.95);
+            }
+        }
+
+        function nextModuleCard(minsReward = 15) {
+            if (moduleIndex < moduleQueue.length - 1) {
+                moduleIndex++;
+                recallRevealed = false;
+                renderTrainingCard();
+                if (listeningPlaying) speakWithRate(moduleQueue[moduleIndex].tagalog, 0.95);
+            } else {
+                dailyMinutesCompleted += minsReward;
+                localStorage.setItem('nt_dailyMinutes', dailyMinutesCompleted.toString());
+                updateDailyGoalUI();
+                closeTrainingModal();
+                alert(`Great job! Session complete (+${minsReward} minutes added to today's goal).`);
+            }
+        }
+
+        function completeNewWordAndNext() {
+            const item = moduleQueue[moduleIndex];
+            if (item && item.status === 'again') {
+                item.status = 'familiar';
+                saveData();
+            }
+            nextModuleCard(15);
+        }
+
+        function revealRecallAnswer() {
+            recallRevealed = true;
+            renderTrainingCard();
+        }
+
+        function gradeRecallCard(status) {
+            const item = moduleQueue[moduleIndex];
+            if (item) {
+                item.status = status;
+                saveData();
+            }
+            nextModuleCard(15);
+        }
+
+        function toggleListeningLoop() {
+            if (listeningPlaying) {
+                stopListeningLoop();
+                renderTrainingCard();
+            } else {
+                listeningPlaying = true;
+                renderTrainingCard();
+                speakWithRate(moduleQueue[moduleIndex].tagalog, 0.95);
+                listeningTimer = setInterval(() => {
+                    if (moduleIndex < moduleQueue.length - 1) {
+                        moduleIndex++;
+                        renderTrainingCard();
+                        speakWithRate(moduleQueue[moduleIndex].tagalog, 0.95);
+                    } else {
+                        stopListeningLoop();
+                        nextModuleCard(15);
+                    }
+                }, 4200);
+            }
+        }
+
+        function stopListeningLoop() {
+            listeningPlaying = false;
+            if (listeningTimer) {
+                clearInterval(listeningTimer);
+                listeningTimer = null;
+            }
+        }
     </script>
 
+
 </body>
-</html> 
+</html>
