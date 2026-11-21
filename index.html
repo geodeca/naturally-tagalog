@@ -38,7 +38,6 @@
         }
     </script>
 
-
     <style>
         body {
             background-color: #FAF6F0;
@@ -49,6 +48,32 @@
         }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Tagalog Focus / Trigger Marker Pills */
+        .tg-marker-ang {
+            background-color: #ccfbf1;
+            color: #0f766e;
+            border-bottom: 2px solid #0d9488;
+            padding: 0 4px;
+            border-radius: 5px;
+            font-weight: 800;
+        }
+        .tg-marker-ng {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-bottom: 2px solid #f59e0b;
+            padding: 0 4px;
+            border-radius: 5px;
+            font-weight: 800;
+        }
+        .tg-marker-sa {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+            border-bottom: 2px solid #9333ea;
+            padding: 0 4px;
+            border-radius: 5px;
+            font-weight: 800;
+        }
     </style>
 </head>
 <body class="min-h-screen pb-32">
@@ -71,7 +96,7 @@
             </div>
 
             <!-- Global Search Bar -->
-            <div class="flex-1 max-w-md min-w-[240px]">
+            <div class="flex-1 max-w-md min-w-[220px]">
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-teal-700/60 text-sm"></i>
                     <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search tubig, thank you, BAHA, market..." 
@@ -80,7 +105,19 @@
             </div>
 
             <!-- Header Action Controls -->
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
+                <!-- Global Audio Speed Toggle (1.0x vs 0.75x) -->
+                <button onclick="toggleSpeechRate()" id="speedToggleBtn" title="Switch global Tagalog audio playback speed"
+                        class="px-2.5 py-2 rounded-xl text-xs font-extrabold bg-white/15 hover:bg-white/25 text-white border border-white/20 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-gauge-high text-teal-200"></i>
+                    <span id="speedToggleLabel">1.0x</span>
+                </button>
+                <!-- Focus Marker Cues Toggle -->
+                <button onclick="toggleFocusCues()" id="focusCueToggleBtn" title="Highlight Ang / Ng / Sa focus markers in sentences"
+                        class="px-2.5 py-2 rounded-xl text-xs font-extrabold bg-tealBrand-600 hover:bg-tealBrand-500 text-white border border-teal-400/50 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-highlighter text-amber-300"></i>
+                    <span class="hidden sm:inline">Focus Cues</span>
+                </button>
                 <button onclick="toggleAboutModal()" class="px-3 py-2 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white transition flex items-center gap-1.5">
                     <i class="fa-solid fa-circle-info"></i> About
                 </button>
@@ -90,7 +127,7 @@
             </div>
         </div>
 
-        <!-- 20 FIXED LANGUAGE ISLAND TOPICS (Horizontal Scroll) -->
+        <!-- 12 FIXED LANGUAGE ISLAND TOPICS (Horizontal Scroll) -->
         <div class="border-t border-tealBrand-800 bg-tealBrand-800/80 py-2 px-4">
             <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto hide-scrollbar text-xs" id="categoryContainer">
                 <!-- Chips injected via JS -->
@@ -104,6 +141,7 @@
         <!-- SUB-HEADER TAB NAVIGATION -->
         <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1 text-xs border-b border-slate-200">
             <button onclick="switchTab('daily')" id="tab-daily" class="px-3 py-1.5 font-bold rounded-lg bg-tealBrand-700 text-white">Daily</button>
+            <button onclick="switchTab('practice')" id="tab-practice" class="px-3 py-1.5 font-bold rounded-lg text-rose-700 bg-rose-50/70 hover:bg-rose-100 border border-rose-200/70">Needs Practice (0)</button>
             <button onclick="switchTab('favorites')" id="tab-favorites" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Favorites (0)</button>
             <button onclick="switchTab('words')" id="tab-words" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Words (114)</button>
             <button onclick="switchTab('islands')" id="tab-islands" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Sentences (109)</button>
@@ -181,7 +219,7 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-xs text-slate-800">Shadowing (15 min)</h4>
-                            <p class="text-[10px] text-slate-500">Slow 0.7x + Record & Compare</p>
+                            <p class="text-[10px] text-slate-500">Slow 0.75x + Natural 1.0x</p>
                         </div>
                     </div>
                     <span class="text-xs font-bold text-purple-600 group-hover:translate-x-0.5 transition">→</span>
@@ -204,9 +242,25 @@
 
         <!-- MAIN VOCABULARY DECK GRID SECTION -->
         <div id="deckViewSection" class="space-y-4">
-            <div class="flex items-center justify-between">
-                <h3 class="font-serif font-extrabold text-lg text-slate-900" id="deckHeaderTitle">Vocabulary Cards</h3>
-                <span class="text-xs font-semibold text-slate-500" id="deckItemCountText">Showing items</span>
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <h3 class="font-serif font-extrabold text-lg text-slate-900" id="deckHeaderTitle">Vocabulary Cards</h3>
+                    <!-- Compact Focus Marker Legend -->
+                    <div id="focusLegendBar" class="flex items-center gap-1.5 text-[10px] font-bold bg-white px-2.5 py-1 rounded-full border border-slate-200/80 shadow-2xs">
+                        <span class="text-slate-400 uppercase tracking-wider mr-0.5">Triggers:</span>
+                        <span class="tg-marker-ang">ang</span><span class="text-slate-500">Topic/Actor</span>
+                        <span class="tg-marker-ng ml-1">ng</span><span class="text-slate-500">Object/Of</span>
+                        <span class="tg-marker-sa ml-1">sa</span><span class="text-slate-500">Location/To</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleAllTranslationsMode()" id="globalTransModeBtn"
+                            class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-language text-tealBrand-700"></i>
+                        <span id="globalTransModeLabel">Translations: Natural</span>
+                    </button>
+                    <span class="text-xs font-semibold text-slate-500" id="deckItemCountText">Showing items</span>
+                </div>
             </div>
 
             <div id="cardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -251,18 +305,22 @@
     </main>
 
     <!-- BOTTOM NAV BAR -->
-    <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 bg-white/95 backdrop-blur-md px-6 py-2 rounded-full border border-slate-200 shadow-xl flex items-center gap-6 text-xs font-bold">
+    <nav class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 bg-white/95 backdrop-blur-md px-5 py-2 rounded-full border border-slate-200 shadow-xl flex items-center gap-5 text-xs font-bold">
         <button onclick="switchTab('daily')" id="nav-daily" class="flex flex-col items-center gap-0.5 text-tealBrand-700">
             <i class="fa-solid fa-house text-base"></i>
             <span>Home</span>
         </button>
+        <button onclick="switchTab('practice')" id="nav-practice" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-rose-600">
+            <i class="fa-solid fa-flag text-base"></i>
+            <span>Practice</span>
+        </button>
         <button onclick="switchTab('words')" id="nav-words" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-600">
             <i class="fa-solid fa-book-open text-base"></i>
-            <span>Lessons</span>
+            <span>Words</span>
         </button>
         <button onclick="switchTab('islands')" id="nav-islands" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-600">
             <i class="fa-solid fa-umbrella-beach text-base"></i>
-            <span>Islands</span>
+            <span>Sentences</span>
         </button>
         <button onclick="switchTab('favorites')" id="nav-favorites" class="flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-600">
             <i class="fa-solid fa-star text-base"></i>
@@ -406,7 +464,7 @@
                     <ul class="space-y-1.5 pl-4 list-disc text-slate-700">
                         <li><strong>New Words (15 min):</strong> Introduces 5 words at a time with pronunciation audio, vivid mnemonic stories, and real-life Manila context.</li>
                         <li><strong>Recall (15 min):</strong> Active-recall flashcards that hide the English meaning first so your brain works to retrieve it before grading <em>Again</em>, <em>Familiar</em>, or <em>Learned</em>.</li>
-                        <li><strong>Shadowing (15 min):</strong> Plays phrases at <strong>0.7x slow speed</strong> and <strong>1.0x natural speed</strong>—repeat out loud alongside the audio to train your mouth and rhythm.</li>
+                        <li><strong>Shadowing (15 min):</strong> Plays phrases at <strong>0.75x slow speed</strong> and <strong>1.0x natural speed</strong>—repeat out loud alongside the audio to train your mouth and rhythm.</li>
                         <li><strong>Listening (15 min):</strong> Hands-free continuous audio loop that plays each Tagalog phrase aloud and advances automatically so you can absorb phrases while walking or commuting.</li>
                     </ul>
                 </div>
@@ -418,25 +476,22 @@
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-[11px]">
                         <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
-                            <strong class="text-slate-900"><i class="fa-solid fa-volume-high text-tealBrand-700 mr-1"></i> Speaker Icon (On Cards):</strong> Plays native Tagalog pronunciation—tap repeatedly to mimic syllable stress (shown in CAPITALS).
+                            <strong class="text-slate-900"><i class="fa-solid fa-gauge-high text-tealBrand-700 mr-1"></i> Audio Speed Toggle (1.0x / 0.75x):</strong> Slows down every speaker button across the entire app so you can hear glottal stops and syllable contractions clearly.
                         </div>
                         <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
-                            <strong class="text-slate-900"><i class="fa-solid fa-star text-amber-500 mr-1"></i> Star Icon (On Cards):</strong> Bookmarks tricky words or favorite phrases into your personal <em>Favorites</em> tab for extra review.
+                            <strong class="text-slate-900"><i class="fa-solid fa-highlighter text-amber-500 mr-1"></i> Focus Cues (Ang / Ng / Sa):</strong> Color-codes Tagalog focus markers in sentences so you intuitively see how the sentence pivots.
                         </div>
                         <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
-                            <strong class="text-slate-900"><i class="fa-solid fa-layer-group text-tealBrand-700 mr-1"></i> Top Topic Pills:</strong> Filter your deck by real-world situations (Greetings, Food, Directions, Shopping, Home, Work, Health, Weather, Family, Hobbies, Condo & Social).
+                            <strong class="text-slate-900"><i class="fa-solid fa-flag text-rose-500 mr-1"></i> Needs Practice Flag:</strong> Flags difficult trouble spots into a dedicated <em>Needs Practice</em> deck for focused review.
                         </div>
                         <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
-                            <strong class="text-slate-900"><i class="fa-solid fa-magnifying-glass text-tealBrand-700 mr-1"></i> Top Search Bar:</strong> Instantly search by Tagalog word, English meaning, or mnemonic keyword.
+                            <strong class="text-slate-900"><i class="fa-solid fa-language text-tealBrand-700 mr-1"></i> Literal / Natural Toggle:</strong> Switches sentence cards between natural English and word-for-word Tagalog structure.
                         </div>
                         <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
-                            <strong class="text-slate-900"><i class="fa-solid fa-table-columns text-tealBrand-700 mr-1"></i> Navigation Tabs & Bottom Bar:</strong> Switch between <em>Daily</em>, <em>Favorites</em>, <em>Words</em>, <em>Sentences</em>, <em>Random</em> (shuffled practice), <em>Audio</em>, and <em>Comments / Q&A</em>.
+                            <strong class="text-slate-900"><i class="fa-solid fa-star text-amber-500 mr-1"></i> Star Icon (On Cards):</strong> Bookmarks favorite phrases into your personal <em>Favorites</em> tab.
                         </div>
                         <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-200/70">
                             <strong class="text-slate-900"><i class="fa-solid fa-plus text-amber-600 mr-1"></i> + Add Content:</strong> Import new weekly lesson JSON packs or paste your own custom Tagalog | English word pairs.
-                        </div>
-                        <div class="p-2.5 bg-rose-50 rounded-xl border border-rose-200 sm:col-span-2">
-                            <strong class="text-rose-800"><i class="fa-solid fa-triangle-exclamation text-rose-600 mr-1"></i> Red Floating SOS Button (Bottom-Right):</strong> Opens instant survival Tagalog phrases with one-tap audio for emergencies, jeepney/tricycle stops (<em>"Para po!"</em>), hospitals, and quick street needs.
                         </div>
                     </div>
                 </div>
@@ -3591,7 +3646,7 @@
             "10. Opinions, Likes & Hobbies",
             "11. Condo, Building & Errands",
             "12. Socializing, Invitations & Emergencies"
-];
+        ];
 
         const sosPhrases = [
             { tagalog: "Saklolo!", english: "Help!" },
@@ -3611,23 +3666,134 @@
         ];
 
         let vocabData = JSON.parse(localStorage.getItem('nt_vocabData_v3')) || initialVocab;
+        // Ensure backward-compatible needsPractice property exists on all cards
+        vocabData.forEach(item => {
+            if (typeof item.needsPractice === 'undefined') item.needsPractice = false;
+        });
+
         let commentsData = JSON.parse(localStorage.getItem('nt_commentsData')) || initialComments;
         let activeCategory = "All Steps";
         let activeTab = "daily";
         let isAdminUnlocked = false;
 
-        window.onload = function() {
-            renderCategoryChips();
-            updateSrsCounts();
-            renderDeck();
-            renderSosPhrases();
-            renderComments();
-        };
+        // Phase 1 Pedagogical State
+        let speechRate = parseFloat(localStorage.getItem('nt_speechRate')) || 1.0;
+        let showFocusCues = localStorage.getItem('nt_showFocusCues') !== 'false';
+        let globalLiteralMode = false;
+        let literalCardIds = new Set();
 
         function saveData() {
             localStorage.setItem('nt_vocabData_v3', JSON.stringify(vocabData));
             localStorage.setItem('nt_commentsData', JSON.stringify(commentsData));
             updateSrsCounts();
+        }
+
+        // --- PHASE 1 FEATURE 1: Focus / Trigger (Ang / Ng / Sa) Visual Cues ---
+        function formatTagalogWithFocusCues(text, isSentence) {
+            if (!showFocusCues || !isSentence || !text) return text;
+            // Highlight standalone focus/trigger particles: ang, ng, sa (case-insensitive, word boundaries)
+            return text
+                .replace(/\b(ang)\b/gi, '<span class="tg-marker-ang" title="Topic / Actor Focus Marker">$1</span>')
+                .replace(/\b(ng)\b/gi, '<span class="tg-marker-ng" title="Object / Possessive Marker">$1</span>')
+                .replace(/\b(sa)\b/gi, '<span class="tg-marker-sa" title="Direction / Location Marker">$1</span>');
+        }
+
+        function updateFocusCuesUI() {
+            const btn = document.getElementById('focusCueToggleBtn');
+            const legend = document.getElementById('focusLegendBar');
+            if (btn) {
+                btn.className = showFocusCues
+                    ? "px-2.5 py-2 rounded-xl text-xs font-extrabold bg-tealBrand-600 hover:bg-tealBrand-500 text-white border border-teal-400/50 transition flex items-center gap-1.5"
+                    : "px-2.5 py-2 rounded-xl text-xs font-semibold bg-white/10 hover:bg-white/20 text-white/80 border border-white/10 transition flex items-center gap-1.5";
+            }
+            if (legend) {
+                legend.style.display = showFocusCues ? 'flex' : 'none';
+            }
+        }
+
+        function toggleFocusCues() {
+            showFocusCues = !showFocusCues;
+            localStorage.setItem('nt_showFocusCues', showFocusCues.toString());
+            updateFocusCuesUI();
+            renderDeck();
+            if (!document.getElementById('trainingModal').classList.contains('hidden')) {
+                renderTrainingCard();
+            }
+            showStatusToast(showFocusCues ? 'Focus Cues ON (ang / ng / sa highlighted)' : 'Focus Cues OFF');
+        }
+
+        // --- PHASE 1 FEATURE 2: Literal vs. Natural Translation Helpers ---
+        function getLiteralTranslation(item) {
+            if (item.literal) return item.literal;
+            if (item.mnemonic && item.mnemonic.toLowerCase().startsWith('word-by-word:')) {
+                return item.mnemonic.replace(/^word-by-word:\s*/i, '').trim();
+            }
+            return null;
+        }
+
+        function toggleCardLiteral(id) {
+            if (literalCardIds.has(id)) {
+                literalCardIds.delete(id);
+            } else {
+                literalCardIds.add(id);
+            }
+            renderDeck();
+        }
+
+        function toggleAllTranslationsMode() {
+            globalLiteralMode = !globalLiteralMode;
+            literalCardIds.clear();
+            const lbl = document.getElementById('globalTransModeLabel');
+            if (lbl) lbl.innerText = globalLiteralMode ? 'Translations: Literal' : 'Translations: Natural';
+            renderDeck();
+            showStatusToast(globalLiteralMode ? 'Showing word-by-word literal translations' : 'Showing natural English translations');
+        }
+
+        // --- PHASE 1 FEATURE 3: Needs Practice Flag ---
+        function toggleNeedsPractice(id) {
+            const item = vocabData.find(v => v.id == id);
+            if (item) {
+                item.needsPractice = !item.needsPractice;
+                saveData();
+                renderDeck();
+                if (!document.getElementById('trainingModal').classList.contains('hidden')) {
+                    renderTrainingCard();
+                }
+                showStatusToast(item.needsPractice ? `Flagged "${item.tagalog}" for Needs Practice` : `Cleared "${item.tagalog}" from Needs Practice`);
+            }
+        }
+
+        // --- PHASE 1 FEATURE 4: Global Audio Speed Toggle (1.0x vs 0.75x) ---
+        function updateSpeechRateUI() {
+            const lbl = document.getElementById('speedToggleLabel');
+            const btn = document.getElementById('speedToggleBtn');
+            if (lbl) lbl.innerText = speechRate === 0.75 ? '0.75x' : '1.0x';
+            if (btn) {
+                btn.className = speechRate === 0.75
+                    ? "px-2.5 py-2 rounded-xl text-xs font-extrabold bg-amberBrand-500 text-slate-950 shadow-sm transition flex items-center gap-1.5"
+                    : "px-2.5 py-2 rounded-xl text-xs font-extrabold bg-white/15 hover:bg-white/25 text-white border border-white/20 transition flex items-center gap-1.5";
+            }
+        }
+
+        function toggleSpeechRate() {
+            speechRate = speechRate === 1.0 ? 0.75 : 1.0;
+            localStorage.setItem('nt_speechRate', speechRate.toString());
+            updateSpeechRateUI();
+            showStatusToast(speechRate === 0.75 ? 'Audio Speed: 0.75x (Slow & Clear)' : 'Audio Speed: 1.0x (Natural Pace)');
+        }
+
+        function speakTagalog(text, overrideRate = null) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'tl-PH';
+                u.rate = overrideRate !== null ? overrideRate : speechRate;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        function speakWithRate(text, rate = null) {
+            speakTagalog(text, rate);
         }
 
         function renderCategoryChips() {
@@ -3638,7 +3804,7 @@
             container.innerHTML = dynamicTopics.map(topic => {
                 const isActive = activeCategory === topic;
                 return `
-                    <button onclick="selectCategory('${topic.replace(/'/g, "\\'")}')" 
+                    <button onclick="selectCategory('${topic.replace(/'/g, "\'")}')" 
                         class="px-3.5 py-1 rounded-full font-bold whitespace-nowrap transition text-xs ${
                             isActive 
                             ? 'bg-amberBrand-500 text-slate-950 shadow-sm' 
@@ -3664,6 +3830,7 @@
             const wordsCount = vocabData.filter(v => v.type === 'word').length;
             const sentencesCount = vocabData.filter(v => v.type === 'sentence').length;
             const favCount = vocabData.filter(v => v.favorite).length;
+            const practiceCount = vocabData.filter(v => v.needsPractice).length;
 
             document.getElementById('srsAgainCount').innerText = `${again} (Again)`;
             document.getElementById('srsFamiliarCount').innerText = `${familiar} (Familiar)`;
@@ -3672,10 +3839,12 @@
             const tabWords = document.getElementById('tab-words');
             const tabIslands = document.getElementById('tab-islands');
             const tabFav = document.getElementById('tab-favorites');
+            const tabPractice = document.getElementById('tab-practice');
             const badge = document.getElementById('headerWordBadge');
             if (tabWords) tabWords.innerText = `Words (${wordsCount})`;
             if (tabIslands) tabIslands.innerText = `Sentences (${sentencesCount})`;
             if (tabFav) tabFav.innerText = `Favorites (${favCount})`;
+            if (tabPractice) tabPractice.innerText = `Needs Practice (${practiceCount})`;
             if (badge) badge.innerText = `${wordsCount} Words • ${sentencesCount} Sentences`;
 
             const total = vocabData.length;
@@ -3688,14 +3857,28 @@
             activeTab = tab;
 
             // Highlight subnav tabs
-            ['daily','favorites','words','islands','myislands','random','audio','comments'].forEach(t => {
+            ['daily','practice','favorites','words','islands','myislands','random','audio','comments'].forEach(t => {
                 const btn = document.getElementById(`tab-${t}`);
                 if (btn) {
                     if (t === tab) {
-                        btn.className = "px-3 py-1.5 font-bold rounded-lg bg-tealBrand-700 text-white";
+                        btn.className = t === 'practice'
+                            ? "px-3 py-1.5 font-bold rounded-lg bg-rose-600 text-white shadow-xs"
+                            : "px-3 py-1.5 font-bold rounded-lg bg-tealBrand-700 text-white";
                     } else {
-                        btn.className = "px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200";
+                        btn.className = t === 'practice'
+                            ? "px-3 py-1.5 font-bold rounded-lg text-rose-700 bg-rose-50/70 hover:bg-rose-100 border border-rose-200/70"
+                            : "px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200";
                     }
+                }
+            });
+
+            // Highlight bottom nav items
+            ['daily','practice','words','islands','favorites','comments'].forEach(t => {
+                const nav = document.getElementById(`nav-${t}`);
+                if (nav) {
+                    nav.className = t === tab
+                        ? "flex flex-col items-center gap-0.5 text-tealBrand-700"
+                        : "flex flex-col items-center gap-0.5 text-slate-400 hover:text-slate-600";
                 }
             });
 
@@ -3725,7 +3908,9 @@
             const searchInput = document.getElementById('searchInput');
             const q = searchInput ? searchInput.value.trim().toLowerCase() : '';
 
-            if (activeTab === 'favorites') {
+            if (activeTab === 'practice') {
+                items = vocabData.filter(v => v.needsPractice);
+            } else if (activeTab === 'favorites') {
                 items = vocabData.filter(v => v.favorite);
             } else if (activeTab === 'words') {
                 items = vocabData.filter(v => v.type === 'word');
@@ -3739,6 +3924,10 @@
                     : vocabData.filter(v => v.category === activeCategory);
             }
 
+            if (activeCategory !== 'All Steps' && ['practice', 'favorites', 'words', 'islands'].includes(activeTab)) {
+                items = items.filter(v => v.category === activeCategory);
+            }
+
             if (q) {
                 items = items.filter(v =>
                     v.tagalog.toLowerCase().includes(q) ||
@@ -3747,42 +3936,99 @@
                 );
             }
 
-            document.getElementById('deckHeaderTitle').innerText = activeTab.toUpperCase() + ' Deck';
+            const tabTitles = {
+                daily: activeCategory === 'All Steps' ? 'All Vocabulary & Sentences' : activeCategory,
+                practice: 'Needs Practice Deck (Flagged Trouble Spots)',
+                favorites: 'Favorites Deck',
+                words: 'Core Words Deck',
+                islands: 'Conversational Sentences Deck',
+                myislands: 'My Custom Islands',
+                random: 'Shuffled Practice Deck',
+                audio: 'Audio Immersion Deck'
+            };
+            document.getElementById('deckHeaderTitle').innerText = tabTitles[activeTab] || (activeTab.toUpperCase() + ' Deck');
             document.getElementById('deckItemCountText').innerText = `Showing ${items.length} items`;
 
+            if (items.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full bg-white p-8 rounded-2xl border border-slate-200/80 text-center space-y-2">
+                        <i class="fa-solid fa-folder-open text-2xl text-slate-300"></i>
+                        <p class="text-sm font-bold text-slate-700">No cards match this filter yet.</p>
+                        <p class="text-xs text-slate-500">${activeTab === 'practice' ? 'Tap the flag icon on any word or sentence card to add it to your Needs Practice deck.' : 'Try selecting "All Steps" at the top or clearing your search.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
             grid.innerHTML = items.map(item => {
-                const cardBorderClass = item.status === 'learned'
-                    ? 'border-tealBrand-500/70 ring-1 ring-tealBrand-500/20'
-                    : item.status === 'familiar'
-                        ? 'border-amber-400/80 ring-1 ring-amber-400/20'
-                        : 'border-slate-200/80';
+                const isSentence = item.type === 'sentence';
+                const formattedTagalog = formatTagalogWithFocusCues(item.tagalog, isSentence);
+                const literalText = getLiteralTranslation(item);
+                const isCardLiteral = literalText && (globalLiteralMode ? !literalCardIds.has(item.id) : literalCardIds.has(item.id));
+
+                const cardBorderClass = item.needsPractice
+                    ? 'border-rose-400/90 ring-1 ring-rose-400/30'
+                    : item.status === 'learned'
+                        ? 'border-tealBrand-500/70 ring-1 ring-tealBrand-500/20'
+                        : item.status === 'familiar'
+                            ? 'border-amber-400/80 ring-1 ring-amber-400/20'
+                            : 'border-slate-200/80';
+
+                // For sentence cards whose mnemonic is solely the word-by-word breakdown, show a clean structural note
+                const showMnemonicBox = !isSentence || (item.mnemonic && !item.mnemonic.toLowerCase().startsWith('word-by-word:'));
+
                 return `
-                <div class="bg-white p-5 rounded-2xl border ${cardBorderClass} shadow-sm space-y-3 transition-all">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-tealBrand-50 text-tealBrand-700 uppercase border border-tealBrand-100">
-                            ${item.category}
-                        </span>
-                        <div class="flex items-center gap-1">
-                            <button onclick="speakTagalog('${item.tagalog.replace(/'/g, "\\'")}')" class="w-7 h-7 rounded-lg bg-tealBrand-50 text-tealBrand-700 hover:bg-tealBrand-700 hover:text-white flex items-center justify-center text-xs transition">
-                                <i class="fa-solid fa-volume-high"></i>
-                            </button>
-                            <button onclick="toggleFavorite(${item.id})" class="w-7 h-7 rounded-lg text-slate-300 hover:text-amber-500 flex items-center justify-center text-xs transition">
-                                <i class="fa-solid fa-star ${item.favorite ? 'text-amber-400' : ''}"></i>
-                            </button>
+                <div class="bg-white p-5 rounded-2xl border ${cardBorderClass} shadow-sm space-y-3 transition-all flex flex-col justify-between">
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-tealBrand-50 text-tealBrand-700 uppercase border border-tealBrand-100 truncate">
+                                ${item.category}
+                            </span>
+                            <div class="flex items-center gap-1 shrink-0">
+                                <button onclick="speakTagalog('${item.tagalog.replace(/'/g, "\'")}')" title="Listen (${speechRate}x)"
+                                        class="w-7 h-7 rounded-lg bg-tealBrand-50 text-tealBrand-700 hover:bg-tealBrand-700 hover:text-white flex items-center justify-center text-xs transition">
+                                    <i class="fa-solid fa-volume-high"></i>
+                                </button>
+                                <button onclick="toggleNeedsPractice(${item.id})" title="${item.needsPractice ? 'Remove from Needs Practice' : 'Flag for Needs Practice'}"
+                                        class="w-7 h-7 rounded-lg ${item.needsPractice ? 'bg-rose-50 text-rose-600' : 'text-slate-300 hover:text-rose-500'} flex items-center justify-center text-xs transition">
+                                    <i class="fa-solid fa-flag"></i>
+                                </button>
+                                <button onclick="toggleFavorite(${item.id})" title="${item.favorite ? 'Remove from Favorites' : 'Add to Favorites'}"
+                                        class="w-7 h-7 rounded-lg text-slate-300 hover:text-amber-500 flex items-center justify-center text-xs transition">
+                                    <i class="fa-solid fa-star ${item.favorite ? 'text-amber-400' : ''}"></i>
+                                </button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div>
-                        <h3 class="font-serif font-extrabold text-xl text-slate-900">${item.tagalog}</h3>
-                        <p class="text-xs font-bold text-tealBrand-600">${item.romanization || ''}</p>
-                        <p class="text-xs font-semibold text-slate-500 mt-0.5">${item.english}</p>
-                    </div>
+                        <div>
+                            <h3 class="font-serif font-extrabold text-xl text-slate-900 leading-snug">${formattedTagalog}</h3>
+                            <p class="text-xs font-bold text-tealBrand-600 mt-0.5">${item.romanization || ''}</p>
+                            
+                            <!-- Natural vs. Word-by-Word Literal Translation Block -->
+                            <div class="mt-2 p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wider ${isCardLiteral ? 'text-purple-700' : 'text-slate-400'}">
+                                        ${isCardLiteral ? 'Word-by-Word Literal' : 'Natural English'}
+                                    </span>
+                                    ${literalText ? `
+                                        <button onclick="toggleCardLiteral(${item.id})" class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-white border border-slate-200 text-tealBrand-700 hover:bg-tealBrand-50 transition">
+                                            <i class="fa-solid fa-repeat mr-0.5"></i> ${isCardLiteral ? 'Show Natural' : 'Show Literal'}
+                                        </button>
+                                    ` : ''}
+                                </div>
+                                <p class="text-xs font-semibold ${isCardLiteral ? 'text-purple-950 italic' : 'text-slate-700'}">
+                                    ${isCardLiteral ? literalText : item.english}
+                                </p>
+                            </div>
+                        </div>
 
-                    <div class="p-3 bg-amber-50/70 border border-amber-200/60 rounded-xl text-xs space-y-1">
-                        <span class="font-bold text-amber-900 flex items-center gap-1 text-[11px]">
-                            <i class="fa-solid fa-lightbulb text-amber-500"></i> Remember It Vividly:
-                        </span>
-                        <p class="italic text-slate-700">${item.mnemonic}</p>
+                        ${showMnemonicBox ? `
+                        <div class="p-3 bg-amber-50/70 border border-amber-200/60 rounded-xl text-xs space-y-1">
+                            <span class="font-bold text-amber-900 flex items-center gap-1 text-[11px]">
+                                <i class="fa-solid fa-lightbulb text-amber-500"></i> Remember It Vividly:
+                            </span>
+                            <p class="italic text-slate-700">${item.mnemonic}</p>
+                        </div>` : ''}
                     </div>
 
                     <div class="pt-2 flex items-center justify-between gap-1.5 border-t border-slate-100 text-[10px] font-extrabold">
@@ -3886,6 +4132,7 @@
             const item = vocabData.find(v => v.id == id);
             if (item) {
                 item.status = status;
+                if (status === 'learned') item.needsPractice = false;
                 saveData();
                 renderDeck();
                 const labels = {
@@ -3907,15 +4154,6 @@
             }
         }
 
-        function speakTagalog(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'tl-PH';
-                window.speechSynthesis.speak(u);
-            }
-        }
-
         function toggleSosModal() { document.getElementById('sosModal').classList.toggle('hidden'); }
         function toggleAboutModal() { document.getElementById('aboutModal').classList.toggle('hidden'); }
         function openAddModal() { document.getElementById('addModal').classList.remove('hidden'); }
@@ -3924,7 +4162,8 @@
         function processBulkImport() {
             const val = document.getElementById('bulkImportInput').value.trim();
             if (!val) return;
-            const lines = val.split('\n');
+            const lines = val.split('
+');
             lines.forEach(line => {
                 const parts = line.split('|');
                 if (parts.length >= 2) {
@@ -3933,10 +4172,11 @@
                         type: "word",
                         tagalog: parts[0].trim(),
                         english: parts[1].trim(),
-                        category: "Palengke",
+                        category: "4. Shopping & Money",
                         mnemonic: `Sound-alike hook for ${parts[0].trim()}`,
                         status: "again",
-                        favorite: false
+                        favorite: false,
+                        needsPractice: false
                     });
                 }
             });
@@ -3952,7 +4192,7 @@
                         <h4 class="font-bold text-slate-900">${p.tagalog}</h4>
                         <p class="text-slate-500">${p.english}</p>
                     </div>
-                    <button onclick="speakTagalog('${p.tagalog.replace(/'/g, "\\'")}')" class="w-7 h-7 rounded bg-rose-50 text-rose-600 flex items-center justify-center">
+                    <button onclick="speakTagalog('${p.tagalog.replace(/'/g, "\'")}')" class="w-7 h-7 rounded bg-rose-50 text-rose-600 flex items-center justify-center">
                         <i class="fa-solid fa-volume-high"></i>
                     </button>
                 </div>
@@ -3984,12 +4224,13 @@
                                     tagalog: w.tagalog,
                                     romanization: w.phonetic || w.romanization || "",
                                     english: w.english || "",
-                                    category: w.island || w.category || "Step 1: Greetings & Politeness",
+                                    category: w.island || w.category || "1. Greetings & Small Talk",
                                     mnemonic: w.mnemonic_trigger ? `${w.mnemonic_trigger} — ${w.mnemonic_story || ''}` : (w.mnemonic || ""),
                                     example: w.example_tagalog ? `${w.example_tagalog} (${w.example_english || ''})` : "",
                                     culturalNote: w.cultural_note || "",
                                     status: "again",
                                     favorite: false,
+                                    needsPractice: false,
                                     isCustom: true
                                 });
                                 added++;
@@ -4008,10 +4249,11 @@
                                     tagalog: s.tagalog,
                                     romanization: s.phonetic || s.romanization || "",
                                     english: s.english || "",
-                                    category: s.island || s.category || "Step 1: Greetings & Politeness",
+                                    category: s.island || s.category || "1. Greetings & Small Talk",
                                     mnemonic: s.literal_breakdown ? `Word-by-word: ${s.literal_breakdown}` : (s.mnemonic || ""),
                                     status: "again",
                                     favorite: false,
+                                    needsPractice: false,
                                     isCustom: true
                                 });
                                 added++;
@@ -4036,6 +4278,7 @@
         let moduleQueue = [];
         let moduleIndex = 0;
         let recallRevealed = false;
+        let modalShowLiteral = false;
         let listeningTimer = null;
         let listeningPlaying = false;
         let dailyMinutesCompleted = parseInt(localStorage.getItem('nt_dailyMinutes') || '0', 10);
@@ -4046,9 +4289,14 @@
             if (sub) sub.innerText = `Today: ${dailyMinutesCompleted} min / 60 min goal (${pct}%)`;
         }
 
-        const origOnload = window.onload;
         window.onload = function() {
-            if (origOnload) origOnload();
+            updateSpeechRateUI();
+            updateFocusCuesUI();
+            renderCategoryChips();
+            updateSrsCounts();
+            renderDeck();
+            renderSosPhrases();
+            renderComments();
             updateDailyGoalUI();
         };
 
@@ -4056,31 +4304,37 @@
             currentModuleType = type;
             moduleIndex = 0;
             recallRevealed = false;
+            modalShowLiteral = false;
             stopListeningLoop();
 
-            const pool = activeCategory === 'All Steps'
+            // Prioritize flagged Needs Practice items when available, or filtered category pool
+            const basePool = activeCategory === 'All Steps'
                 ? [...vocabData]
                 : vocabData.filter(v => v.category === activeCategory);
+            const flaggedFirst = [
+                ...basePool.filter(v => v.needsPractice),
+                ...basePool.filter(v => !v.needsPractice)
+            ];
 
             if (type === 'newWords') {
-                const unseen = pool.filter(v => v.type === 'word' && v.status === 'again');
-                const wordsPool = unseen.length >= 5 ? unseen : pool.filter(v => v.type === 'word');
+                const unseen = flaggedFirst.filter(v => v.type === 'word' && v.status === 'again');
+                const wordsPool = unseen.length >= 5 ? unseen : flaggedFirst.filter(v => v.type === 'word');
                 moduleQueue = wordsPool.slice(0, 5);
                 document.getElementById('trainingModalHeader').className = "p-4 bg-tealBrand-700 text-white flex items-center justify-between";
                 document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-book-open mr-1.5"></i> New Words (15 min)';
             } else if (type === 'recall') {
-                const due = pool.filter(v => v.status !== 'learned');
-                const recallPool = due.length > 0 ? due : pool;
+                const due = flaggedFirst.filter(v => v.status !== 'learned' || v.needsPractice);
+                const recallPool = due.length > 0 ? due : flaggedFirst;
                 moduleQueue = [...recallPool].sort(() => 0.5 - Math.random()).slice(0, 8);
                 document.getElementById('trainingModalHeader').className = "p-4 bg-rose-600 text-white flex items-center justify-between";
                 document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-brain mr-1.5"></i> Active Recall Flashcards';
             } else if (type === 'shadowing') {
-                const sentences = pool.filter(v => v.type === 'sentence');
-                moduleQueue = (sentences.length > 0 ? sentences : pool).slice(0, 6);
+                const sentences = flaggedFirst.filter(v => v.type === 'sentence');
+                moduleQueue = (sentences.length > 0 ? sentences : flaggedFirst).slice(0, 6);
                 document.getElementById('trainingModalHeader').className = "p-4 bg-purple-600 text-white flex items-center justify-between";
-                document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-microphone mr-1.5"></i> Shadowing Practice (0.7x Slow + Normal)';
+                document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-microphone mr-1.5"></i> Shadowing Practice (0.75x Slow + Natural)';
             } else if (type === 'listening') {
-                moduleQueue = [...pool].slice(0, 12);
+                moduleQueue = [...flaggedFirst].slice(0, 12);
                 document.getElementById('trainingModalHeader').className = "p-4 bg-amberBrand-500 text-slate-950 flex items-center justify-between";
                 document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-headphones mr-1.5"></i> Hands-Free Listening Loop';
             }
@@ -4101,14 +4355,9 @@
             renderDeck();
         }
 
-        function speakWithRate(text, rate = 1.0) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'tl-PH';
-                u.rate = rate;
-                window.speechSynthesis.speak(u);
-            }
+        function toggleModalLiteral() {
+            modalShowLiteral = !modalShowLiteral;
+            renderTrainingCard();
         }
 
         function renderTrainingCard() {
@@ -4118,20 +4367,28 @@
 
             const body = document.getElementById('trainingModalBody');
             const footer = document.getElementById('trainingModalFooter');
-            const escapedTagalog = item.tagalog.replace(/'/g, "\\'");
+            const escapedTagalog = item.tagalog.replace(/'/g, "\'");
+            const isSentence = item.type === 'sentence';
+            const formattedTagalog = formatTagalogWithFocusCues(item.tagalog, isSentence);
+            const literalText = getLiteralTranslation(item);
 
             if (currentModuleType === 'newWords') {
                 body.innerHTML = `
                     <div class="space-y-4">
                         <div class="flex items-start justify-between gap-3">
                             <div>
-                                <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-tealBrand-50 text-tealBrand-700 border border-tealBrand-100">${item.category}</span>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-tealBrand-50 text-tealBrand-700 border border-tealBrand-100">${item.category}</span>
+                                    <button onclick="toggleNeedsPractice(${item.id})" class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${item.needsPractice ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-slate-50 text-slate-500 border-slate-200'}">
+                                        <i class="fa-solid fa-flag mr-0.5"></i> ${item.needsPractice ? 'Flagged' : 'Flag'}
+                                    </button>
+                                </div>
                                 <h2 class="font-serif font-extrabold text-3xl text-slate-900 mt-2">${item.tagalog}</h2>
                                 <p class="text-sm font-bold text-tealBrand-600">${item.romanization || ''}</p>
                                 <p class="text-base font-semibold text-slate-700 mt-1">${item.english}</p>
                             </div>
-                            <button onclick="speakWithRate('${escapedTagalog}', 1.0)" class="px-3.5 py-2.5 rounded-xl bg-tealBrand-700 hover:bg-tealBrand-800 text-white font-bold text-xs flex items-center gap-1.5 shadow">
-                                <i class="fa-solid fa-volume-high"></i> Listen
+                            <button onclick="speakWithRate('${escapedTagalog}')" class="px-3.5 py-2.5 rounded-xl bg-tealBrand-700 hover:bg-tealBrand-800 text-white font-bold text-xs flex items-center gap-1.5 shadow shrink-0">
+                                <i class="fa-solid fa-volume-high"></i> Listen (${speechRate}x)
                             </button>
                         </div>
                         <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl space-y-1">
@@ -4156,24 +4413,32 @@
             } else if (currentModuleType === 'recall') {
                 body.innerHTML = `
                     <div class="text-center py-4 space-y-4">
-                        <span class="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">${item.type === 'sentence' ? 'Sentence' : 'Vocabulary Word'}</span>
+                        <div class="flex items-center justify-center gap-2">
+                            <span class="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">${isSentence ? 'Sentence' : 'Vocabulary Word'}</span>
+                            <button onclick="toggleNeedsPractice(${item.id})" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${item.needsPractice ? 'bg-rose-600 text-white border-rose-600' : 'bg-slate-50 text-slate-500 border-slate-200'}">
+                                <i class="fa-solid fa-flag mr-0.5"></i> ${item.needsPractice ? 'Needs Practice' : 'Flag Practice'}
+                            </button>
+                        </div>
                         <div>
-                            <h2 class="font-serif font-extrabold text-3xl text-slate-900">${item.tagalog}</h2>
+                            <h2 class="font-serif font-extrabold text-3xl text-slate-900 leading-snug">${formattedTagalog}</h2>
                             <p class="text-xs font-bold text-tealBrand-600 mt-1">${item.romanization || ''}</p>
                         </div>
-                        <button onclick="speakWithRate('${escapedTagalog}', 1.0)" class="mx-auto px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs inline-flex items-center gap-1.5">
-                            <i class="fa-solid fa-volume-high text-tealBrand-700"></i> Hear Pronunciation
+                        <button onclick="speakWithRate('${escapedTagalog}')" class="mx-auto px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs inline-flex items-center gap-1.5">
+                            <i class="fa-solid fa-volume-high text-tealBrand-700"></i> Hear Pronunciation (${speechRate}x)
                         </button>
                         ${!recallRevealed ? `
                             <div class="pt-4">
                                 <button onclick="revealRecallAnswer()" class="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs shadow-md">
-                                    Show Meaning & Mnemonic
+                                    Show Meaning & Breakdown
                                 </button>
                             </div>
                         ` : `
                             <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl text-left space-y-2 mt-2">
-                                <p class="text-sm font-extrabold text-slate-900">${item.english}</p>
-                                <p class="text-xs text-slate-600 italic">${item.mnemonic}</p>
+                                <div class="flex items-center justify-between">
+                                    <p class="text-sm font-extrabold text-slate-900">${modalShowLiteral && literalText ? literalText : item.english}</p>
+                                    ${literalText ? `<button onclick="toggleModalLiteral()" class="text-[10px] font-bold px-2 py-0.5 rounded bg-white border border-slate-200 text-tealBrand-700">${modalShowLiteral ? 'Natural' : 'Literal'}</button>` : ''}
+                                </div>
+                                ${!isSentence ? `<p class="text-xs text-slate-600 italic">${item.mnemonic}</p>` : ''}
                             </div>
                         `}
                     </div>
@@ -4192,20 +4457,24 @@
                 body.innerHTML = `
                     <div class="space-y-4">
                         <div class="p-4 bg-purple-50/70 border border-purple-200 rounded-xl space-y-2">
-                            <h2 class="font-serif font-extrabold text-2xl text-slate-900">${item.tagalog}</h2>
+                            <div class="flex items-center justify-between">
+                                <span class="text-[10px] font-extrabold uppercase text-purple-800">Shadowing Phrase</span>
+                                ${literalText ? `<button onclick="toggleModalLiteral()" class="text-[10px] font-bold px-2 py-0.5 rounded bg-white border border-purple-200 text-purple-800">${modalShowLiteral ? 'Show Natural English' : 'Show Literal Structure'}</button>` : ''}
+                            </div>
+                            <h2 class="font-serif font-extrabold text-2xl text-slate-900 leading-snug">${formattedTagalog}</h2>
                             <p class="text-xs font-bold text-purple-700">${item.romanization || ''}</p>
-                            <p class="text-xs font-semibold text-slate-600">${item.english}</p>
+                            <p class="text-xs font-semibold ${modalShowLiteral && literalText ? 'text-purple-950 italic' : 'text-slate-600'}">${modalShowLiteral && literalText ? literalText : item.english}</p>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
-                            <button onclick="speakWithRate('${escapedTagalog}', 0.65)" class="p-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow">
-                                <i class="fa-solid fa-snail"></i> Play Slow (0.7x)
+                            <button onclick="speakWithRate('${escapedTagalog}', 0.75)" class="p-3 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow">
+                                <i class="fa-solid fa-gauge"></i> Play Slow (0.75x)
                             </button>
                             <button onclick="speakWithRate('${escapedTagalog}', 1.0)" class="p-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow">
                                 <i class="fa-solid fa-volume-high"></i> Play Natural (1.0x)
                             </button>
                         </div>
                         <p class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200/70">
-                            <strong>How to Shadow:</strong> Play at <strong>0.7x</strong> first and speak aloud simultaneously with the voice, matching the syllable stress shown in CAPITALS, then repeat at <strong>1.0x</strong>.
+                            <strong>How to Shadow:</strong> Play at <strong>0.75x</strong> first and speak aloud simultaneously with the voice, matching the syllable stress shown in CAPITALS, then repeat at <strong>1.0x</strong>.
                         </p>
                     </div>
                 `;
@@ -4220,17 +4489,17 @@
                     <div class="text-center py-3 space-y-4">
                         <div class="p-5 bg-amber-50/70 border border-amber-200 rounded-2xl space-y-2">
                             <span class="text-[10px] font-extrabold uppercase text-amber-800">${item.category}</span>
-                            <h2 class="font-serif font-extrabold text-2xl text-slate-900">${item.tagalog}</h2>
+                            <h2 class="font-serif font-extrabold text-2xl text-slate-900 leading-snug">${formattedTagalog}</h2>
                             <p class="text-xs font-bold text-tealBrand-700">${item.romanization || ''}</p>
                             <p class="text-sm font-semibold text-slate-700 pt-1">${item.english}</p>
                         </div>
                         <div class="flex items-center justify-center gap-3">
                             <button onclick="toggleListeningLoop()" id="listeningToggleBtn" class="px-5 py-2.5 rounded-xl bg-amberBrand-500 hover:bg-amberBrand-600 text-slate-950 font-extrabold text-xs shadow flex items-center gap-2">
                                 <i class="fa-solid ${listeningPlaying ? 'fa-pause' : 'fa-play'}"></i>
-                                ${listeningPlaying ? 'Pause Auto-Loop' : 'Start Hands-Free Loop'}
+                                ${listeningPlaying ? 'Pause Auto-Loop' : `Start Hands-Free Loop (${speechRate}x)`}
                             </button>
                         </div>
-                        <p class="text-[11px] text-slate-500">Plays each Tagalog phrase aloud and automatically advances every 4 seconds.</p>
+                        <p class="text-[11px] text-slate-500">Plays each Tagalog phrase aloud at ${speechRate}x speed and automatically advances.</p>
                     </div>
                 `;
                 footer.innerHTML = `
@@ -4246,8 +4515,9 @@
             if (moduleIndex > 0) {
                 moduleIndex--;
                 recallRevealed = false;
+                modalShowLiteral = false;
                 renderTrainingCard();
-                if (listeningPlaying) speakWithRate(moduleQueue[moduleIndex].tagalog, 0.95);
+                if (listeningPlaying) speakWithRate(moduleQueue[moduleIndex].tagalog);
             }
         }
 
@@ -4255,8 +4525,9 @@
             if (moduleIndex < moduleQueue.length - 1) {
                 moduleIndex++;
                 recallRevealed = false;
+                modalShowLiteral = false;
                 renderTrainingCard();
-                if (listeningPlaying) speakWithRate(moduleQueue[moduleIndex].tagalog, 0.95);
+                if (listeningPlaying) speakWithRate(moduleQueue[moduleIndex].tagalog);
             } else {
                 dailyMinutesCompleted += minsReward;
                 localStorage.setItem('nt_dailyMinutes', dailyMinutesCompleted.toString());
@@ -4284,6 +4555,7 @@
             const item = moduleQueue[moduleIndex];
             if (item) {
                 item.status = status;
+                if (status === 'learned') item.needsPractice = false;
                 saveData();
             }
             nextModuleCard(15);
@@ -4296,17 +4568,18 @@
             } else {
                 listeningPlaying = true;
                 renderTrainingCard();
-                speakWithRate(moduleQueue[moduleIndex].tagalog, 0.95);
+                speakWithRate(moduleQueue[moduleIndex].tagalog);
+                const intervalMs = speechRate === 0.75 ? 5400 : 4200;
                 listeningTimer = setInterval(() => {
                     if (moduleIndex < moduleQueue.length - 1) {
                         moduleIndex++;
                         renderTrainingCard();
-                        speakWithRate(moduleQueue[moduleIndex].tagalog, 0.95);
+                        speakWithRate(moduleQueue[moduleIndex].tagalog);
                     } else {
                         stopListeningLoop();
                         nextModuleCard(15);
                     }
-                }, 4200);
+                }, intervalMs);
             }
         }
 
@@ -4318,7 +4591,5 @@
             }
         }
     </script>
-
-
 </body>
 </html>
