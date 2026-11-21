@@ -145,9 +145,9 @@
             <button onclick="switchTab('favorites')" id="tab-favorites" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Favorites (0)</button>
             <button onclick="switchTab('words')" id="tab-words" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Words (114)</button>
             <button onclick="switchTab('islands')" id="tab-islands" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Sentences (109)</button>
-            <button onclick="switchTab('myislands')" id="tab-myislands" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">My Islands (0)</button>
+            <button onclick="switchTab('myislands')" id="tab-myislands" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200"><i class="fa-solid fa-island-tropical mr-1 text-tealBrand-600"></i>My Islands (0)</button>
             <button onclick="switchTab('random')" id="tab-random" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Random</button>
-            <button onclick="switchTab('audio')" id="tab-audio" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Audio</button>
+            <button onclick="switchTab('audio')" id="tab-audio" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200"><i class="fa-solid fa-headphones mr-1 text-amber-600"></i>Audio Player</button>
             <button onclick="switchTab('comments')" id="tab-comments" class="px-3 py-1.5 font-bold rounded-lg text-slate-600 hover:bg-slate-200">Comments / Q&A</button>
         </div>
 
@@ -169,8 +169,12 @@
                     </div>
                 </div>
 
-                <!-- SRS Repetition Count Badges -->
-                <div class="flex items-center gap-2 text-xs font-extrabold">
+                <!-- SRS Repetition Count Badges & Due Queue -->
+                <div class="flex items-center gap-2 text-xs font-extrabold flex-wrap">
+                    <button onclick="filterDueNow()" id="srsDueBadge" title="Filter cards currently due for spaced-repetition review"
+                            class="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center gap-1">
+                        <i class="fa-solid fa-clock-rotate-left"></i> <span id="srsDueCount">0 Due</span>
+                    </button>
                     <span class="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200" id="srsAgainCount">0 (Again)</span>
                     <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200" id="srsFamiliarCount">0 (Familiar)</span>
                     <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200" id="srsLearnedCount">0 (Learned)</span>
@@ -237,6 +241,121 @@
                     </div>
                     <span class="text-xs font-bold text-amber-700 group-hover:translate-x-0.5 transition">→</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- MY ISLANDS BUILDER SECTION (Hidden by Default) -->
+        <div id="myIslandsViewSection" class="hidden space-y-5">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                    <div>
+                        <h2 class="font-serif font-extrabold text-lg text-slate-900">My Custom Language Islands</h2>
+                        <p class="text-xs text-slate-500">Build personal conversation scripts for your real life in Metro Manila—condo errands, doctors, markets, or family.</p>
+                    </div>
+                    <span id="myIslandsBadge" class="text-xs font-extrabold px-3 py-1 rounded-full bg-tealBrand-50 text-tealBrand-700 border border-tealBrand-200">0 Custom Items</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200/70">
+                    <div class="space-y-2">
+                        <label class="block text-[11px] font-extrabold text-slate-700 uppercase">Custom Island Topic Name</label>
+                        <input type="text" id="customIslandName" placeholder="e.g., 13. Greenfield Coffee & Errands" value="13. My Custom Manila Island"
+                               class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-tealBrand-600 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[11px] font-extrabold text-slate-700 uppercase">Card Type</label>
+                        <select id="customItemType" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-tealBrand-600 outline-none">
+                            <option value="sentence">Conversational Sentence (with Focus Cues)</option>
+                            <option value="word">Vocabulary Word / Phrase</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[11px] font-extrabold text-slate-700 uppercase">Tagalog Text *</label>
+                        <input type="text" id="customTagalogInput" placeholder="e.g., Isang iced americano po, walang asukal."
+                               class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-tealBrand-600 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[11px] font-extrabold text-slate-700 uppercase">Natural English Meaning *</label>
+                        <input type="text" id="customEnglishInput" placeholder="e.g., One iced americano please, without sugar."
+                               class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-tealBrand-600 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[11px] font-extrabold text-slate-700 uppercase">Syllable Stress Guide (Optional)</label>
+                        <input type="text" id="customRomanizationInput" placeholder="e.g., ee-SAHNG iced americano poh, wah-LAHNG ah-SOO-kahl."
+                               class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-tealBrand-600 outline-none">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-[11px] font-extrabold text-slate-700 uppercase">Mnemonic Hook or Word-by-Word Literal (Optional)</label>
+                        <input type="text" id="customMnemonicInput" placeholder="e.g., Word-by-word: One iced americano (respect), without sugar."
+                               class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:ring-2 focus:ring-tealBrand-600 outline-none">
+                    </div>
+                    <div class="md:col-span-2 flex justify-end pt-1">
+                        <button onclick="addCustomIslandItem()" class="px-5 py-2.5 bg-tealBrand-700 hover:bg-tealBrand-800 text-white font-extrabold text-xs rounded-xl shadow flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-plus"></i> Save to My Islands
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AUDIO IMMERSION PLAYLIST PLAYER SECTION (Hidden by Default) -->
+        <div id="audioPlayerViewSection" class="hidden space-y-5">
+            <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-5">
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-11 h-11 rounded-2xl bg-amberBrand-500 text-slate-950 flex items-center justify-center text-lg shadow-sm">
+                            <i class="fa-solid fa-headphones"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-serif font-extrabold text-lg text-slate-900">Hands-Free Audio Immersion Player</h2>
+                            <p class="text-xs text-slate-500">Listen continuously while walking or commuting • Filtered by active top Island chip</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs font-bold">
+                        <label class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 cursor-pointer">
+                            <input type="checkbox" id="audioSpeakEnglishToggle" class="rounded text-tealBrand-700">
+                            <span>Speak English Meaning After Tagalog</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Now Playing Stage -->
+                <div class="p-6 rounded-2xl bg-gradient-to-br from-tealBrand-800 to-tealBrand-900 text-white text-center space-y-3 shadow-inner">
+                    <div class="flex items-center justify-center gap-2 text-[11px] font-extrabold uppercase tracking-wider text-teal-200">
+                        <span id="audioTrackPosition">Track 1 of 1</span>
+                        <span>•</span>
+                        <span id="audioTrackCategory">All Steps</span>
+                    </div>
+                    <h3 id="audioCurrentTagalog" class="font-serif font-extrabold text-2xl sm:text-3xl text-white leading-snug">Ready to Play</h3>
+                    <p id="audioCurrentRomanization" class="text-xs sm:text-sm font-bold text-amber-300"></p>
+                    <p id="audioCurrentEnglish" class="text-sm text-teal-100/90 font-medium"></p>
+
+                    <!-- Transport Controls -->
+                    <div class="pt-3 flex items-center justify-center gap-3 flex-wrap">
+                        <button onclick="audioPrevTrack()" class="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition" title="Previous Track">
+                            <i class="fa-solid fa-backward-step"></i>
+                        </button>
+                        <button onclick="toggleAudioPlaylist()" id="audioMainPlayBtn" class="px-6 py-3 rounded-full bg-amberBrand-500 hover:bg-amberBrand-600 text-slate-950 font-extrabold text-xs shadow-lg flex items-center gap-2 transition">
+                            <i class="fa-solid fa-play"></i> <span>Play Playlist</span>
+                        </button>
+                        <button onclick="audioNextTrack()" class="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-white flex items-center justify-center transition" title="Next Track">
+                            <i class="fa-solid fa-forward-step"></i>
+                        </button>
+                        <button onclick="toggleSpeechRate(); updateAudioPlayerUI();" class="px-3.5 py-2.5 rounded-full bg-white/15 hover:bg-white/25 text-white font-extrabold text-xs border border-white/20 transition">
+                            Speed: <span id="audioPlayerSpeedBadge">1.0x</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Interactive Playlist Queue -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-xs font-bold text-slate-500">
+                        <span>Queue Preview (Click any line to jump & play)</span>
+                        <span id="audioQueueTotalText">0 tracks</span>
+                    </div>
+                    <div id="audioPlaylistList" class="max-h-72 overflow-y-auto divide-y divide-slate-100 border border-slate-200/80 rounded-xl bg-slate-50/50">
+                        <!-- Injected via JS -->
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -379,6 +498,15 @@
                     <textarea id="bulkImportInput" rows="3" placeholder="tubig | water&#10;palengke | wet market&#10;masarap | delicious" class="w-full px-3 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-tealBrand-600 outline-none"></textarea>
                     <button onclick="processBulkImport()" class="mt-2 w-full py-2 bg-slate-900 text-white font-bold text-xs rounded-xl hover:bg-slate-800">
                         Run Bulk Auto-Mnemonic Importer
+                    </button>
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <div>
+                        <h4 class="text-xs font-extrabold text-slate-800">Backup Your Progress & Custom Cards</h4>
+                        <p class="text-[10px] text-slate-500">Download a full JSON backup of your SRS ratings, favorites, and custom islands.</p>
+                    </div>
+                    <button onclick="exportDeckBackup()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-sm shrink-0 flex items-center gap-1.5">
+                        <i class="fa-solid fa-download"></i> Export Backup
                     </button>
                 </div>
             </div>
@@ -3666,14 +3794,20 @@
         ];
 
         let vocabData = JSON.parse(localStorage.getItem('nt_vocabData_v3')) || initialVocab;
-        // Ensure backward-compatible needsPractice property exists on all cards
+        // Ensure backward-compatible Phase 1 & Phase 2 properties exist on all cards
+        const DAY_MS = 24 * 60 * 60 * 1000;
+        const MIN_MS = 60 * 1000;
         vocabData.forEach(item => {
             if (typeof item.needsPractice === 'undefined') item.needsPractice = false;
+            if (typeof item.reps === 'undefined') item.reps = item.status === 'learned' ? 2 : (item.status === 'familiar' ? 1 : 0);
+            if (typeof item.intervalDays === 'undefined') item.intervalDays = item.status === 'learned' ? 30 : (item.status === 'familiar' ? 1 : 0);
+            if (typeof item.nextReviewAt === 'undefined') item.nextReviewAt = Date.now();
         });
 
         let commentsData = JSON.parse(localStorage.getItem('nt_commentsData')) || initialComments;
         let activeCategory = "All Steps";
         let activeTab = "daily";
+        let onlyShowDue = false;
         let isAdminUnlocked = false;
 
         // Phase 1 Pedagogical State
@@ -3820,31 +3954,72 @@
             activeCategory = cat;
             renderCategoryChips();
             if (activeTab === 'comments') switchTab('daily');
-            else renderDeck();
+            else if (activeTab === 'audio') {
+                stopAudioPlaylist();
+                initAudioPlaylist();
+            } else renderDeck();
+        }
+
+        function isCardDue(item) {
+            return !item.nextReviewAt || item.nextReviewAt <= Date.now();
+        }
+
+        function formatNextReviewLabel(item) {
+            if (!item.nextReviewAt || item.nextReviewAt <= Date.now()) {
+                return 'Due now';
+            }
+            const diffMs = item.nextReviewAt - Date.now();
+            const diffMins = Math.round(diffMs / MIN_MS);
+            if (diffMins < 60) return `Next in ${diffMins}m`;
+            const diffHours = Math.round(diffMins / 60);
+            if (diffHours < 24) return `Next in ${diffHours}h`;
+            const diffDays = Math.round(diffMs / DAY_MS);
+            return `Next in ${diffDays}d`;
+        }
+
+        function filterDueNow() {
+            onlyShowDue = !onlyShowDue;
+            const badge = document.getElementById('srsDueBadge');
+            if (badge) {
+                badge.className = onlyShowDue
+                    ? "px-2.5 py-1 rounded-lg bg-indigo-600 text-white shadow-sm transition flex items-center gap-1"
+                    : "px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition flex items-center gap-1";
+            }
+            renderDeck();
+            showStatusToast(onlyShowDue ? 'Showing only cards due for review right now' : 'Showing all cards');
         }
 
         function updateSrsCounts() {
             const again = vocabData.filter(v => v.status === 'again').length;
             const familiar = vocabData.filter(v => v.status === 'familiar').length;
             const learned = vocabData.filter(v => v.status === 'learned').length;
+            const dueCount = vocabData.filter(v => isCardDue(v)).length;
             const wordsCount = vocabData.filter(v => v.type === 'word').length;
             const sentencesCount = vocabData.filter(v => v.type === 'sentence').length;
             const favCount = vocabData.filter(v => v.favorite).length;
             const practiceCount = vocabData.filter(v => v.needsPractice).length;
+            const customCount = vocabData.filter(v => v.isCustom).length;
 
             document.getElementById('srsAgainCount').innerText = `${again} (Again)`;
             document.getElementById('srsFamiliarCount').innerText = `${familiar} (Familiar)`;
             document.getElementById('srsLearnedCount').innerText = `${learned} (Learned)`;
+            const dueEl = document.getElementById('srsDueCount');
+            if (dueEl) dueEl.innerText = `${dueCount} Due`;
 
             const tabWords = document.getElementById('tab-words');
             const tabIslands = document.getElementById('tab-islands');
             const tabFav = document.getElementById('tab-favorites');
             const tabPractice = document.getElementById('tab-practice');
+            const tabMyIslands = document.getElementById('tab-myislands');
+            const myIslandsBadge = document.getElementById('myIslandsBadge');
             const badge = document.getElementById('headerWordBadge');
+
             if (tabWords) tabWords.innerText = `Words (${wordsCount})`;
             if (tabIslands) tabIslands.innerText = `Sentences (${sentencesCount})`;
             if (tabFav) tabFav.innerText = `Favorites (${favCount})`;
             if (tabPractice) tabPractice.innerText = `Needs Practice (${practiceCount})`;
+            if (tabMyIslands) tabMyIslands.innerHTML = `<i class="fa-solid fa-island-tropical mr-1 text-tealBrand-600"></i>My Islands (${customCount})`;
+            if (myIslandsBadge) myIslandsBadge.innerText = `${customCount} Custom Item${customCount === 1 ? '' : 's'}`;
             if (badge) badge.innerText = `${wordsCount} Words • ${sentencesCount} Sentences`;
 
             const total = vocabData.length;
@@ -3855,6 +4030,7 @@
 
         function switchTab(tab) {
             activeTab = tab;
+            if (tab !== 'audio') stopAudioPlaylist();
 
             // Highlight subnav tabs
             ['daily','practice','favorites','words','islands','myislands','random','audio','comments'].forEach(t => {
@@ -3886,17 +4062,28 @@
             const dailySec = document.getElementById('dailyViewSection');
             const deckSec = document.getElementById('deckViewSection');
             const commentsSec = document.getElementById('commentsViewSection');
+            const myIslandsSec = document.getElementById('myIslandsViewSection');
+            const audioSec = document.getElementById('audioPlayerViewSection');
+
+            dailySec.classList.add('hidden');
+            deckSec.classList.add('hidden');
+            commentsSec.classList.add('hidden');
+            myIslandsSec.classList.add('hidden');
+            audioSec.classList.add('hidden');
 
             if (tab === 'comments') {
-                dailySec.classList.add('hidden');
-                deckSec.classList.add('hidden');
                 commentsSec.classList.remove('hidden');
                 renderComments();
+            } else if (tab === 'audio') {
+                audioSec.classList.remove('hidden');
+                initAudioPlaylist();
+            } else if (tab === 'myislands') {
+                myIslandsSec.classList.remove('hidden');
+                deckSec.classList.remove('hidden');
+                renderDeck();
             } else {
-                commentsSec.classList.add('hidden');
                 deckSec.classList.remove('hidden');
                 if (tab === 'daily') dailySec.classList.remove('hidden');
-                else dailySec.classList.add('hidden');
                 renderDeck();
             }
         }
@@ -3914,8 +4101,10 @@
                 items = vocabData.filter(v => v.favorite);
             } else if (activeTab === 'words') {
                 items = vocabData.filter(v => v.type === 'word');
-            } else if (activeTab === 'islands' || activeTab === 'myislands') {
+            } else if (activeTab === 'islands') {
                 items = vocabData.filter(v => v.type === 'sentence');
+            } else if (activeTab === 'myislands') {
+                items = vocabData.filter(v => v.isCustom);
             } else if (activeTab === 'random') {
                 items = [...vocabData].sort(() => 0.5 - Math.random());
             } else {
@@ -3926,6 +4115,10 @@
 
             if (activeCategory !== 'All Steps' && ['practice', 'favorites', 'words', 'islands'].includes(activeTab)) {
                 items = items.filter(v => v.category === activeCategory);
+            }
+
+            if (onlyShowDue && activeTab === 'daily') {
+                items = items.filter(v => isCardDue(v));
             }
 
             if (q) {
@@ -3981,10 +4174,20 @@
                 <div class="bg-white p-5 rounded-2xl border ${cardBorderClass} shadow-sm space-y-3 transition-all flex flex-col justify-between">
                     <div class="space-y-3">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-tealBrand-50 text-tealBrand-700 uppercase border border-tealBrand-100 truncate">
-                                ${item.category}
-                            </span>
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-tealBrand-50 text-tealBrand-700 uppercase border border-tealBrand-100 truncate">
+                                    ${item.category}
+                                </span>
+                                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded ${isCardDue(item) ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-500'} shrink-0">
+                                    ${formatNextReviewLabel(item)}
+                                </span>
+                            </div>
                             <div class="flex items-center gap-1 shrink-0">
+                                ${item.isCustom ? `
+                                <button onclick="deleteCustomCard(${item.id})" title="Delete Custom Card"
+                                        class="w-7 h-7 rounded-lg text-slate-300 hover:text-rose-600 flex items-center justify-center text-xs transition">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>` : ''}
                                 <button onclick="speakTagalog('${item.tagalog.replace(/'/g, "\\'")}')" title="Listen (${speechRate}x)"
                                         class="w-7 h-7 rounded-lg bg-tealBrand-50 text-tealBrand-700 hover:bg-tealBrand-700 hover:text-white flex items-center justify-center text-xs transition">
                                     <i class="fa-solid fa-volume-high"></i>
@@ -4128,20 +4331,251 @@
             window._srsToastTimer = setTimeout(() => { toast.style.opacity = '0'; }, 1800);
         }
 
+        function applySrsSchedule(item, status) {
+            item.status = status;
+            const now = Date.now();
+            if (status === 'again') {
+                item.reps = 0;
+                item.intervalDays = 0;
+                item.nextReviewAt = now + (5 * MIN_MS);
+            } else if (status === 'familiar') {
+                item.reps = (item.reps || 0) + 1;
+                item.intervalDays = item.reps === 1 ? 1 : Math.min(7, item.reps * 2);
+                item.nextReviewAt = now + (item.intervalDays * DAY_MS);
+            } else if (status === 'learned') {
+                item.reps = Math.max(2, (item.reps || 0) + 1);
+                item.intervalDays = item.intervalDays >= 30 ? Math.min(90, item.intervalDays * 2) : 30;
+                item.nextReviewAt = now + (item.intervalDays * DAY_MS);
+                item.needsPractice = false;
+            }
+        }
+
         function setCardStatus(id, status) {
             const item = vocabData.find(v => v.id == id);
             if (item) {
-                item.status = status;
-                if (status === 'learned') item.needsPractice = false;
+                applySrsSchedule(item, status);
                 saveData();
                 renderDeck();
                 const labels = {
-                    again: 'Again (5m) — Kept in active review queue',
-                    familiar: 'Familiar (1d) — Moving into short-term memory',
-                    learned: 'Learned (30d) — Mastered! Progress bar updated'
+                    again: 'Again (5m) — Due again in 5 minutes',
+                    familiar: `Familiar — Scheduled in ${item.intervalDays} day${item.intervalDays > 1 ? 's' : ''}`,
+                    learned: `Learned — Mastered! Next review in ${item.intervalDays} days`
                 };
                 showStatusToast(`${item.tagalog}: ${labels[status] || status}`);
             }
+        }
+
+        // --- PHASE 2: MY CUSTOM ISLANDS BUILDER ---
+        function addCustomIslandItem() {
+            const islandName = (document.getElementById('customIslandName').value || '').trim() || '13. My Custom Manila Island';
+            const type = document.getElementById('customItemType').value;
+            const tagalog = (document.getElementById('customTagalogInput').value || '').trim();
+            const english = (document.getElementById('customEnglishInput').value || '').trim();
+            const romanization = (document.getElementById('customRomanizationInput').value || '').trim();
+            const mnemonic = (document.getElementById('customMnemonicInput').value || '').trim();
+
+            if (!tagalog || !english) {
+                alert('Please enter both the Tagalog phrase and its English meaning.');
+                return;
+            }
+
+            vocabData.unshift({
+                id: Date.now() + Math.random(),
+                type: type,
+                tagalog: tagalog,
+                romanization: romanization,
+                english: english,
+                category: islandName,
+                mnemonic: mnemonic || (type === 'word' ? `Personal memory hook for ${tagalog}` : ''),
+                status: 'again',
+                reps: 0,
+                intervalDays: 0,
+                nextReviewAt: Date.now(),
+                favorite: false,
+                needsPractice: false,
+                isCustom: true
+            });
+
+            document.getElementById('customTagalogInput').value = '';
+            document.getElementById('customEnglishInput').value = '';
+            document.getElementById('customRomanizationInput').value = '';
+            document.getElementById('customMnemonicInput').value = '';
+
+            saveData();
+            renderCategoryChips();
+            renderDeck();
+            showStatusToast(`Added "${tagalog}" to ${islandName}`);
+        }
+
+        function deleteCustomCard(id) {
+            if (!confirm('Remove this custom card from My Islands?')) return;
+            vocabData = vocabData.filter(v => v.id != id);
+            saveData();
+            renderCategoryChips();
+            renderDeck();
+            showStatusToast('Custom card removed');
+        }
+
+        // --- PHASE 2: HANDS-FREE AUDIO IMMERSION PLAYLIST PLAYER ---
+        let audioQueue = [];
+        let audioIndex = 0;
+        let audioIsPlaying = false;
+        let audioLoopTimeout = null;
+
+        function initAudioPlaylist() {
+            audioQueue = activeCategory === 'All Steps'
+                ? [...vocabData]
+                : vocabData.filter(v => v.category === activeCategory);
+            if (audioIndex >= audioQueue.length) audioIndex = 0;
+            updateAudioPlayerUI();
+        }
+
+        function updateAudioPlayerUI() {
+            const speedBadge = document.getElementById('audioPlayerSpeedBadge');
+            if (speedBadge) speedBadge.innerText = speechRate === 0.75 ? '0.75x' : '1.0x';
+
+            const total = audioQueue.length;
+            const queueTotalEl = document.getElementById('audioQueueTotalText');
+            if (queueTotalEl) queueTotalEl.innerText = `${total} tracks`;
+
+            const playBtn = document.getElementById('audioMainPlayBtn');
+            if (playBtn) {
+                playBtn.innerHTML = audioIsPlaying
+                    ? '<i class="fa-solid fa-pause"></i> <span>Pause Playlist</span>'
+                    : '<i class="fa-solid fa-play"></i> <span>Play Playlist</span>';
+            }
+
+            if (!total) {
+                document.getElementById('audioCurrentTagalog').innerText = 'No tracks in this category';
+                document.getElementById('audioCurrentRomanization').innerText = '';
+                document.getElementById('audioCurrentEnglish').innerText = '';
+                document.getElementById('audioPlaylistList').innerHTML = '';
+                return;
+            }
+
+            const track = audioQueue[audioIndex];
+            document.getElementById('audioTrackPosition').innerText = `Track ${audioIndex + 1} of ${total}`;
+            document.getElementById('audioTrackCategory').innerText = track.category;
+            document.getElementById('audioCurrentTagalog').innerHTML = formatTagalogWithFocusCues(track.tagalog, track.type === 'sentence');
+            document.getElementById('audioCurrentRomanization').innerText = track.romanization || '';
+            document.getElementById('audioCurrentEnglish').innerText = track.english;
+
+            const listEl = document.getElementById('audioPlaylistList');
+            listEl.innerHTML = audioQueue.map((item, idx) => `
+                <button onclick="jumpToAudioTrack(${idx})" class="w-full px-4 py-2.5 text-left flex items-center justify-between gap-3 transition ${
+                    idx === audioIndex ? 'bg-tealBrand-50 font-bold' : 'hover:bg-white'
+                }">
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-extrabold ${idx === audioIndex ? 'text-tealBrand-700' : 'text-slate-400'}">#${idx + 1}</span>
+                            <span class="text-xs font-extrabold text-slate-900 truncate">${item.tagalog}</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 truncate pl-6">${item.english}</p>
+                    </div>
+                    <span class="text-xs ${idx === audioIndex ? 'text-tealBrand-700' : 'text-slate-300'} shrink-0">
+                        <i class="fa-solid ${idx === audioIndex && audioIsPlaying ? 'fa-volume-high' : 'fa-play'}"></i>
+                    </span>
+                </button>
+            `).join('');
+        }
+
+        function playCurrentAudioTrack() {
+            if (!audioQueue.length) return;
+            const track = audioQueue[audioIndex];
+            updateAudioPlayerUI();
+
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+
+            const utterTg = new SpeechSynthesisUtterance(track.tagalog);
+            utterTg.lang = 'tl-PH';
+            utterTg.rate = speechRate;
+
+            const speakEn = document.getElementById('audioSpeakEnglishToggle') && document.getElementById('audioSpeakEnglishToggle').checked;
+
+            utterTg.onend = () => {
+                if (!audioIsPlaying) return;
+                if (speakEn) {
+                    const utterEn = new SpeechSynthesisUtterance(track.english);
+                    utterEn.lang = 'en-US';
+                    utterEn.rate = 1.0;
+                    utterEn.onend = () => {
+                        if (!audioIsPlaying) return;
+                        audioLoopTimeout = setTimeout(() => {
+                            audioIndex = (audioIndex + 1) % audioQueue.length;
+                            playCurrentAudioTrack();
+                        }, 1100);
+                    };
+                    window.speechSynthesis.speak(utterEn);
+                } else {
+                    audioLoopTimeout = setTimeout(() => {
+                        audioIndex = (audioIndex + 1) % audioQueue.length;
+                        playCurrentAudioTrack();
+                    }, 1200);
+                }
+            };
+
+            window.speechSynthesis.speak(utterTg);
+        }
+
+        function toggleAudioPlaylist() {
+            if (audioIsPlaying) {
+                stopAudioPlaylist();
+                updateAudioPlayerUI();
+            } else {
+                if (!audioQueue.length) initAudioPlaylist();
+                audioIsPlaying = true;
+                playCurrentAudioTrack();
+            }
+        }
+
+        function stopAudioPlaylist() {
+            audioIsPlaying = false;
+            if (audioLoopTimeout) {
+                clearTimeout(audioLoopTimeout);
+                audioLoopTimeout = null;
+            }
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        }
+
+        function audioNextTrack() {
+            if (!audioQueue.length) return;
+            audioIndex = (audioIndex + 1) % audioQueue.length;
+            if (audioIsPlaying) playCurrentAudioTrack();
+            else updateAudioPlayerUI();
+        }
+
+        function audioPrevTrack() {
+            if (!audioQueue.length) return;
+            audioIndex = (audioIndex - 1 + audioQueue.length) % audioQueue.length;
+            if (audioIsPlaying) playCurrentAudioTrack();
+            else updateAudioPlayerUI();
+        }
+
+        function jumpToAudioTrack(idx) {
+            audioIndex = idx;
+            audioIsPlaying = true;
+            playCurrentAudioTrack();
+        }
+
+        // --- PHASE 2: FULL JSON DECK BACKUP EXPORT ---
+        function exportDeckBackup() {
+            const backupPayload = {
+                app: "Naturally Tagalog",
+                exportedAt: new Date().toISOString(),
+                words: vocabData.filter(v => v.type === 'word'),
+                sentences: vocabData.filter(v => v.type === 'sentence')
+            };
+            const blob = new Blob([JSON.stringify(backupPayload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `naturally-tagalog-backup-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showStatusToast('Full JSON backup downloaded');
         }
 
         function toggleFavorite(id) {
@@ -4174,8 +4608,12 @@
                         category: "4. Shopping & Money",
                         mnemonic: `Sound-alike hook for ${parts[0].trim()}`,
                         status: "again",
+                        reps: 0,
+                        intervalDays: 0,
+                        nextReviewAt: Date.now(),
                         favorite: false,
-                        needsPractice: false
+                        needsPractice: false,
+                        isCustom: true
                     });
                 }
             });
@@ -4322,9 +4760,9 @@
                 document.getElementById('trainingModalHeader').className = "p-4 bg-tealBrand-700 text-white flex items-center justify-between";
                 document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-book-open mr-1.5"></i> New Words (15 min)';
             } else if (type === 'recall') {
-                const due = flaggedFirst.filter(v => v.status !== 'learned' || v.needsPractice);
+                const due = flaggedFirst.filter(v => isCardDue(v) || v.status !== 'learned' || v.needsPractice);
                 const recallPool = due.length > 0 ? due : flaggedFirst;
-                moduleQueue = [...recallPool].sort(() => 0.5 - Math.random()).slice(0, 8);
+                moduleQueue = [...recallPool].slice(0, 8);
                 document.getElementById('trainingModalHeader').className = "p-4 bg-rose-600 text-white flex items-center justify-between";
                 document.getElementById('trainingModalTitle').innerHTML = '<i class="fa-solid fa-brain mr-1.5"></i> Active Recall Flashcards';
             } else if (type === 'shadowing') {
@@ -4553,8 +4991,7 @@
         function gradeRecallCard(status) {
             const item = moduleQueue[moduleIndex];
             if (item) {
-                item.status = status;
-                if (status === 'learned') item.needsPractice = false;
+                applySrsSchedule(item, status);
                 saveData();
             }
             nextModuleCard(15);
