@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f766e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>Naturally Tagalog - SRS Mnemonic & Immersion Deck</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -132,6 +135,10 @@
             <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto hide-scrollbar text-xs" id="categoryContainer">
                 <!-- Chips injected via JS -->
             </div>
+        </div>
+        <!-- Offline Status Banner (Hidden when online) -->
+        <div id="offlineBanner" class="hidden bg-amberBrand-500 text-slate-950 text-[11px] font-extrabold px-4 py-1.5 text-center border-t border-amber-600/30">
+            <i class="fa-solid fa-wifi-slash mr-1"></i> Offline Mode — Your cards, mnemonics, and SRS progress work 100% locally.
         </div>
     </header>
 
@@ -392,8 +399,8 @@
             <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm space-y-4">
                 <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
                     <div>
-                        <h2 class="font-serif font-extrabold text-lg text-slate-900">Community Questions & Comments</h2>
-                        <p class="text-xs text-slate-500">Ask questions, share mnemonics, or leave feedback for the admin.</p>
+                        <h2 class="font-serif font-extrabold text-lg text-slate-900">Beta Tester Feedback & Study Notes</h2>
+                        <p class="text-xs text-slate-500">Save personal study notes on your device or send feedback directly to George.</p>
                     </div>
                     <div class="flex items-center gap-2">
                         <span id="adminStatusBadge" class="text-xs font-bold px-3 py-1 bg-slate-100 text-slate-600 rounded-lg">User Mode</span>
@@ -403,13 +410,38 @@
                     </div>
                 </div>
 
-                <!-- Comment Input Form -->
+                <!-- Closed Testing Direct Feedback Banner -->
+                <div class="p-4 bg-tealBrand-50 border border-tealBrand-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="space-y-1">
+                        <h3 class="text-xs font-extrabold text-tealBrand-900 flex items-center gap-1.5">
+                            <i class="fa-brands fa-google-play text-tealBrand-700"></i> Google Play Closed Testing Feedback
+                        </h3>
+                        <p class="text-[11px] text-slate-700 leading-relaxed">
+                            Notes posted below are saved locally on your device. To send bug reports, audio feedback, or word suggestions directly to the developer, tap <strong>Send to Developer</strong> or leave private feedback on our Google Play listing.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <a href="https://play.google.com/store/apps/details?id=com.geodecarlo.naturallytagalogapp" target="_blank" rel="noopener noreferrer"
+                           class="px-3 py-2 bg-white hover:bg-slate-50 text-tealBrand-800 border border-tealBrand-300 font-extrabold text-xs rounded-xl shadow-2xs flex items-center gap-1.5 transition">
+                            <i class="fa-brands fa-google-play text-tealBrand-700"></i> Play Store Page
+                        </a>
+                        <button onclick="sendFeedbackEmail()"
+                           class="px-3.5 py-2 bg-amberBrand-500 hover:bg-amberBrand-600 text-slate-950 font-extrabold text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-paper-plane"></i> Send to Developer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Comment / Feedback Input Form -->
                 <div class="space-y-3">
-                    <textarea id="commentTextInput" rows="3" placeholder="Type your question or Tagalog study note here..." 
+                    <textarea id="commentTextInput" rows="3" placeholder="Write your feedback, bug report, or Tagalog study note here..." 
                               class="w-full p-3 border rounded-xl text-xs focus:ring-2 focus:ring-tealBrand-600 outline-none"></textarea>
-                    <div class="flex justify-end">
-                        <button onclick="postComment()" class="px-4 py-2 bg-tealBrand-700 hover:bg-tealBrand-800 text-white font-bold text-xs rounded-xl shadow">
-                            Post Comment
+                    <div class="flex flex-wrap items-center justify-end gap-2">
+                        <button onclick="postComment()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl border border-slate-200 transition">
+                            Save Local Study Note
+                        </button>
+                        <button onclick="postAndEmailFeedback()" class="px-4 py-2 bg-tealBrand-700 hover:bg-tealBrand-800 text-white font-bold text-xs rounded-xl shadow flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-envelope"></i> Save & Email to George
                         </button>
                     </div>
                 </div>
@@ -3937,14 +3969,31 @@
             const dynamicTopics = [...islandTopics, ...extraTopics];
             container.innerHTML = dynamicTopics.map(topic => {
                 const isActive = activeCategory === topic;
+                const topicItems = topic === 'All Steps'
+                    ? vocabData
+                    : vocabData.filter(v => v.category === topic);
+                const total = topicItems.length;
+                const learned = topicItems.filter(v => v.status === 'learned').length;
+                const familiar = topicItems.filter(v => v.status === 'familiar').length;
+                const pct = total ? Math.round(((learned + familiar * 0.5) / total) * 100) : 0;
+                const learnedPct = total ? (learned / total) * 100 : 0;
+                const familiarPct = total ? (familiar / total) * 100 : 0;
+
                 return `
                     <button onclick="selectCategory('${topic.replace(/'/g, "\\'")}')" 
-                        class="px-3.5 py-1 rounded-full font-bold whitespace-nowrap transition text-xs ${
+                        class="px-3.5 py-1.5 rounded-xl font-bold whitespace-nowrap transition text-xs flex flex-col items-start gap-1 min-w-[135px] ${
                             isActive 
                             ? 'bg-amberBrand-500 text-slate-950 shadow-sm' 
                             : 'bg-tealBrand-700/80 text-teal-100 hover:bg-tealBrand-600 border border-teal-600/40'
                         }">
-                        ${topic}
+                        <div class="w-full flex items-center justify-between gap-2">
+                            <span>${topic}</span>
+                            <span class="text-[10px] font-extrabold ${isActive ? 'text-slate-900/80' : 'text-teal-200/90'}">${learned}/${total} (${pct}%)</span>
+                        </div>
+                        <div class="w-full h-1.5 rounded-full overflow-hidden flex ${isActive ? 'bg-slate-950/20' : 'bg-tealBrand-950/60'}">
+                            <div class="${isActive ? 'bg-tealBrand-800' : 'bg-emerald-400'} h-full transition-all duration-300" style="width: ${learnedPct}%"></div>
+                            <div class="${isActive ? 'bg-amber-700' : 'bg-amber-400'} h-full transition-all duration-300" style="width: ${familiarPct}%"></div>
+                        </div>
                     </button>
                 `;
             }).join('');
@@ -4026,9 +4075,21 @@
             document.getElementById('progressBarAgain').style.width = (total ? (again/total)*100 : 0) + '%';
             document.getElementById('progressBarFamiliar').style.width = (total ? (familiar/total)*100 : 0) + '%';
             document.getElementById('progressBarLearned').style.width = (total ? (learned/total)*100 : 0) + '%';
+            renderCategoryChips();
         }
 
-        function switchTab(tab) {
+        function pushNavHistoryState(stateObj) {
+            try {
+                if (window.history && window.history.pushState) {
+                    window.history.pushState(stateObj, '');
+                }
+            } catch (e) {}
+        }
+
+        function switchTab(tab, fromHistory = false) {
+            if (!fromHistory && tab !== activeTab) {
+                pushNavHistoryState({ view: 'tab', tab: tab });
+            }
             activeTab = tab;
             if (tab !== 'audio') stopAudioPlaylist();
 
@@ -4283,7 +4344,7 @@
 
             commentsData.unshift({
                 id: Date.now(),
-                author: isAdminUnlocked ? "Admin" : "Student",
+                author: isAdminUnlocked ? "Admin" : "Tester / Student",
                 text: txt,
                 date: new Date().toLocaleDateString(),
                 replies: []
@@ -4291,6 +4352,34 @@
             input.value = "";
             saveData();
             renderComments();
+            showStatusToast('Saved to your local study notes');
+        }
+
+        function sendFeedbackEmail(prefilledText = '') {
+            const subject = encodeURIComponent('Naturally Tagalog - Beta Tester Feedback');
+            const deviceInfo = `\n\n---\nApp: Naturally Tagalog (${vocabData.length} cards)\nActive Island: ${activeCategory}\nAudio Speed: ${speechRate}x`;
+            const body = encodeURIComponent((prefilledText || 'Hi George,\n\nHere is my feedback on Naturally Tagalog:\n') + deviceInfo);
+            window.location.href = `mailto:geodecarlo@gmail.com?subject=${subject}&body=${body}`;
+        }
+
+        function postAndEmailFeedback() {
+            const input = document.getElementById('commentTextInput');
+            const txt = input.value.trim();
+            if (!txt) {
+                sendFeedbackEmail();
+                return;
+            }
+            commentsData.unshift({
+                id: Date.now(),
+                author: isAdminUnlocked ? "Admin" : "Tester / Student",
+                text: txt,
+                date: new Date().toLocaleDateString(),
+                replies: []
+            });
+            input.value = "";
+            saveData();
+            renderComments();
+            sendFeedbackEmail(txt);
         }
 
         function toggleAdminUnlock() {
@@ -4588,9 +4677,22 @@
             }
         }
 
-        function toggleSosModal() { document.getElementById('sosModal').classList.toggle('hidden'); }
-        function toggleAboutModal() { document.getElementById('aboutModal').classList.toggle('hidden'); }
-        function openAddModal() { document.getElementById('addModal').classList.remove('hidden'); }
+        function toggleSosModal(fromHistory = false) {
+            const el = document.getElementById('sosModal');
+            const willOpen = el.classList.contains('hidden');
+            el.classList.toggle('hidden');
+            if (willOpen && !fromHistory) pushNavHistoryState({ view: 'modal', modal: 'sosModal' });
+        }
+        function toggleAboutModal(fromHistory = false) {
+            const el = document.getElementById('aboutModal');
+            const willOpen = el.classList.contains('hidden');
+            el.classList.toggle('hidden');
+            if (willOpen && !fromHistory) pushNavHistoryState({ view: 'modal', modal: 'aboutModal' });
+        }
+        function openAddModal(fromHistory = false) {
+            document.getElementById('addModal').classList.remove('hidden');
+            if (!fromHistory) pushNavHistoryState({ view: 'modal', modal: 'addModal' });
+        }
         function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
 
         function processBulkImport() {
@@ -4726,7 +4828,81 @@
             if (sub) sub.innerText = `Today: ${dailyMinutesCompleted} min / 60 min goal (${pct}%)`;
         }
 
+        function updateOnlineStatusUI() {
+            const banner = document.getElementById('offlineBanner');
+            if (!banner) return;
+            if (navigator.onLine) {
+                banner.classList.add('hidden');
+            } else {
+                banner.classList.remove('hidden');
+            }
+        }
+
+        function handleHardwareBackOrEscape() {
+            // 1. Close any open modal first (Android TWA / WebView back gesture UX)
+            const trainingModal = document.getElementById('trainingModal');
+            if (trainingModal && !trainingModal.classList.contains('hidden')) {
+                closeTrainingModal();
+                return true;
+            }
+            const addModal = document.getElementById('addModal');
+            if (addModal && !addModal.classList.contains('hidden')) {
+                closeAddModal();
+                return true;
+            }
+            const sosModal = document.getElementById('sosModal');
+            if (sosModal && !sosModal.classList.contains('hidden')) {
+                sosModal.classList.add('hidden');
+                return true;
+            }
+            const aboutModal = document.getElementById('aboutModal');
+            if (aboutModal && !aboutModal.classList.contains('hidden')) {
+                aboutModal.classList.add('hidden');
+                return true;
+            }
+            // 2. If not on Home ('daily') tab, navigate cleanly back to Home instead of exiting app
+            if (activeTab !== 'daily') {
+                switchTab('daily', true);
+                return true;
+            }
+            return false;
+        }
+
+        window.addEventListener('popstate', function(event) {
+            const handled = handleHardwareBackOrEscape();
+            if (handled) {
+                // Keep a base state on the stack so subsequent back presses stay inside the app
+                try {
+                    window.history.replaceState({ view: 'tab', tab: activeTab }, '');
+                } catch (e) {}
+            }
+        });
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                handleHardwareBackOrEscape();
+            }
+        });
+
+        window.addEventListener('online', updateOnlineStatusUI);
+        window.addEventListener('offline', updateOnlineStatusUI);
+
+        function registerOfflineServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Naturally Tagalog SW registered:', reg.scope))
+                    .catch(err => console.warn('SW registration skipped/failed:', err));
+            }
+        }
+
         window.onload = function() {
+            try {
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState({ view: 'tab', tab: 'daily' }, '');
+                }
+            } catch (e) {}
+            updateOnlineStatusUI();
+            registerOfflineServiceWorker();
             updateSpeechRateUI();
             updateFocusCuesUI();
             renderCategoryChips();
@@ -4782,6 +4958,7 @@
             }
 
             document.getElementById('trainingModal').classList.remove('hidden');
+            pushNavHistoryState({ view: 'modal', modal: 'trainingModal' });
             renderTrainingCard();
         }
 
