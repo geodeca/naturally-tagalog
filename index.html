@@ -519,18 +519,66 @@
 
     <!-- MODAL: ADD CONTENT / BULK IMPORTER -->
     <div id="addModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
-            <div class="p-4 bg-tealBrand-700 text-white flex items-center justify-between">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-100 overflow-hidden max-h-[90vh] flex flex-col">
+            <div class="p-4 bg-tealBrand-700 text-white flex items-center justify-between shrink-0">
                 <h3 class="font-extrabold text-sm flex items-center gap-2">
                     <i class="fa-solid fa-plus text-amberBrand-500"></i> Add Tagalog Words / Bulk Import 100
                 </h3>
                 <button onclick="closeAddModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
-            <div class="p-6 space-y-5">
-                <div class="p-4 bg-tealBrand-50 border border-tealBrand-200 rounded-xl space-y-2">
-                    <label class="block text-xs font-extrabold text-tealBrand-900">Import Weekly JSON Pack (No Coding Needed)</label>
+            <div class="p-6 space-y-5 overflow-y-auto">
+                <div class="p-4 bg-tealBrand-50 border border-tealBrand-200 rounded-xl space-y-2.5">
+                    <div class="flex items-center justify-between gap-2">
+                        <label class="block text-xs font-extrabold text-tealBrand-900">Import Weekly JSON Pack (No Coding Needed)</label>
+                        <span class="px-2 py-0.5 bg-tealBrand-100 text-tealBrand-800 text-[10px] font-bold rounded-full">Auto-Validated</span>
+                    </div>
                     <p class="text-[11px] text-slate-600">Select a clean JSON file generated for your lessons to add new words and sentences automatically.</p>
                     <input type="file" id="jsonFileInput" accept=".json" onchange="handleJsonFileUpload(event)" class="block w-full text-xs text-slate-700 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-tealBrand-700 file:text-white hover:file:bg-tealBrand-800 cursor-pointer">
+
+                    <!-- Integrated 3 JSON Pack Helpers -->
+                    <div class="pt-2.5 border-t border-tealBrand-200/70 flex flex-wrap items-center gap-1.5">
+                        <button type="button" onclick="copyJsonPackPrompt()" class="px-2.5 py-1.5 bg-white hover:bg-tealBrand-100 text-tealBrand-800 border border-tealBrand-300 font-bold text-[11px] rounded-lg shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fa-regular fa-copy"></i> Copy AI Prompt
+                        </button>
+                        <button type="button" onclick="downloadSampleJsonPack()" class="px-2.5 py-1.5 bg-white hover:bg-tealBrand-100 text-tealBrand-800 border border-tealBrand-300 font-bold text-[11px] rounded-lg shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-file-code"></i> Download Sample JSON
+                        </button>
+                        <button type="button" onclick="toggleJsonFormatGuide()" class="px-2.5 py-1.5 bg-white hover:bg-tealBrand-100 text-tealBrand-800 border border-tealBrand-300 font-bold text-[11px] rounded-lg shadow-xs flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-circle-info"></i> Format Guide
+                        </button>
+                    </div>
+
+                    <!-- Collapsible Format Guide & Guardrail Reference -->
+                    <div id="jsonFormatGuideBox" class="hidden mt-2 p-3 bg-white border border-tealBrand-200 rounded-lg text-[11px] text-slate-700 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-extrabold text-tealBrand-900">JSON Pack Schema &amp; Built-In Guardrails</span>
+                            <button type="button" onclick="toggleJsonFormatGuide()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                        <p class="text-[10px] text-slate-600 leading-relaxed">
+                            Top-level object with <code class="bg-slate-100 px-1 rounded font-mono">"words"</code> and/or <code class="bg-slate-100 px-1 rounded font-mono">"sentences"</code> arrays. Built-in guardrails automatically validate JSON syntax, deduplicate existing Tagalog entries, map Language Islands (1–13) to Tiers 1–3, and support both native keys (<code class="bg-slate-100 px-1 rounded font-mono">romanization</code>, <code class="bg-slate-100 px-1 rounded font-mono">category</code>, <code class="bg-slate-100 px-1 rounded font-mono">mnemonic</code>, <code class="bg-slate-100 px-1 rounded font-mono">example</code>, <code class="bg-slate-100 px-1 rounded font-mono">culturalNote</code>) and legacy keys (<code class="bg-slate-100 px-1 rounded font-mono">phonetic</code>, <code class="bg-slate-100 px-1 rounded font-mono">island</code>, <code class="bg-slate-100 px-1 rounded font-mono">literal_breakdown</code>).
+                        </p>
+                        <pre class="p-2 bg-slate-900 text-emerald-300 rounded-lg text-[10px] font-mono overflow-x-auto leading-snug">{
+  "words": [{
+    "tagalog": "Tubero",
+    "romanization": "too-BEH-roh",
+    "english": "Plumber",
+    "category": "11. Condo, Building & Errands",
+    "tier": 3,
+    "mnemonic": "TUBE HERO — A plumber saves a burst pipe.",
+    "example": "Tumawag ng tubero. (Call a plumber.)",
+    "culturalNote": "From Spanish tubero."
+  }],
+  "sentences": [{
+    "tagalog": "Puwede po bang pa-check ang tubig?",
+    "romanization": "PWEH-deh poh bahng pah-CHECK ahng TOO-big?",
+    "english": "Could you please have the water checked?",
+    "category": "11. Condo, Building & Errands",
+    "tier": 3,
+    "mnemonic": "Word-by-word: Possible (respect) please-check the water?",
+    "culturalNote": "pa- + English verb is standard in Manila."
+  }]
+}</pre>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1">Quick Add Words (Format: Tagalog | English)</label>
@@ -7204,6 +7252,152 @@
             renderDeck();
         }
 
+        // --- INTEGRATED JSON PACK HELPERS (AI PROMPT, SAMPLE JSON, FORMAT GUIDE & GUARDRAILS) ---
+        function resolveIslandCategory(rawCat) {
+            if (!rawCat || typeof rawCat !== 'string') return "1. Greetings & Small Talk";
+            const cleaned = rawCat.trim();
+            const exact = islandTopics.find(t => t !== "All Steps" && t.toLowerCase() === cleaned.toLowerCase());
+            if (exact) return exact;
+            const numMatch = cleaned.match(/^(\d+)\./);
+            if (numMatch) {
+                const byNum = islandTopics.find(t => t.startsWith(numMatch[1] + "."));
+                if (byNum) return byNum;
+            }
+            return cleaned || "1. Greetings & Small Talk";
+        }
+
+        function copyJsonPackPrompt() {
+            const promptText = `Generate a valid JSON object for the "Naturally Tagalog" mobile app using the exact schema below. Do not include markdown commentary outside the JSON block.
+
+RULES:
+1. "category" MUST exactly match one of these 13 strings:
+   - "1. Greetings & Small Talk" (Tier 1)
+   - "2. Food, Ordering & Restaurants" (Tier 1)
+   - "3. Directions & Transport" (Tier 1)
+   - "4. Shopping & Money" (Tier 1)
+   - "5. Home & Daily Routine" (Tier 2)
+   - "6. Work & School" (Tier 2)
+   - "7. Health & Body" (Tier 2)
+   - "8. Time, Weather & Plans" (Tier 2)
+   - "9. Family & People" (Tier 2)
+   - "10. Opinions, Likes & Hobbies" (Tier 3)
+   - "11. Condo, Building & Errands" (Tier 3)
+   - "12. Socializing, Invitations & Emergencies" (Tier 3)
+   - "13. Immigration and Legal" (Tier 3)
+2. "tier" MUST be 1 (Islands 1–4), 2 (Islands 5–9), or 3 (Islands 10–13).
+3. "romanization" MUST use syllable-hyphenated phonetic spelling with CAPS on the stressed syllable (e.g., "koo-moos-TAH").
+4. For "words":
+   - "mnemonic" MUST follow: "ENGLISH SOUND-ALIKE HOOK — Vivid visual memory story connecting the English sound to the Tagalog meaning."
+   - "example" MUST follow: "Tagalog sentence using the word. (Natural English translation.)"
+   - "culturalNote" should give a practical Metro Manila usage, politeness ("po"), or stress tip.
+5. For "sentences":
+   - "mnemonic" MUST start with "Word-by-word: " followed by the literal gloss so the app's Literal vs. Natural toggle works automatically.
+
+JSON SCHEMA:
+{
+  "packTitle": "Weekly Lesson Pack",
+  "words": [
+    {
+      "tagalog": "",
+      "romanization": "",
+      "english": "",
+      "category": "",
+      "tier": 1,
+      "mnemonic": "",
+      "example": "",
+      "culturalNote": ""
+    }
+  ],
+  "sentences": [
+    {
+      "tagalog": "",
+      "romanization": "",
+      "english": "",
+      "category": "",
+      "tier": 1,
+      "mnemonic": "Word-by-word: ",
+      "culturalNote": ""
+    }
+  ]
+}
+
+TOPIC FOR THIS PACK: [Insert your topic, e.g., "10 words and 5 sentences for Condo Building Maintenance & Plumber Visits in Mandaluyong"]`;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(promptText).then(() => {
+                    showStatusToast('AI Prompt copied! Paste into Gemini & add your topic.');
+                }).catch(() => {
+                    fallbackCopyPrompt(promptText);
+                });
+            } else {
+                fallbackCopyPrompt(promptText);
+            }
+        }
+
+        function fallbackCopyPrompt(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+            showStatusToast('AI Prompt copied to clipboard!');
+        }
+
+        function downloadSampleJsonPack() {
+            const samplePayload = {
+                packTitle: "Naturally Tagalog — Sample Weekly Pack",
+                words: [
+                    {
+                        tagalog: "Tubero",
+                        romanization: "too-BEH-roh",
+                        english: "Plumber",
+                        category: "11. Condo, Building & Errands",
+                        tier: 3,
+                        mnemonic: "TUBE HERO — When a pipe bursts under your condo sink, the TUBE HERO arrives with a wrench to save the day!",
+                        example: "Tumawag na ang admin ng tubero para sa tagas sa banyo. (The admin already called a plumber for the bathroom leak.)",
+                        culturalNote: "Derived from Spanish 'tubero' (pipe worker). Building engineering handles minor leaks, while major repairs require a licensed tubero."
+                    },
+                    {
+                        tagalog: "Tawad",
+                        romanization: "TAH-wahd",
+                        english: "Discount / Haggle / Forgiveness",
+                        category: "4. Shopping & Money",
+                        tier: 1,
+                        mnemonic: "TOWER AD — You point to a giant TOWER AD promising a 50% discount and ask the vendor for 'Tawad po!'",
+                        example: "May tawad pa po ba ito? (Is there still a discount on this?)",
+                        culturalNote: "At open-air wet markets (palengke) and tiangge stalls, polite haggling with a smile and 'po' is expected."
+                    }
+                ],
+                sentences: [
+                    {
+                        tagalog: "Puwede po bang pa-check ang pressure ng tubig sa unit namin?",
+                        romanization: "PWEH-deh poh bahng pah-CHECK ahng PRES-yoor nahng TOO-big sah YOO-nit NAH-min?",
+                        english: "Could you please have the water pressure in our unit checked?",
+                        category: "11. Condo, Building & Errands",
+                        tier: 3,
+                        mnemonic: "Word-by-word: Possible (respect) [question] please-check the pressure of water in unit ours?",
+                        culturalNote: "Using 'pa-' + English verb ('pa-check', 'pa-deliver', 'pa-repair') is the most natural everyday Metro Manila way to request a service politely."
+                    }
+                ]
+            };
+            const blob = new Blob([JSON.stringify(samplePayload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'naturally-tagalog-sample-pack.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showStatusToast('Sample JSON pack downloaded');
+        }
+
+        function toggleJsonFormatGuide() {
+            const box = document.getElementById('jsonFormatGuideBox');
+            if (box) box.classList.toggle('hidden');
+        }
+
         function handleJsonFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -7211,66 +7405,110 @@
             reader.onload = function(e) {
                 try {
                     const parsed = JSON.parse(e.target.result);
-                    const existingTagalog = new Set(vocabData.map(v => v.tagalog.toLowerCase().trim()));
+                    if (!parsed || typeof parsed !== 'object' || (!Array.isArray(parsed.words) && !Array.isArray(parsed.sentences))) {
+                        alert('Invalid JSON Pack format: File must contain a "words" array and/or a "sentences" array. Click "Format Guide" or "Download Sample JSON" for the exact structure.');
+                        event.target.value = '';
+                        return;
+                    }
+
+                    const existingTagalog = new Set(vocabData.map(v => (v.tagalog || '').toLowerCase().trim()));
                     let added = 0;
+                    let skippedDuplicates = 0;
+                    let skippedInvalid = 0;
 
                     if (Array.isArray(parsed.words)) {
                         parsed.words.forEach(w => {
-                            const key = (w.tagalog || '').toLowerCase().trim();
-                            if (key && !existingTagalog.has(key)) {
-                                existingTagalog.add(key);
-                                vocabData.push({
-                                    id: Date.now() + Math.random(),
-                                    type: "word",
-                                    tagalog: w.tagalog,
-                                    romanization: w.phonetic || w.romanization || "",
-                                    english: w.english || "",
-                                    category: w.island || w.category || "1. Greetings & Small Talk",
-                                    tier: w.tier || inferItemTier(w.island || w.category),
-                                    mnemonic: w.mnemonic_trigger ? `${w.mnemonic_trigger} — ${w.mnemonic_story || ''}` : (w.mnemonic || ""),
-                                    example: w.example_tagalog ? `${w.example_tagalog} (${w.example_english || ''})` : "",
-                                    culturalNote: w.cultural_note || "",
-                                    status: "again",
-                                    favorite: false,
-                                    needsPractice: false,
-                                    isCustom: true
-                                });
-                                added++;
-                            }
+                            if (!w || typeof w !== 'object') { skippedInvalid++; return; }
+                            const tagalogClean = (w.tagalog || '').trim();
+                            const englishClean = (w.english || '').trim();
+                            if (!tagalogClean || !englishClean) { skippedInvalid++; return; }
+                            const key = tagalogClean.toLowerCase();
+                            if (existingTagalog.has(key)) { skippedDuplicates++; return; }
+
+                            existingTagalog.add(key);
+                            const resolvedCat = resolveIslandCategory(w.category || w.island);
+                            vocabData.push({
+                                id: Date.now() + Math.random(),
+                                type: "word",
+                                tagalog: tagalogClean,
+                                romanization: (w.romanization || w.phonetic || "").trim(),
+                                english: englishClean,
+                                category: resolvedCat,
+                                tier: [1, 2, 3].includes(Number(w.tier)) ? Number(w.tier) : inferItemTier(resolvedCat),
+                                mnemonic: w.mnemonic_trigger
+                                    ? `${w.mnemonic_trigger} — ${w.mnemonic_story || ''}`.trim()
+                                    : (w.mnemonic || "").trim(),
+                                example: w.example_tagalog
+                                    ? `${w.example_tagalog} (${w.example_english || ''})`.trim()
+                                    : (w.example || "").trim(),
+                                culturalNote: (w.culturalNote || w.cultural_note || "").trim(),
+                                status: "again",
+                                reps: 0,
+                                intervalDays: 0,
+                                nextReviewAt: Date.now(),
+                                favorite: false,
+                                needsPractice: false,
+                                isCustom: true
+                            });
+                            added++;
                         });
                     }
 
                     if (Array.isArray(parsed.sentences)) {
                         parsed.sentences.forEach(s => {
-                            const key = (s.tagalog || '').toLowerCase().trim();
-                            if (key && !existingTagalog.has(key)) {
-                                existingTagalog.add(key);
-                                vocabData.push({
-                                    id: Date.now() + Math.random(),
-                                    type: "sentence",
-                                    tagalog: s.tagalog,
-                                    romanization: s.phonetic || s.romanization || "",
-                                    english: s.english || "",
-                                    category: s.island || s.category || "1. Greetings & Small Talk",
-                                    tier: s.tier || inferItemTier(s.island || s.category),
-                                    mnemonic: s.literal_breakdown ? `Word-by-word: ${s.literal_breakdown}` : (s.mnemonic || ""),
-                                    status: "again",
-                                    favorite: false,
-                                    needsPractice: false,
-                                    isCustom: true
-                                });
-                                added++;
+                            if (!s || typeof s !== 'object') { skippedInvalid++; return; }
+                            const tagalogClean = (s.tagalog || '').trim();
+                            const englishClean = (s.english || '').trim();
+                            if (!tagalogClean || !englishClean) { skippedInvalid++; return; }
+                            const key = tagalogClean.toLowerCase();
+                            if (existingTagalog.has(key)) { skippedDuplicates++; return; }
+
+                            existingTagalog.add(key);
+                            const resolvedCat = resolveIslandCategory(s.category || s.island);
+                            let mnemonicVal = (s.mnemonic || "").trim();
+                            if (!mnemonicVal && s.literal_breakdown) {
+                                mnemonicVal = `Word-by-word: ${s.literal_breakdown.trim()}`;
                             }
+                            vocabData.push({
+                                id: Date.now() + Math.random(),
+                                type: "sentence",
+                                tagalog: tagalogClean,
+                                romanization: (s.romanization || s.phonetic || "").trim(),
+                                english: englishClean,
+                                category: resolvedCat,
+                                tier: [1, 2, 3].includes(Number(s.tier)) ? Number(s.tier) : inferItemTier(resolvedCat),
+                                mnemonic: mnemonicVal,
+                                example: (s.example || "").trim(),
+                                culturalNote: (s.culturalNote || s.cultural_note || "").trim(),
+                                status: "again",
+                                reps: 0,
+                                intervalDays: 0,
+                                nextReviewAt: Date.now(),
+                                favorite: false,
+                                needsPractice: false,
+                                isCustom: true
+                            });
+                            added++;
                         });
+                    }
+
+                    event.target.value = '';
+                    if (added === 0) {
+                        alert(`No new items were added (${skippedDuplicates} duplicate(s) already in your deck, ${skippedInvalid} incomplete entry/entries skipped).`);
+                        return;
                     }
 
                     saveData();
                     renderCategoryChips();
                     renderDeck();
                     closeAddModal();
-                    alert(`Successfully imported ${added} new unique items!`);
+                    const summaryParts = [`Successfully imported ${added} new unique item(s)!`];
+                    if (skippedDuplicates > 0) summaryParts.push(`Skipped ${skippedDuplicates} duplicate(s).`);
+                    if (skippedInvalid > 0) summaryParts.push(`Skipped ${skippedInvalid} incomplete row(s).`);
+                    alert(summaryParts.join(' '));
                 } catch (err) {
-                    alert("Could not read JSON file. Please make sure it is a valid JSON file.");
+                    event.target.value = '';
+                    alert("Could not read JSON file. Please verify valid JSON syntax (check the Format Guide for an example).");
                 }
             };
             reader.readAsText(file);
