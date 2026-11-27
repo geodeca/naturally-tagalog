@@ -130,7 +130,14 @@
             </div>
         </div>
 
-        <!-- 12 FIXED LANGUAGE ISLAND TOPICS (Horizontal Scroll) -->
+        <!-- THREE-TIER PROGRESSION SYSTEM BAR -->
+        <div class="border-t border-tealBrand-800 bg-tealBrand-900/90 py-2 px-4">
+            <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto hide-scrollbar text-xs" id="tierContainer">
+                <!-- Tier pills injected via JS -->
+            </div>
+        </div>
+
+        <!-- LANGUAGE ISLAND TOPICS (Horizontal Scroll, Filtered by Active Tier) -->
         <div class="border-t border-tealBrand-800 bg-tealBrand-800/80 py-2 px-4">
             <div class="max-w-7xl mx-auto flex items-center gap-2 overflow-x-auto hide-scrollbar text-xs" id="categoryContainer">
                 <!-- Chips injected via JS -->
@@ -601,13 +608,13 @@
                     </p>
                 </div>
 
-                <!-- Language Island Bar Navigation -->
+                <!-- Three-Tier Progression & Language Island Bar Navigation -->
                 <div class="space-y-1.5">
                     <h4 class="font-serif font-extrabold text-sm text-slate-900 border-b border-slate-100 pb-1">
-                        1. Navigating with the Language Island Bar (Top Bar)
+                        1. Three-Tier Progression System &amp; Language Island Bar
                     </h4>
                     <p>
-                        The horizontal <strong>Language Island Bar</strong> just below the header lets you focus on one everyday situation at a time (such as <em>1. Greetings &amp; Small Talk</em>, <em>2. Food, Ordering &amp; Restaurants</em>, or <em>4. Shopping &amp; Money</em>). Tapping any topic chip immediately filters your flashcards, daily training modules, and audio playlist to that island, while displaying your live mastery progress bar right inside each chip.
+                        Your 13 Language Islands are organized into three progressive mastery stages: <strong>Tier 1: Survival &amp; Daily Basics</strong> (Islands 1–4), <strong>Tier 2: Everyday Life &amp; Routine</strong> (Islands 5–9), and <strong>Tier 3: Nuance, Condo &amp; Legal</strong> (Islands 10–13). Select a Tier at the top to track stage-by-stage completion and filter the Language Island chips, flashcards, training modules, and audio playlist.
                     </p>
                 </div>
 
@@ -679,15 +686,7 @@
 
             <!-- Footer -->
             <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                <span class="text-[11px] text-slate-500">Tip: Read and speak each card aloud 3–5 times before moving it to <strong>Learned</strong>.</span>
-                <button onclick="toggleAboutModal()" class="px-5 py-2 bg-tealBrand-700 hover:bg-tealBrand-800 text-white font-bold text-xs rounded-xl shadow">Got It, Let's Practice</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MAIN JAVASCRIPT STATE LOGIC -->
-    <script>
-        const initialVocab = [
+                <span class="text-[11px] text-slate-500">Tip: Read and speak each card aloud 3–5 [
             {
                         "id": 1,
                         "type": "word",
@@ -700,7 +699,8 @@
                         "culturalNote": "Derived from the Spanish '¿Cómo está?'. Adding 'po' ('Kumusta po kayo?') makes it respectful for elders or strangers.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 2,
@@ -714,7 +714,8 @@
                         "culturalNote": "'Maraming salamat' literally translates to 'many thanks' and is the standard warm way to express deep gratitude.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 3,
@@ -728,7 +729,8 @@
                         "culturalNote": "More formal and polite than saying 'Sorry' or 'Pasensya na'; ideal when interrupting or passing by elders.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 4,
@@ -742,7 +744,8 @@
                         "culturalNote": "Pronounced as two distinct syllables ('oh-oh'), never blended into a single 'oo' sound. Polite form is 'Opo'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 5,
@@ -756,7 +759,8 @@
                         "culturalNote": "When combined with 'po' for respect, it contracts smoothly into 'Hindi po' (No, sir/ma'am).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 6,
@@ -770,7 +774,8 @@
                         "culturalNote": "Used strictly for asking the price of items. For asking quantity ('how many'), use 'Ilan'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 7,
@@ -784,7 +789,8 @@
                         "culturalNote": "Drivers on jeepneys and tricycles often ask 'May barya ka ba?' (Do you have small coins?) if they lack sukli for large bills.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 8,
@@ -798,7 +804,8 @@
                         "culturalNote": "'Buo' (whole) refers to large paper bills, whereas 'barya' refers to coins or small 20- and 50-peso bills.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 9,
@@ -812,7 +819,8 @@
                         "culturalNote": "On a jeepney, passengers pass coins forward down the row while saying 'Bayad po' until it reaches the driver.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 10,
@@ -826,7 +834,8 @@
                         "culturalNote": "In wet markets (palengke), polite haggling ('tumawad') is expected and welcomed when done with a smile.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 11,
@@ -840,7 +849,8 @@
                         "culturalNote": "From the Spanish 'palenque'. Going before 7:00 AM gets you the freshest catch and produce.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 12,
@@ -854,7 +864,8 @@
                         "culturalNote": "Used for produce, seafood, meat, and even cool morning air ('sariwang hangin').",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 13,
@@ -868,7 +879,8 @@
                         "culturalNote": "Carries a dual meaning: 'expensive' when talking about prices, and 'love' or 'dear' when speaking to loved ones ('Mahal kita').",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 14,
@@ -882,7 +894,8 @@
                         "culturalNote": "Be mindful of context: as a noun/verb ('pagmumura'), the same word means swearing or cursing.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 15,
@@ -896,7 +909,8 @@
                         "culturalNote": "A cornerstone of Filipino commerce—building a 'suki' relationship earns you better prices, choice cuts, and extra items ('dagdag').",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 16,
@@ -910,7 +924,8 @@
                         "culturalNote": "Literally translates to 'patience' (from Spanish 'paciencia'). Saying 'Pasensya na' asks the listener to extend patience for a minor mistake.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 17,
@@ -924,7 +939,8 @@
                         "culturalNote": "Literally means 'there is nothing whatsoever'. It is the standard polite response to 'Salamat'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 18,
@@ -938,7 +954,8 @@
                         "culturalNote": "Used for longer goodbyes or formal departures. For casual everyday partings, Filipinos often say 'Sige, alis na ako' (Okay, I'm heading out now).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 19,
@@ -952,7 +969,8 @@
                         "culturalNote": "One of the warmest everyday farewells in the Philippines, functioning both as 'be careful' and 'safe travels'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 20,
@@ -966,7 +984,8 @@
                         "culturalNote": "The prefix 'paki-' attaches directly to verb roots (like 'pakibigay' = please give) to turn commands into polite requests.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 21,
@@ -980,7 +999,8 @@
                         "culturalNote": "Tagalog uses native numbers ('isa, dalawa, tatlo') for counting objects, while Spanish-derived numbers ('uno, dos, tres') are common for telling time and large prices.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 22,
@@ -994,7 +1014,8 @@
                         "culturalNote": "Contracts to 'dalawang' when placed directly before a noun (e.g., 'dalawang tiket' = two tickets).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 23,
@@ -1008,7 +1029,8 @@
                         "culturalNote": "Contracts to 'tatlong' before a noun (e.g., 'tatlong daan' = three hundred).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 24,
@@ -1022,7 +1044,8 @@
                         "culturalNote": "After numbers ending in a vowel, 'daan' shifts to 'raan' for smoother pronunciation (e.g., 'dalawang raan' = 200).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 25,
@@ -1036,7 +1059,8 @@
                         "culturalNote": "The 1,000-peso blue banknote ('isang libo') is the highest denomination in Philippine currency.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 26,
@@ -1050,7 +1074,8 @@
                         "culturalNote": "The male counterpart is 'tindero'. At neighborhood sari-sari stores, customers usually call the tindera 'Ate' (older sister) or 'Nanay' (mother).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 27,
@@ -1064,7 +1089,8 @@
                         "culturalNote": "From Spanish 'precio'. Wet market stalls display prices per kilo ('kada kilo') or per small pile ('tumpok').",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 28,
@@ -1078,7 +1104,8 @@
                         "culturalNote": "Public markets feature a 'Timbangan ng Bayan' (People's Weighing Scale) near the entrance so shoppers can verify vendor weights.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 29,
@@ -1092,7 +1119,8 @@
                         "culturalNote": "A classic Tagalog minimal-pair stress trap: 'SOO-poht' (penultimate stress) means bag/pouch, while 'soo-POT' (ultimate stress) means uncircumcised.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 30,
@@ -1106,7 +1134,8 @@
                         "culturalNote": "Root word is 'bili' (buy). 'Bumili' focuses on the buyer ('I bought'), while 'binili' focuses on the item ('the item was bought').",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 31,
@@ -1120,7 +1149,8 @@
                         "culturalNote": "Filipino hospitality always includes welcoming guests inside immediately with 'Tuloy kayo!' and offering food or water.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 32,
@@ -1134,7 +1164,8 @@
                         "culturalNote": "Literally translates to 'Person, sir/ma'am!' Used instead of knocking when approaching a gate, front door, or unstaffed shop counter.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 33,
@@ -1148,7 +1179,8 @@
                         "culturalNote": "Derived from the root 'buhay' (life), literally wishing 'may you live'. Commonly used by hosts, tour guides, and airlines.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 34,
@@ -1162,7 +1194,8 @@
                         "culturalNote": "'Suyo' means winning someone's favor or affection; 'pakisuyo' softens a request into a warm favor.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 35,
@@ -1176,7 +1209,8 @@
                         "culturalNote": "From Spanish 'sigue' (continue). One of the most versatile words in daily Tagalog—used to agree, encourage, or wrap up a conversation.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 36,
@@ -1190,7 +1224,8 @@
                         "culturalNote": "Because 'apat' ends in a consonant ('t'), it takes the separate linker 'na' before a noun ('apat na tao' = four people).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 37,
@@ -1204,7 +1239,8 @@
                         "culturalNote": "Contracts to 'limang' before a noun (e.g., 'limang minuto' = five minutes).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 38,
@@ -1218,7 +1254,8 @@
                         "culturalNote": "Contracts to 'sampung' before a noun. Teens are formed by adding 'labing-' (e.g., 'labing-isa' = 11, 'labindalawa' = 12).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 39,
@@ -1232,7 +1269,8 @@
                         "culturalNote": "From Spanish 'fresco'. Used for crisp vegetables, cool breezes, and freshly laundered clothes.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 40,
@@ -1246,7 +1284,8 @@
                         "culturalNote": "Essential phrase for checking receipts, change, or ingredients when something is missing.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 41,
@@ -1260,7 +1299,8 @@
                         "culturalNote": "Opposite of 'kulang'. Returning extra change ('sobrang sukli') is deeply appreciated by market vendors.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 42,
@@ -1274,7 +1314,8 @@
                         "culturalNote": "Instead of weighing small items like garlic, shallots, or chilies, palengke vendors sell them in pre-grouped piles called 'tumpok'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 43,
@@ -1288,7 +1329,8 @@
                         "culturalNote": "From Spanish 'pedazo'. Used when buying items individually rather than by weight ('kilo').",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 44,
@@ -1302,7 +1344,8 @@
                         "culturalNote": "The opposite is 'hilaw' (unripe or raw)—green mangoes ('manggang hilaw') are eaten crisp with shrimp paste ('bagoong').",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 45,
@@ -1316,7 +1359,8 @@
                         "culturalNote": "From Spanish 'recibo'. Supermarkets and hardware stores issue printed receipts, whereas open-air palengke stalls operate cash-only without paper receipts.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 46,
@@ -1330,7 +1374,8 @@
                         "culturalNote": "Used roughly from 12:00 PM until sunset (around 5:30–6:00 PM), after which it shifts to 'Magandang gabi' (Good evening).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 47,
@@ -1344,7 +1389,8 @@
                         "culturalNote": "Asking 'Kumain ka na ba?' (Have you eaten yet?) right after 'Magandang gabi' is a classic Filipino expression of care.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 48,
@@ -1358,7 +1404,8 @@
                         "culturalNote": "Combines Tagalog 'wala' (none/no) with Spanish 'problema'. Very common in everyday reassuring conversation.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 49,
@@ -1372,7 +1419,8 @@
                         "culturalNote": "From Spanish 'puede'. Paired with 'po' and the question marker 'ba' ('Puwede po ba?'), it is the go-to phrase for polite permission.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 50,
@@ -1386,7 +1434,8 @@
                         "culturalNote": "You will see 'Bawal' signs everywhere across Metro Manila—such as 'Bawal Tumawid' (No Crossing) and 'Bawal Magtapon ng Basura' (No Littering).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 51,
@@ -1400,7 +1449,8 @@
                         "culturalNote": "Ends in 'm', so it uses the separate linker 'na' before a noun ('anim na araw' = six days).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 52,
@@ -1414,7 +1464,8 @@
                         "culturalNote": "Contracts to 'pitong' before a noun. As a standalone noun, 'pito' also means a referee's or traffic enforcer's whistle.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 53,
@@ -1428,7 +1479,8 @@
                         "culturalNote": "Contracts to 'walong' before a noun (e.g., 'walong piso' = eight pesos).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 54,
@@ -1442,7 +1494,8 @@
                         "culturalNote": "Uses the separate linker 'na' before a noun ('siyam na taon' = nine years).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 55,
@@ -1456,7 +1509,8 @@
                         "culturalNote": "Very common at meat and produce stalls ('kalahating kilo' = 500 grams).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 56,
@@ -1470,7 +1524,8 @@
                         "culturalNote": "Root word is 'tamis' (sweetness). Vendors often guarantee sweetness by offering a tiny slice ('patikim') to taste.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 57,
@@ -1484,7 +1539,8 @@
                         "culturalNote": "Root word is 'asim' (sourness). Essential vocabulary for choosing between sweet ripe fruits and sour cooking ingredients like calamansi or tamarind.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 58,
@@ -1498,7 +1554,8 @@
                         "culturalNote": "Sari-sari stores are small family-run neighborhood shops selling single-serving sachets ('tingi'), snacks, drinks, and household basics.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 59,
@@ -1512,7 +1569,8 @@
                         "culturalNote": "Refers to the Filipino practice of buying single-use sachets, single cigarettes, or small measured scoops of cooking oil rather than bulk bottles.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 60,
@@ -1526,7 +1584,8 @@
                         "culturalNote": "Handwoven from buri palm or pandan leaves; traditional, eco-friendly, and sturdy enough to hold heavy produce and fish.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 61,
@@ -1540,7 +1599,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 62,
@@ -1554,7 +1614,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 63,
@@ -1568,7 +1629,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 64,
@@ -1582,7 +1644,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 65,
@@ -1596,7 +1659,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 66,
@@ -1610,7 +1674,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 67,
@@ -1624,7 +1689,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 68,
@@ -1638,7 +1704,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 69,
@@ -1652,7 +1719,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 70,
@@ -1666,7 +1734,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 71,
@@ -1680,7 +1749,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 72,
@@ -1694,7 +1764,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 73,
@@ -1708,7 +1779,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 74,
@@ -1722,7 +1794,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 75,
@@ -1736,7 +1809,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 76,
@@ -1750,7 +1824,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 77,
@@ -1764,7 +1839,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 78,
@@ -1778,7 +1854,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 79,
@@ -1792,7 +1869,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 80,
@@ -1806,7 +1884,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 81,
@@ -1820,7 +1899,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 82,
@@ -1834,7 +1914,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 83,
@@ -1848,7 +1929,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 84,
@@ -1862,7 +1944,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 85,
@@ -1876,7 +1959,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 86,
@@ -1890,7 +1974,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 87,
@@ -1904,7 +1989,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 88,
@@ -1918,7 +2004,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 89,
@@ -1932,7 +2019,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 90,
@@ -1946,7 +2034,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 91,
@@ -1960,7 +2049,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 92,
@@ -1974,7 +2064,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 93,
@@ -1988,7 +2079,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 94,
@@ -2002,7 +2094,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 95,
@@ -2016,7 +2109,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 96,
@@ -2030,7 +2124,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 97,
@@ -2044,7 +2139,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 98,
@@ -2058,7 +2154,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 99,
@@ -2072,7 +2169,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 100,
@@ -2086,7 +2184,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 101,
@@ -2100,7 +2199,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 102,
@@ -2114,7 +2214,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 103,
@@ -2128,7 +2229,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 104,
@@ -2142,7 +2244,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 105,
@@ -2156,7 +2259,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 106,
@@ -2170,7 +2274,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 107,
@@ -2184,7 +2289,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 108,
@@ -2198,7 +2304,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 109,
@@ -2212,7 +2319,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 110,
@@ -2226,7 +2334,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 111,
@@ -2240,7 +2349,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 112,
@@ -2254,7 +2364,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 113,
@@ -2268,7 +2379,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 114,
@@ -2282,7 +2394,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 115,
@@ -2296,7 +2409,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 116,
@@ -2310,7 +2424,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 117,
@@ -2324,7 +2439,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 118,
@@ -2338,7 +2454,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 119,
@@ -2352,7 +2469,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 120,
@@ -2366,7 +2484,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2380,7 +2499,8 @@
                         "id": 121,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2394,7 +2514,8 @@
                         "id": 122,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2408,7 +2529,8 @@
                         "id": 123,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2422,7 +2544,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2436,7 +2559,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2450,7 +2574,8 @@
                         "id": 126,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2464,7 +2589,8 @@
                         "id": 127,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2478,7 +2604,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2492,7 +2619,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2506,7 +2634,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2520,7 +2649,8 @@
                         "id": 131,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2534,7 +2664,8 @@
                         "id": 132,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2548,7 +2679,8 @@
                         "id": 133,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2562,7 +2694,8 @@
                         "id": 134,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2576,7 +2709,8 @@
                         "id": 135,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2590,7 +2724,8 @@
                         "id": 136,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2604,7 +2739,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2618,7 +2754,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2632,7 +2769,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2646,7 +2784,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2660,7 +2799,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2674,7 +2814,8 @@
                         "id": 142,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2688,7 +2829,8 @@
                         "id": 143,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2702,7 +2844,8 @@
                         "id": 144,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2716,7 +2859,8 @@
                         "id": 145,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2730,7 +2874,8 @@
                         "id": 146,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2744,7 +2889,8 @@
                         "id": 147,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2758,7 +2904,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2772,7 +2919,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2786,7 +2934,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2800,7 +2949,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "sentence",
@@ -2814,7 +2964,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "type": "word",
@@ -2828,7 +2979,8 @@
                         "id": 153,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -2842,7 +2994,8 @@
                         "id": 154,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -2856,7 +3009,8 @@
                         "id": 155,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -2870,7 +3024,8 @@
                         "id": 156,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -2884,7 +3039,8 @@
                         "id": 157,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -2898,7 +3054,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -2912,7 +3069,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -2926,7 +3084,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -2940,7 +3099,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -2954,7 +3114,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -2968,7 +3129,8 @@
                         "id": 163,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -2982,7 +3144,8 @@
                         "id": 164,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -2996,7 +3159,8 @@
                         "id": 165,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3010,7 +3174,8 @@
                         "id": 166,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3024,7 +3189,8 @@
                         "id": 167,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3038,7 +3204,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3052,7 +3219,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3066,7 +3234,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3080,7 +3249,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3094,7 +3264,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3108,7 +3279,8 @@
                         "id": 173,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3122,7 +3294,8 @@
                         "id": 174,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3136,7 +3309,8 @@
                         "id": 175,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3150,7 +3324,8 @@
                         "id": 176,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3164,7 +3339,8 @@
                         "id": 177,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3178,7 +3354,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3192,7 +3369,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3206,7 +3384,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3220,7 +3399,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3234,7 +3414,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3248,7 +3429,8 @@
                         "id": 183,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3262,7 +3444,8 @@
                         "id": 184,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3276,7 +3459,8 @@
                         "id": 185,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3290,7 +3474,8 @@
                         "id": 186,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3304,7 +3489,8 @@
                         "id": 187,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3318,7 +3504,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3332,7 +3519,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3346,7 +3534,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3360,7 +3549,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3374,7 +3564,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3388,7 +3579,8 @@
                         "id": 193,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3402,7 +3594,8 @@
                         "id": 194,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3416,7 +3609,8 @@
                         "id": 195,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3430,7 +3624,8 @@
                         "id": 196,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3444,7 +3639,8 @@
                         "id": 197,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3458,7 +3654,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3472,7 +3669,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3486,7 +3684,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3500,7 +3699,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "sentence",
@@ -3514,7 +3714,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "type": "word",
@@ -3528,7 +3729,8 @@
                         "id": 203,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3542,7 +3744,8 @@
                         "id": 204,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3556,7 +3759,8 @@
                         "id": 205,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3570,7 +3774,8 @@
                         "id": 206,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3584,7 +3789,8 @@
                         "id": 207,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "sentence",
@@ -3598,7 +3804,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "sentence",
@@ -3612,7 +3819,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "sentence",
@@ -3626,7 +3834,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "sentence",
@@ -3640,7 +3849,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "sentence",
@@ -3654,7 +3864,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3668,7 +3879,8 @@
                         "id": 213,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3682,7 +3894,8 @@
                         "id": 214,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3696,7 +3909,8 @@
                         "id": 215,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3710,7 +3924,8 @@
                         "id": 216,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "sentence",
@@ -3724,7 +3939,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "sentence",
@@ -3738,7 +3954,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3752,7 +3969,8 @@
                         "id": 219,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3766,7 +3984,8 @@
                         "id": 220,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "word",
@@ -3780,7 +3999,8 @@
                         "id": 221,
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "sentence",
@@ -3794,7 +4014,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "type": "sentence",
@@ -3808,7 +4029,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 224,
@@ -3822,7 +4044,8 @@
                         "culturalNote": "Borrowed from Spanish 'nada' (nothing), used colloquially for 'nothing/zero' alongside native Tagalog 'wala'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 225,
@@ -3836,7 +4059,8 @@
                         "culturalNote": "From Spanish 'embajada'. In Metro Manila, the U.S. Embassy is located along Roxas Boulevard.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 226,
@@ -3850,7 +4074,8 @@
                         "culturalNote": "From Spanish 'consulado', used for consular offices outside or inside an embassy.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 227,
@@ -3864,7 +4089,8 @@
                         "culturalNote": "Philippine government offices rely heavily on printed photocopies ('xerox') of all documentation.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 228,
@@ -3878,7 +4104,8 @@
                         "culturalNote": "From Spanish 'firma'. Often paired with 'pirmahan' (to sign).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 229,
@@ -3892,7 +4119,8 @@
                         "culturalNote": "From Spanish 'sello'. Refers both to rubber stamps at immigration/notaries and postage stamps.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 230,
@@ -3906,7 +4134,8 @@
                         "culturalNote": "Notary offices ('Notary Public') are found on almost every commercial street in Metro Manila.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 231,
@@ -3920,7 +4149,8 @@
                         "culturalNote": "Root word for 'mambabatas' (lawmaker) and 'labag sa batas' (illegal).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 232,
@@ -3934,7 +4164,8 @@
                         "culturalNote": "Used for legal rights, human rights ('karapatang pantao'), and constitutional protections.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 233,
@@ -3948,7 +4179,8 @@
                         "culturalNote": "From Spanish 'reclamo'. Used for both formal legal complaints and everyday customer complaints.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 234,
@@ -3962,7 +4194,8 @@
                         "culturalNote": "From Spanish 'testigo'. Also expressed as 'saksi' in pure Tagalog.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 235,
@@ -3976,7 +4209,8 @@
                         "culturalNote": "Used on official Philippine certificates ('Katibayan ng Kapanganakan' = Birth Certificate).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 236,
@@ -3990,7 +4224,8 @@
                         "culturalNote": "Root word 'tulot' (allow). Used for legal authorization and permits.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 237,
@@ -4004,7 +4239,8 @@
                         "culturalNote": "From Spanish 'multa'. Commonly heard for traffic tickets and Bureau of Immigration late fees.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 238,
@@ -4018,7 +4254,8 @@
                         "culturalNote": "From Spanish 'contrato'. Used for condo leases, employment, and service agreements.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 239,
@@ -4032,7 +4269,8 @@
                         "culturalNote": "Also appears in the deep cultural concept 'utang na loob' (debt of gratitude).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 240,
@@ -4046,7 +4284,8 @@
                         "culturalNote": "Root word 'tinda' (merchandise/goods for sale).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 241,
@@ -4060,7 +4299,8 @@
                         "culturalNote": "From Spanish 'petaca'. Used for both men's wallets and women's small purses.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 242,
@@ -4074,7 +4314,8 @@
                         "culturalNote": "From Spanish 'banco'. Note: 'bangko' in another context can also mean a wooden bench.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 243,
@@ -4088,7 +4329,8 @@
                         "culturalNote": "From Spanish 'gastos'. Verb form: 'gumastos' (to spend).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 244,
@@ -4102,7 +4344,8 @@
                         "culturalNote": "Also used figuratively for the 'key' to solving a problem.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 245,
@@ -4116,7 +4359,8 @@
                         "culturalNote": "Also spelled 'hagdanan'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 246,
@@ -4130,7 +4374,8 @@
                         "culturalNote": "In Tagalog, 'bukas' (open) means turn ON a light or appliance, and 'sarado/patay' (close/kill) means turn OFF.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 247,
@@ -4144,7 +4389,8 @@
                         "culturalNote": "A power outage in the Philippines is commonly called a 'brownout'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 248,
@@ -4158,7 +4404,8 @@
                         "culturalNote": "Adapted from Spanish 'ventana'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 249,
@@ -4172,7 +4419,8 @@
                         "culturalNote": "From Spanish 'cocina'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 250,
@@ -4186,7 +4434,8 @@
                         "culturalNote": "In Philippine English, restrooms are almost universally referred to as 'CR' (Comfort Room), while 'banyo' is standard in Tagalog.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 251,
@@ -4200,7 +4449,8 @@
                         "culturalNote": "From Spanish 'basura'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 252,
@@ -4214,7 +4464,8 @@
                         "culturalNote": "Refers to the floor surface of a room (whereas 'palapag' refers to a building story/floor level).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 253,
@@ -4228,7 +4479,8 @@
                         "culturalNote": "Essential word when reporting condo water leaks to building admin!",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 254,
@@ -4242,7 +4494,8 @@
                         "culturalNote": "From Spanish 'cama'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 255,
@@ -4256,7 +4509,8 @@
                         "culturalNote": "Native Tagalog word.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 256,
@@ -4270,7 +4524,8 @@
                         "culturalNote": "Can also be used as a verb ('magkumot' = to wrap oneself in a blanket).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 257,
@@ -4284,7 +4539,8 @@
                         "culturalNote": "Root word for 'nangungupahan' (tenant/renter) and 'paupahan' (rental property).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 258,
@@ -4298,7 +4554,8 @@
                         "culturalNote": "The single most useful word when giving directions to Grab or taxi drivers in Manila.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 259,
@@ -4312,7 +4569,8 @@
                         "culturalNote": "From Spanish 'canto' (edge/corner). Everyday landmark word in Filipino neighborhoods.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 260,
@@ -4326,7 +4584,8 @@
                         "culturalNote": "Native Tagalog noun.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 261,
@@ -4340,7 +4599,8 @@
                         "culturalNote": "Used interchangeably with 'daan' and 'kalye'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 262,
@@ -4354,7 +4614,8 @@
                         "culturalNote": "Opposite of 'malapit' (near).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 263,
@@ -4368,7 +4629,8 @@
                         "culturalNote": "Formal Tagalog for airport; in daily conversation people also say 'airport' or 'NAIA'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 264,
@@ -4382,7 +4644,8 @@
                         "culturalNote": "From Spanish 'bagaje'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 265,
@@ -4396,7 +4659,8 @@
                         "culturalNote": "Used for flights, ferries, buses, and cinema tickets.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 266,
@@ -4410,7 +4674,8 @@
                         "culturalNote": "From Spanish 'pasajero'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 267,
@@ -4424,7 +4689,8 @@
                         "culturalNote": "'Ingat sa biyahe!' is the classic Filipino send-off whenever someone is traveling.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 268,
@@ -4438,7 +4704,8 @@
                         "culturalNote": "Shouting 'Para po!' tells a jeepney or bus driver to pull over and let you off.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 269,
@@ -4452,7 +4719,8 @@
                         "culturalNote": "In Tagalog, 'trapik' is used both as a noun and an adjective ('Trapik ba?' = 'Is there heavy traffic?').",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 270,
@@ -4466,7 +4734,8 @@
                         "culturalNote": "As a noun ('may sakit'), it means illness; as an adjective ('masakit'), it means painful/hurts.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 271,
@@ -4480,7 +4749,8 @@
                         "culturalNote": "Verb form: 'gamutin' (to treat/cure).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 272,
@@ -4494,7 +4764,8 @@
                         "culturalNote": "From Spanish 'botica'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 273,
@@ -4508,7 +4779,8 @@
                         "culturalNote": "'Nilalagnat' means 'having a fever'.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 274,
@@ -4522,7 +4794,8 @@
                         "culturalNote": "Usually paired with 'sipon' (runny nose/cold).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 275,
@@ -4536,7 +4809,8 @@
                         "culturalNote": "Native Tagalog noun.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 276,
@@ -4550,7 +4824,8 @@
                         "culturalNote": "Pronounced as one crisp syllable: TYAN.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 277,
@@ -4564,7 +4839,8 @@
                         "culturalNote": "Also used for 'head' of a bed or table.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 278,
@@ -4578,7 +4854,8 @@
                         "culturalNote": "Also serves as a directional preposition ('sa likod ng bahay' = behind the house).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 279,
@@ -4592,7 +4869,8 @@
                         "culturalNote": "'Kamayan' is the traditional Filipino feast eaten with bare hands over banana leaves.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 280,
@@ -4606,7 +4884,8 @@
                         "culturalNote": "Notice the distinct two syllables with a glottal pause: pah-AH.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 281,
@@ -4620,7 +4899,8 @@
                         "culturalNote": "Used both anatomically and romantically.",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 282,
@@ -4634,7 +4914,8 @@
                         "culturalNote": "Root word of the famous Filipino dish 'dinuguan' (pork blood stew).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 283,
@@ -4648,7 +4929,8 @@
                         "culturalNote": "Verb form: 'magpahinga' (to rest).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 284,
@@ -4662,7 +4944,8 @@
                         "culturalNote": "Opposite of 'sakitin' (sickly).",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 285,
@@ -4676,7 +4959,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 286,
@@ -4690,7 +4974,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 287,
@@ -4704,7 +4989,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 288,
@@ -4718,7 +5004,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 289,
@@ -4732,7 +5019,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 290,
@@ -4746,7 +5034,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 291,
@@ -4760,7 +5049,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 292,
@@ -4774,7 +5064,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 293,
@@ -4788,7 +5079,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 294,
@@ -4802,7 +5094,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 295,
@@ -4816,7 +5109,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 296,
@@ -4830,7 +5124,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 297,
@@ -4844,7 +5139,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 298,
@@ -4858,7 +5154,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 299,
@@ -4872,7 +5169,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 300,
@@ -4886,7 +5184,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 301,
@@ -4900,7 +5199,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 302,
@@ -4914,7 +5214,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 303,
@@ -4928,7 +5229,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 3
             },
             {
                         "id": 304,
@@ -4942,7 +5244,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 305,
@@ -4956,7 +5259,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 306,
@@ -4970,7 +5274,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 307,
@@ -4984,7 +5289,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 308,
@@ -4998,7 +5304,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 309,
@@ -5012,7 +5319,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 310,
@@ -5026,7 +5334,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 311,
@@ -5040,7 +5349,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 312,
@@ -5054,7 +5364,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 313,
@@ -5068,7 +5379,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 314,
@@ -5082,7 +5394,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 315,
@@ -5096,7 +5409,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 316,
@@ -5110,7 +5424,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 317,
@@ -5124,7 +5439,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 318,
@@ -5138,7 +5454,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 319,
@@ -5152,7 +5469,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 320,
@@ -5166,7 +5484,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 321,
@@ -5180,7 +5499,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 322,
@@ -5194,7 +5514,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 323,
@@ -5208,7 +5529,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 324,
@@ -5222,7 +5544,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 325,
@@ -5236,7 +5559,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 326,
@@ -5250,7 +5574,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 327,
@@ -5264,7 +5589,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 328,
@@ -5278,7 +5604,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 329,
@@ -5292,7 +5619,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 330,
@@ -5306,7 +5634,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 331,
@@ -5320,7 +5649,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 332,
@@ -5334,7 +5664,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 333,
@@ -5348,7 +5679,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 334,
@@ -5362,7 +5694,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 335,
@@ -5376,7 +5709,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 336,
@@ -5390,7 +5724,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 337,
@@ -5404,7 +5739,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 338,
@@ -5418,7 +5754,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 339,
@@ -5432,7 +5769,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 340,
@@ -5446,7 +5784,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 341,
@@ -5460,7 +5799,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 342,
@@ -5474,7 +5814,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 343,
@@ -5488,7 +5829,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 344,
@@ -5502,7 +5844,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 345,
@@ -5516,7 +5859,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 346,
@@ -5530,7 +5874,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 347,
@@ -5544,7 +5889,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 348,
@@ -5558,7 +5904,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 1
             },
             {
                         "id": 349,
@@ -5572,7 +5919,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 350,
@@ -5586,7 +5934,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 351,
@@ -5600,7 +5949,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 352,
@@ -5614,7 +5964,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 353,
@@ -5628,7 +5979,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 354,
@@ -5642,7 +5994,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 355,
@@ -5656,7 +6009,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 356,
@@ -5670,7 +6024,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 357,
@@ -5684,7 +6039,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 358,
@@ -5698,7 +6054,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 359,
@@ -5712,7 +6069,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 360,
@@ -5726,7 +6084,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 361,
@@ -5740,7 +6099,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 362,
@@ -5754,7 +6114,8 @@
                         "culturalNote": "",
                         "status": "again",
                         "favorite": false,
-                        "isCustom": false
+                        "isCustom": false,
+                        "tier": 2
             },
             {
                         "id": 363,
@@ -5763,6 +6124,15 @@
                         "romanization": "mah-loo-SOG ang pah-ngah-ngah-tah-WAN NYAH.",
                         "english": "His/Her physique is healthy.",
                         "category": "7. Health & Body",
+                        "mnemonic": "Word-by-word: Malusog (healthy) + ang (marker) + pangangatawan (body/physique) + niya (his/her).",
+                        "example": "",
+                        "culturalNote": "",
+                        "status": "again",
+                        "favorite": false,
+                        "isCustom": false,
+                        "tier": 2
+            }
+]Health & Body",
                         "mnemonic": "Word-by-word: Malusog (healthy) + ang (marker) + pangangatawan (body/physique) + niya (his/her).",
                         "example": "",
                         "culturalNote": "",
@@ -5806,6 +6176,25 @@
             { id: 1, author: "John D.", text: "The mnemonic for Tubig helped me remember it instantly!", date: "Nov 6, 2026", replies: ["Admin: Salamat John! Repetition is key."] }
         ];
 
+        const tierDefinitions = [
+            { id: 'all', label: 'All Tiers', subtitle: 'Complete 363-Card Curriculum' },
+            { id: 1, label: 'Tier 1: Survival & Daily Basics', subtitle: 'Islands 1–4 • Greetings, Food, Transit & Money' },
+            { id: 2, label: 'Tier 2: Everyday Life & Routine', subtitle: 'Islands 5–9 • Home, Work, Health, Time & Family' },
+            { id: 3, label: 'Tier 3: Nuance, Condo & Legal', subtitle: 'Islands 10–13 • Opinions, Condo, Social & Legal' }
+        ];
+
+        function inferItemTier(category) {
+            if (!category) return 1;
+            const match = category.match(/^(\d+)\./);
+            if (match) {
+                const num = parseInt(match[1], 10);
+                if (num <= 4) return 1;
+                if (num <= 9) return 2;
+                return 3;
+            }
+            return 1;
+        }
+
         let savedV3 = JSON.parse(localStorage.getItem('nt_vocabData_v3') || 'null');
         let vocabData = JSON.parse(localStorage.getItem('nt_vocabData_v4') || 'null');
         if (!vocabData) {
@@ -5822,10 +6211,11 @@
                 savedV3.filter(p => p.isCustom).forEach(customItem => vocabData.push(customItem));
             }
         }
-        // Ensure backward-compatible Phase 1 & Phase 2 properties exist on all cards
+        // Ensure backward-compatible Phase 1, Phase 2 & Tier properties exist on all cards
         const DAY_MS = 24 * 60 * 60 * 1000;
         const MIN_MS = 60 * 1000;
         vocabData.forEach(item => {
+            if (typeof item.tier === 'undefined') item.tier = inferItemTier(item.category);
             if (typeof item.needsPractice === 'undefined') item.needsPractice = false;
             if (typeof item.reps === 'undefined') item.reps = item.status === 'learned' ? 2 : (item.status === 'familiar' ? 1 : 0);
             if (typeof item.intervalDays === 'undefined') item.intervalDays = item.status === 'learned' ? 30 : (item.status === 'familiar' ? 1 : 0);
@@ -5833,6 +6223,7 @@
         });
 
         let commentsData = JSON.parse(localStorage.getItem('nt_commentsData')) || initialComments;
+        let activeTier = 'all';
         let activeCategory = "All Steps";
         let activeTab = "daily";
         let onlyShowDue = false;
@@ -5958,16 +6349,86 @@
             speakTagalog(text, rate);
         }
 
+        function getTierFilteredPool() {
+            return activeTier === 'all'
+                ? vocabData
+                : vocabData.filter(v => (v.tier || inferItemTier(v.category)) === activeTier);
+        }
+
+        function getActiveFilteredPool() {
+            const tierPool = getTierFilteredPool();
+            return activeCategory === 'All Steps'
+                ? tierPool
+                : tierPool.filter(v => v.category === activeCategory);
+        }
+
+        function renderTierPills() {
+            const container = document.getElementById('tierContainer');
+            if (!container) return;
+            container.innerHTML = tierDefinitions.map(t => {
+                const isActive = activeTier === t.id;
+                const items = t.id === 'all'
+                    ? vocabData
+                    : vocabData.filter(v => (v.tier || inferItemTier(v.category)) === t.id);
+                const total = items.length;
+                const learned = items.filter(v => v.status === 'learned').length;
+                const familiar = items.filter(v => v.status === 'familiar').length;
+                const pct = total ? Math.round(((learned + familiar * 0.5) / total) * 100) : 0;
+                const tierParam = t.id === 'all' ? "'all'" : t.id;
+
+                return `
+                    <button onclick="selectTier(${tierParam})"
+                        class="px-3 py-1.5 rounded-xl font-extrabold whitespace-nowrap transition text-[11px] flex items-center gap-2 border ${
+                            isActive
+                            ? 'bg-white text-tealBrand-900 border-white shadow-sm'
+                            : 'bg-tealBrand-800/70 text-teal-100 hover:bg-tealBrand-700 border-teal-700/60'
+                        }">
+                        <span class="w-2 h-2 rounded-full ${
+                            t.id === 'all' ? 'bg-teal-400' : (t.id === 1 ? 'bg-emerald-400' : (t.id === 2 ? 'bg-amber-400' : 'bg-purple-400'))
+                        }"></span>
+                        <span>${t.label}</span>
+                        <span class="px-1.5 py-0.5 rounded-md text-[10px] ${
+                            isActive ? 'bg-tealBrand-100 text-tealBrand-900' : 'bg-tealBrand-950/60 text-teal-200'
+                        }">${learned}/${total} • ${pct}%</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function selectTier(tierId) {
+            activeTier = tierId;
+            if (activeCategory !== 'All Steps' && activeTier !== 'all') {
+                const catTier = inferItemTier(activeCategory);
+                if (catTier !== activeTier) {
+                    activeCategory = 'All Steps';
+                }
+            }
+            renderTierPills();
+            renderCategoryChips();
+            if (activeTab === 'comments') switchTab('daily');
+            else if (activeTab === 'audio') {
+                stopAudioPlaylist();
+                initAudioPlaylist();
+            } else renderDeck();
+        }
+
         function renderCategoryChips() {
             const container = document.getElementById('categoryContainer');
+            const tierPool = getTierFilteredPool();
             const existingSet = new Set(islandTopics);
             const extraTopics = [...new Set(vocabData.map(v => v.category).filter(c => c && !existingSet.has(c)))];
-            const dynamicTopics = [...islandTopics, ...extraTopics];
+            const allTopics = [...islandTopics, ...extraTopics];
+            const dynamicTopics = allTopics.filter(topic => {
+                if (topic === 'All Steps') return true;
+                if (activeTier === 'all') return true;
+                return inferItemTier(topic) === activeTier;
+            });
+
             container.innerHTML = dynamicTopics.map(topic => {
                 const isActive = activeCategory === topic;
                 const topicItems = topic === 'All Steps'
-                    ? vocabData
-                    : vocabData.filter(v => v.category === topic);
+                    ? tierPool
+                    : tierPool.filter(v => v.category === topic);
                 const total = topicItems.length;
                 const learned = topicItems.filter(v => v.status === 'learned').length;
                 const familiar = topicItems.filter(v => v.status === 'familiar').length;
@@ -5976,7 +6437,7 @@
                 const familiarPct = total ? (familiar / total) * 100 : 0;
 
                 return `
-                    <button onclick="selectCategory('${topic.replace(/'/g, "\\'")}')" 
+                    <button onclick="selectCategory('${topic.replace(/'/g, "\'")}')" 
                         class="px-3.5 py-1.5 rounded-xl font-bold whitespace-nowrap transition text-xs flex flex-col items-start gap-1 min-w-[135px] ${
                             isActive 
                             ? 'bg-amberBrand-500 text-slate-950 shadow-sm' 
@@ -6071,6 +6532,7 @@
             document.getElementById('progressBarAgain').style.width = (total ? (again/total)*100 : 0) + '%';
             document.getElementById('progressBarFamiliar').style.width = (total ? (familiar/total)*100 : 0) + '%';
             document.getElementById('progressBarLearned').style.width = (total ? (learned/total)*100 : 0) + '%';
+            renderTierPills();
             renderCategoryChips();
         }
 
@@ -6152,22 +6614,24 @@
             const searchInput = document.getElementById('searchInput');
             const q = searchInput ? searchInput.value.trim().toLowerCase() : '';
 
+            const tierPool = getTierFilteredPool();
+
             if (activeTab === 'practice') {
-                items = vocabData.filter(v => v.needsPractice);
+                items = tierPool.filter(v => v.needsPractice);
             } else if (activeTab === 'favorites') {
-                items = vocabData.filter(v => v.favorite);
+                items = tierPool.filter(v => v.favorite);
             } else if (activeTab === 'words') {
-                items = vocabData.filter(v => v.type === 'word');
+                items = tierPool.filter(v => v.type === 'word');
             } else if (activeTab === 'islands') {
-                items = vocabData.filter(v => v.type === 'sentence');
+                items = tierPool.filter(v => v.type === 'sentence');
             } else if (activeTab === 'myislands') {
                 items = vocabData.filter(v => v.isCustom);
             } else if (activeTab === 'random') {
-                items = [...vocabData].sort(() => 0.5 - Math.random());
+                items = [...tierPool].sort(() => 0.5 - Math.random());
             } else {
                 items = activeCategory === 'All Steps'
-                    ? [...vocabData]
-                    : vocabData.filter(v => v.category === activeCategory);
+                    ? [...tierPool]
+                    : tierPool.filter(v => v.category === activeCategory);
             }
 
             if (activeCategory !== 'All Steps' && ['practice', 'favorites', 'words', 'islands'].includes(activeTab)) {
@@ -6232,6 +6696,9 @@
                     <div class="space-y-3">
                         <div class="flex items-center justify-between gap-2">
                             <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-slate-800 text-white shrink-0">
+                                    T${item.tier || inferItemTier(item.category)}
+                                </span>
                                 <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-tealBrand-50 text-tealBrand-700 uppercase border border-tealBrand-100 truncate">
                                     ${item.category}
                                 </span>
@@ -6471,6 +6938,7 @@
                 romanization: romanization,
                 english: english,
                 category: islandName,
+                tier: inferItemTier(islandName),
                 mnemonic: mnemonic || (type === 'word' ? `Personal memory hook for ${tagalog}` : ''),
                 status: 'again',
                 reps: 0,
@@ -6508,9 +6976,7 @@
         let audioLoopTimeout = null;
 
         function initAudioPlaylist() {
-            audioQueue = activeCategory === 'All Steps'
-                ? [...vocabData]
-                : vocabData.filter(v => v.category === activeCategory);
+            audioQueue = [...getActiveFilteredPool()];
             if (audioIndex >= audioQueue.length) audioIndex = 0;
             updateAudioPlayerUI();
         }
@@ -6704,6 +7170,7 @@
                         tagalog: parts[0].trim(),
                         english: parts[1].trim(),
                         category: "4. Shopping & Money",
+                        tier: 1,
                         mnemonic: `Sound-alike hook for ${parts[0].trim()}`,
                         status: "again",
                         reps: 0,
@@ -6760,6 +7227,7 @@
                                     romanization: w.phonetic || w.romanization || "",
                                     english: w.english || "",
                                     category: w.island || w.category || "1. Greetings & Small Talk",
+                                    tier: w.tier || inferItemTier(w.island || w.category),
                                     mnemonic: w.mnemonic_trigger ? `${w.mnemonic_trigger} — ${w.mnemonic_story || ''}` : (w.mnemonic || ""),
                                     example: w.example_tagalog ? `${w.example_tagalog} (${w.example_english || ''})` : "",
                                     culturalNote: w.cultural_note || "",
@@ -6785,6 +7253,7 @@
                                     romanization: s.phonetic || s.romanization || "",
                                     english: s.english || "",
                                     category: s.island || s.category || "1. Greetings & Small Talk",
+                                    tier: s.tier || inferItemTier(s.island || s.category),
                                     mnemonic: s.literal_breakdown ? `Word-by-word: ${s.literal_breakdown}` : (s.mnemonic || ""),
                                     status: "again",
                                     favorite: false,
@@ -6901,6 +7370,7 @@
             registerOfflineServiceWorker();
             updateSpeechRateUI();
             updateFocusCuesUI();
+            renderTierPills();
             renderCategoryChips();
             updateSrsCounts();
             renderDeck();
@@ -6916,10 +7386,8 @@
             modalShowLiteral = false;
             stopListeningLoop();
 
-            // Prioritize flagged Needs Practice items when available, or filtered category pool
-            const basePool = activeCategory === 'All Steps'
-                ? [...vocabData]
-                : vocabData.filter(v => v.category === activeCategory);
+            // Prioritize flagged Needs Practice items when available, or filtered tier + category pool
+            const basePool = [...getActiveFilteredPool()];
             const flaggedFirst = [
                 ...basePool.filter(v => v.needsPractice),
                 ...basePool.filter(v => !v.needsPractice)
