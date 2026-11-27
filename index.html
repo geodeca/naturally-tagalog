@@ -686,7 +686,14 @@
 
             <!-- Footer -->
             <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
-                <span class="text-[11px] text-slate-500">Tip: Read and speak each card aloud 3–5 [
+                <span class="text-[11px] text-slate-500">Tip: Read and speak each card aloud 3–5 times until natural.</span>
+                <button onclick="toggleAboutModal()" class="px-4 py-2 bg-tealBrand-700 hover:bg-tealBrand-800 text-white font-bold text-xs rounded-xl">Got It</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const initialVocab = [
             {
                         "id": 1,
                         "type": "word",
@@ -6132,15 +6139,7 @@
                         "isCustom": false,
                         "tier": 2
             }
-]Health & Body",
-                        "mnemonic": "Word-by-word: Malusog (healthy) + ang (marker) + pangangatawan (body/physique) + niya (his/her).",
-                        "example": "",
-                        "culturalNote": "",
-                        "status": "again",
-                        "favorite": false,
-                        "isCustom": false
-            }
-];
+        ];
 
         const islandTopics = [
             "All Steps",
